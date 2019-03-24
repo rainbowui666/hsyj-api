@@ -1,0 +1,22 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/index.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "indexAction",
+        "User",
+        "model",
+        "select",
+        "success"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC5BI,aAAN,GAAoB;AAAA;;AAAA;AAClB,YAAMC,OAAO,MAAM,MAAKC,KAAL,CAAW,MAAX,EAAmBC,MAAnB,EAAnB;;AAEA,aAAO,MAAKC,OAAL,CAAa;AAClBH,cAAMA;AADY,OAAb,CAAP;AAHkB;AAMnB;AAPiC,CAApC",
+    "file": "../../../src/api/controller/index.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n  async indexAction() {\n    const User = await this.model('User').select();\n\n    return this.success({\n      User: User\n    });\n  }\n};\n"
+    ]
+}

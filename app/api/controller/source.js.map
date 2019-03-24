@@ -1,0 +1,29 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/source.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "addAction",
+        "sourcetype",
+        "post",
+        "insertid",
+        "sourceaddress",
+        "insertid2",
+        "model",
+        "add",
+        "sourceType",
+        "sourceAddress",
+        "targetid",
+        "success"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,aAAN,GAAkB;AAAA;;AAAA;AACd,kBAAMC,aAAa,MAAKC,IAAL,CAAU,YAAV,CAAnB;AACA,kBAAMC,WAAW,MAAKD,IAAL,CAAU,UAAV,CAAjB;AACA,kBAAME,gBAAgB,MAAKF,IAAL,CAAU,eAAV,CAAtB;;AAEA,kBAAMG,YAAY,MAAM,MAAKC,KAAL,CAAW,QAAX,EAAqBC,GAArB,CAAyB;AAC7CC,4BAAWP,UADkC;AAE7CQ,+BAAeL,aAF8B;AAG7CM,0BAAUP;AAHmC,aAAzB,CAAxB;;AAMA,gBAAIE,SAAJ,EAAe;AACX,uBAAO,MAAKM,OAAL,CAAa,QAAb,CAAP;AACH;AAba;AAcjB;AAf+B,CAApC",
+    "file": "../../../src/api/controller/source.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async addAction() {\n        const sourcetype = this.post('sourcetype');\n        const insertid = this.post('insertid');\n        const sourceaddress = this.post('sourceaddress');\n        \n        const insertid2 = await this.model('source').add({\n            sourceType:sourcetype,\n            sourceAddress: sourceaddress,\n            targetid: insertid\n        });\n\n        if (insertid2) {\n            return this.success('学校添加成功')\n        }\n    }\n}"
+    ]
+}

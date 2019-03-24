@@ -1,0 +1,18 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/activity.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "fs",
+        "module",
+        "exports"
+    ],
+    "mappings": "AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;AACA,MAAMC,KAAKD,QAAQ,IAAR,CAAX;;AAEAE,OAAOC,OAAP,GAAiB,cAAcJ,IAAd,CAAmB,EAApC",
+    "file": "../../../src/api/controller/activity.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\nconst fs = require('fs');\n\nmodule.exports = class extends Base {\n    \n}"
+    ]
+}

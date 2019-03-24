@@ -1,0 +1,32 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/role.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "saveAction",
+        "roleData",
+        "roleName",
+        "get",
+        "id",
+        "think",
+        "isEmpty",
+        "model",
+        "add",
+        "where",
+        "roleID",
+        "update",
+        "success",
+        "deleteAction",
+        "delete"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,cAAN,GAAmB;AAAA;;AAAA;AACf,kBAAMC,WAAW;AACbC,0BAAU,MAAKC,GAAL,CAAS,UAAT;AADG,aAAjB;;AAIA,gBAAIC,KAAK,MAAKD,GAAL,CAAS,IAAT,CAAT;AACA,gBAAIE,MAAMC,OAAN,CAAcF,EAAd,CAAJ,EAAuB;AACnB,sBAAM,MAAKG,KAAL,CAAW,MAAX,EAAmBC,GAAnB,CAAuBP,QAAvB,CAAN;AACH,aAFD,MAEO;AACH,sBAAM,MAAKM,KAAL,CAAW,MAAX,EAAmBE,KAAnB,CAAyB,EAACC,QAAQN,EAAT,EAAzB,EAAuCO,MAAvC,CAA8CV,QAA9C,CAAN;AACH;;AAED,mBAAO,MAAKW,OAAL,CAAa,QAAb,CAAP;AAZe;AAalB;;AAEKC,gBAAN,GAAqB;AAAA;;AAAA;AACjB,kBAAMT,KAAK,OAAKD,GAAL,CAAS,IAAT,CAAX;AACA,kBAAM,OAAKI,KAAL,CAAW,MAAX,EAAmBE,KAAnB,CAAyB,EAACC,QAAQN,EAAT,EAAzB,EAAuCU,MAAvC,EAAN;;AAEA,mBAAO,OAAKF,OAAL,CAAa,MAAb,CAAP;AAJiB;AAKpB;AArB+B,CAApC",
+    "file": "../../../src/api/controller/role.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async saveAction() {\n        const roleData = {\n            roleName: this.get('rolename')\n        }\n\n        let id = this.get('id');\n        if (think.isEmpty(id)) {\n            await this.model('role').add(roleData);\n        } else {\n            await this.model('role').where({roleID: id}).update(roleData);\n        }\n\n        return this.success('角色添加成功');\n    }\n\n    async deleteAction() {\n        const id = this.get('id');\n        await this.model('role').where({roleID: id}).delete();\n\n        return this.success('删除成功')\n    }\n}"
+    ]
+}

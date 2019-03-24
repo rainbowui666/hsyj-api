@@ -1,0 +1,22 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/common/config/config.js"
+    ],
+    "names": [
+        "module",
+        "exports",
+        "default_module",
+        "weixin",
+        "appid",
+        "secret",
+        "mch_id",
+        "partner_key",
+        "notify_url"
+    ],
+    "mappings": "AAAA;AACAA,OAAOC,OAAP,GAAiB;AACfC,kBAAgB,KADD;AAEfC,UAAQ;AACNC,WAAO,EADD,EACK;AACXC,YAAQ,EAFF,EAEM;AACZC,YAAQ,EAHF,EAGM;AACZC,iBAAa,EAJP,EAIW;AACjBC,gBAAY,EALN,CAKS;AALT;AAFO,CAAjB",
+    "file": "../../../src/common/config/config.js",
+    "sourcesContent": [
+        "// default config\nmodule.exports = {\n  default_module: 'api',\n  weixin: {\n    appid: '', // 小程序 appid\n    secret: '', // 小程序密钥\n    mch_id: '', // 商户帐号ID\n    partner_key: '', // 微信支付密钥\n    notify_url: '' // 微信异步通知，例：https://www.nideshop.com/api/pay/notify\n  }\n};\n"
+    ]
+}

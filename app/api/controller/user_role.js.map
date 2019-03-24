@@ -1,0 +1,27 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/user_role.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "saveAction",
+        "userData",
+        "sysuserid",
+        "get",
+        "roleid",
+        "think",
+        "isEmpty",
+        "model",
+        "add",
+        "success"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,cAAN,GAAmB;AAAA;;AAAA;AACf,kBAAMC,WAAW;AACbC,2BAAW,MAAKC,GAAL,CAAS,WAAT,CADE;AAEbC,wBAAQ,MAAKD,GAAL,CAAS,QAAT;AAFK,aAAjB;;AAKA,gBAAID,YAAY,MAAKC,GAAL,CAAS,WAAT,CAAhB;AACA,gBAAIC,SAAS,MAAKD,GAAL,CAAS,QAAT,CAAb;AACA,gBAAI,CAACE,MAAMC,OAAN,CAAcJ,SAAd,CAAD,IAA6B,CAACG,MAAMC,OAAN,CAAcF,MAAd,CAAlC,EAAyD;AACrD,sBAAM,MAAKG,KAAL,CAAW,WAAX,EAAwBC,GAAxB,CAA4BP,QAA5B,CAAN;AACH;AACD;AACA;AACA;AACA;AACA;;AAEA,mBAAO,MAAKQ,OAAL,CAAa,UAAb,CAAP;AAjBe;AAkBlB;;AAED;AACA;AACA;;AAEA;AACA;AA1BgC,CAApC",
+    "file": "../../../src/api/controller/user_role.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async saveAction() {\n        const userData = {\n            sysuserid: this.get('sysuserid'),\n            roleid: this.get('roleid')\n        }\n\n        let sysuserid = this.get('sysuserid');\n        let roleid = this.get('roleid');\n        if (!think.isEmpty(sysuserid) && !think.isEmpty(roleid)) {\n            await this.model('user_role').add(userData);\n        }\n        // if (think.isEmpty(id)) {\n        //     await this.model('permission').add(userData);\n        // } else {\n        //     await this.model('permission').where({permissionID: id}).update(userData);\n        // }\n        \n        return this.success(' success');\n    }\n\n    // async deleteAction() {\n    //     const id = this.get('id');\n    //     await this.model('permission').where({permissionID: id}).delete();\n\n    //     return this.success('删除成功')\n    // }\n}"
+    ]
+}

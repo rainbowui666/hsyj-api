@@ -1,0 +1,27 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/role_permission.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "saveAction",
+        "userData",
+        "permissionid",
+        "get",
+        "roleid",
+        "think",
+        "isEmpty",
+        "model",
+        "add",
+        "success"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,cAAN,GAAmB;AAAA;;AAAA;AACf,kBAAMC,WAAW;AACbC,8BAAc,MAAKC,GAAL,CAAS,cAAT,CADD;AAEbC,wBAAQ,MAAKD,GAAL,CAAS,QAAT;AAFK,aAAjB;;AAKA,gBAAID,eAAe,MAAKC,GAAL,CAAS,cAAT,CAAnB;AACA,gBAAIC,SAAS,MAAKD,GAAL,CAAS,QAAT,CAAb;AACA,gBAAI,CAACE,MAAMC,OAAN,CAAcJ,YAAd,CAAD,IAAgC,CAACG,MAAMC,OAAN,CAAcF,MAAd,CAArC,EAA4D;AACxD,sBAAM,MAAKG,KAAL,CAAW,iBAAX,EAA8BC,GAA9B,CAAkCP,QAAlC,CAAN;AACH;;AAED,mBAAO,MAAKQ,OAAL,CAAa,UAAb,CAAP;AAZe;AAalB;;AAED;AACA;AACA;;AAEA;AACA;AArBgC,CAApC",
+    "file": "../../../src/api/controller/role_permission.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async saveAction() {\n        const userData = {\n            permissionid: this.get('permissionid'),\n            roleid: this.get('roleid')\n        }\n\n        let permissionid = this.get('permissionid');\n        let roleid = this.get('roleid');\n        if (!think.isEmpty(permissionid) && !think.isEmpty(roleid)) {\n            await this.model('role_permission').add(userData);\n        }\n\n        return this.success(' success');\n    }\n\n    // async deleteAction() {\n    //     const id = this.get('id');\n    //     await this.model('permission').where({permissionID: id}).delete();\n\n    //     return this.success('删除成功')\n    // }\n}"
+    ]
+}

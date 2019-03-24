@@ -1,0 +1,33 @@
+{
+    "version": 3,
+    "sources": [
+        "../../src/controller/User.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "saveAction",
+        "userData",
+        "userName",
+        "get",
+        "pwd",
+        "id",
+        "think",
+        "isEmpty",
+        "model",
+        "add",
+        "where",
+        "sysUserID",
+        "update",
+        "success",
+        "deleteAction",
+        "delete"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,cAAN,GAAmB;AAAA;;AAAA;AACf,kBAAMC,WAAW;AACbC,0BAAU,MAAKC,GAAL,CAAS,UAAT,CADG;AAEbC,qBAAK,MAAKD,GAAL,CAAS,KAAT;AAFQ,aAAjB;;AAKA,gBAAIE,KAAK,MAAKF,GAAL,CAAS,IAAT,CAAT;AACA,gBAAIG,MAAMC,OAAN,CAAcF,EAAd,CAAJ,EAAuB;AACnB,sBAAM,MAAKG,KAAL,CAAW,MAAX,EAAmBC,GAAnB,CAAuBR,QAAvB,CAAN;AACH,aAFD,MAEO;AACH,sBAAM,MAAKO,KAAL,CAAW,MAAX,EAAmBE,KAAnB,CAAyB,EAACC,WAAWN,EAAZ,EAAzB,EAA0CO,MAA1C,CAAiDX,QAAjD,CAAN;AACH;;AAED,mBAAO,MAAKY,OAAL,CAAa,UAAb,CAAP;AAbe;AAclB;;AAEKC,gBAAN,GAAqB;AAAA;;AAAA;AACjB,kBAAMT,KAAK,OAAKF,GAAL,CAAS,IAAT,CAAX;AACA,kBAAM,OAAKK,KAAL,CAAW,MAAX,EAAmBE,KAAnB,CAAyB,EAACC,WAAWN,EAAZ,EAAzB,EAA0CU,MAA1C,EAAN;;AAEA,mBAAO,OAAKF,OAAL,CAAa,MAAb,CAAP;AAJiB;AAKpB;AAtB+B,CAApC",
+    "file": "../../src/controller/User.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async saveAction() {\n        const userData = {\n            userName: this.get('userName'),\n            pwd: this.get('pwd')\n        }\n\n        let id = this.get('id');\n        if (think.isEmpty(id)) {\n            await this.model('User').add(userData);\n        } else {\n            await this.model('User').where({sysUserID: id}).update(userData);\n        }\n        \n        return this.success(' success');\n    }\n\n    async deleteAction() {\n        const id = this.get('id');\n        await this.model('User').where({sysUserID: id}).delete();\n\n        return this.success('删除成功')\n    }\n}"
+    ]
+}

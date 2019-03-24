@@ -1,0 +1,17 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/config/config.js"
+    ],
+    "names": [
+        "module",
+        "exports",
+        "publicController",
+        "publicAction"
+    ],
+    "mappings": "AAAAA,OAAOC,OAAP,GAAiB;AACbC,sBAAkB,CACd,OADc,EAEd,MAFc,CADL;;AAMbC,kBAAc,CACV,OADU,EAEV,WAFU;AAND,CAAjB",
+    "file": "../../../src/api/config/config.js",
+    "sourcesContent": [
+        "module.exports = {\n    publicController: [\n        'index',\n        'User'\n    ],\n\n    publicAction: [\n        'index',\n        'User/save'\n    ]\n}"
+    ]
+}

@@ -1,0 +1,44 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/upload.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "fs",
+        "module",
+        "exports",
+        "indexAction",
+        "display",
+        "uploadFileAction",
+        "self",
+        "fileInfo",
+        "file",
+        "think",
+        "isEmpty",
+        "fail",
+        "that",
+        "extension",
+        "name",
+        "indexOf",
+        "filename",
+        "uuid",
+        "is",
+        "createReadStream",
+        "path",
+        "os",
+        "createWriteStream",
+        "ROOT_PATH",
+        "pipe",
+        "json",
+        "error",
+        "errmsg",
+        "success"
+    ],
+    "mappings": "AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;AACA,MAAMC,KAAKD,QAAQ,IAAR,CAAX;;AAEAE,OAAOC,OAAP,GAAiB,cAAcJ,IAAd,CAAmB;AAChCK,kBAAa;AACT,aAAKC,OAAL;AACH;;AAEDC,uBAAmB;AACf,YAAIC,OAAO,IAAX;AACA,YAAIC,WAAW,KAAKC,IAAL,CAAU,QAAV,CAAf;;AAEA,YAAIC,MAAMC,OAAN,CAAcH,QAAd,CAAJ,EAA6B;AACzB,mBAAO,KAAKI,IAAL,CAAU,MAAV,CAAP;AACD;AACD,cAAMC,OAAO,IAAb;AACA,YAAIC,YAAYN,SAASO,IAAzB;AACA,YAAID,UAAUE,OAAV,CAAkB,MAAlB,KAA6B,CAAC,CAA9B,IAAmCF,UAAUE,OAAV,CAAkB,MAAlB,KAA6B,CAAC,CAArE,EAAwE;AACtEF,wBAAY,MAAZ;AACD,SAFD,MAEO,IAAIA,UAAUE,OAAV,CAAkB,MAAlB,KAA6B,CAAC,CAAlC,EAAqC;AAC1CF,wBAAY,MAAZ;AACD;AACD,cAAMG,WAAW,oBAAoBP,MAAMQ,IAAN,CAAW,EAAX,CAApB,GAAqCJ,SAAtD;;AAEA,cAAMK,KAAKlB,GAAGmB,gBAAH,CAAoBZ,SAASa,IAA7B,CAAX;AACA,cAAMC,KAAKrB,GAAGsB,iBAAH,CAAqBb,MAAMc,SAAN,GAAkB,MAAlB,GAA2BP,QAAhD,CAAX;AACAE,WAAGM,IAAH,CAAQH,EAAR;;AAEF,YAAGd,QAAH,EAAa;AACTD,iBAAKmB,IAAL,CAAU;AACNC,uBAAO,CADD;AAENC,wBAAQ,IAFF;AAGNX,0BAAUA,QAHJ;AAINY,yBAAS,IAJH,CAIQ;AAJR,aAAV;AAMH,SAPD,MAOM;AACFtB,iBAAKoB,KAAL;AACH;AACJ;;AAED;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AAlDgC,CAApC",
+    "file": "../../../src/api/controller/upload.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\nconst fs = require('fs');\n\nmodule.exports = class extends Base {\n    indexAction(){\n        this.display();\n    }\n\n    uploadFileAction() {\n        var self = this;\n        var fileInfo = this.file('qqfile');\n\n        if (think.isEmpty(fileInfo)) {\n            return this.fail('保存失败');\n          }\n          const that = this;\n          let extension = fileInfo.name;\n          if (extension.indexOf('.jpg') != -1 || extension.indexOf('.jpg') != -1) {\n            extension = '.jpg'\n          } else if (extension.indexOf('.png') != -1) {\n            extension = '.png'\n          }\n          const filename = '/static/upload/' + think.uuid(16) + extension;\n      \n          const is = fs.createReadStream(fileInfo.path);\n          const os = fs.createWriteStream(think.ROOT_PATH + '/www' + filename);\n          is.pipe(os);\n\n        if(fileInfo) {\n            self.json({\n                error: 0,\n                errmsg: 'ok',\n                filename: filename,\n                success: true //只有success返回true才认为上传成功\n            });\n        }else {\n            self.error();\n        }\n    }\n\n    // async upload2Action() {\n    //     const circleId = this.post('circleId');\n    //     const img = this.file('file');\n    //     const _name = img.name;\n    //     const tempName = _name.split('.');\n    //     const timestamp = _.uniqueId('circle');\n    //     const name = timestamp + '-' + circleId + '.' + tempName[tempName.length - 1];\n    //     const thumbUrl = this.config('image.circle') + '/' + name;\n    //     const thumbSmallUrl = this.config('image.circle') + '/small/' + name;\n    //     fs.renameSync(img.path, thumbUrl);\n    //     images(thumbUrl + '').resize(96).save(thumbSmallUrl);\n    //     const imgObj = await this.model('circle_img').add({ circle_id: circleId, url: 'https://static.huanjiaohu.com/image/circle/small/' + name });\n    //     return this.json(imgObj);\n    //   }\n};"
+    ]
+}

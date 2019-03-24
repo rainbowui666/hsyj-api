@@ -1,0 +1,48 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/student.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "addEditAction",
+        "studentname",
+        "post",
+        "wxchat",
+        "tel",
+        "stuNo",
+        "idcard",
+        "birthday",
+        "schoolid",
+        "photo",
+        "shstate",
+        "pwd",
+        "wxopenid",
+        "nickname",
+        "sex",
+        "id",
+        "get",
+        "param",
+        "studentName",
+        "IDCard",
+        "think",
+        "isEmpty",
+        "model",
+        "insertid",
+        "add",
+        "success",
+        "where",
+        "studentID",
+        "update",
+        "deleteAction",
+        "data"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,iBAAN,GAAsB;AAAA;;AAAA;AAClB,kBAAMC,cAAc,MAAKC,IAAL,CAAU,aAAV,CAApB;AACA,kBAAMC,SAAS,MAAKD,IAAL,CAAU,QAAV,CAAf;AACA,kBAAME,MAAM,MAAKF,IAAL,CAAU,KAAV,KAAoB,EAAhC;AACA,kBAAMG,QAAQ,MAAKH,IAAL,CAAU,OAAV,KAAsB,EAApC;AACA,kBAAMI,SAAS,MAAKJ,IAAL,CAAU,QAAV,KAAuB,EAAtC;AACA,kBAAMK,WAAU,MAAKL,IAAL,CAAU,UAAV,CAAhB;AACA,kBAAMM,WAAW,MAAKN,IAAL,CAAU,UAAV,CAAjB;AACA,kBAAMO,QAAQ,MAAKP,IAAL,CAAU,OAAV,CAAd;AACA,kBAAMQ,UAAU,MAAKR,IAAL,CAAU,SAAV,CAAhB;AACA,kBAAMS,MAAM,MAAKT,IAAL,CAAU,KAAV,CAAZ;AACA,kBAAMU,WAAW,MAAKV,IAAL,CAAU,UAAV,CAAjB;AACA,kBAAMW,WAAW,MAAKX,IAAL,CAAU,UAAV,CAAjB;AACA,kBAAMY,MAAM,MAAKZ,IAAL,CAAU,KAAV,CAAZ;AACA,kBAAMa,KAAK,MAAKC,GAAL,CAAS,IAAT,CAAX;;AAEA,gBAAIC,QAAQ;AACRC,6BAAYjB,WADJ;AAERE,wBAAQA,MAFA;AAGRC,mBAHQ;AAIRC,qBAJQ;AAKRc,wBAAOb,MALC;AAMRC,wBANQ;AAORC,wBAPQ;AAQRC,qBARQ;AASRC,uBATQ;AAURC,mBAVQ;AAWRC,wBAXQ;AAYRC,wBAZQ;AAaRC;AAbQ,aAAZ;;AAgBA,gBAAIM,MAAMC,OAAN,CAAcN,EAAd,CAAJ,EAAuB;AACnB,oBAAIO,QAAQ,MAAKA,KAAL,CAAW,SAAX,CAAZ;AACA,sBAAMC,WAAW,MAAMD,MAAME,GAAN,CAAUP,KAAV,CAAvB;AACA,uBAAO,MAAKQ,OAAL,CAAa,MAAb,CAAP;AACH,aAJD,MAIO;AACH,sBAAM,MAAKH,KAAL,CAAW,SAAX,EAAsBI,KAAtB,CAA4B,EAACC,WAAUZ,EAAX,EAA5B,EAA4Ca,MAA5C,CAAmDX,KAAnD,CAAN;AACA,uBAAO,MAAKQ,OAAL,CAAa,MAAb,CAAP;AACH;AAvCiB;AAwCrB;;AAEKI,gBAAN,GAAqB;AAAA;;AAAA;AACjB,kBAAMd,KAAK,OAAKC,GAAL,CAAS,IAAT,CAAX;AACA,kBAAMN,UAAU,OAAKM,GAAL,CAAS,SAAT,CAAhB;AACA,kBAAMc,OAAO;AACTpB,yBAASA;AADA,aAAb;AAGA,kBAAM,OAAKY,KAAL,CAAW,SAAX,EAAsBI,KAAtB,CAA4B,EAACC,WAAUZ,EAAX,EAA5B,EAA4Ca,MAA5C,CAAmDE,IAAnD,CAAN;AACA,mBAAO,OAAKL,OAAL,CAAa,IAAb,CAAP;AAPiB;AAQpB;AAnD+B,CAApC",
+    "file": "../../../src/api/controller/student.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async addEditAction() {\n        const studentname = this.post('studentname');\n        const wxchat = this.post('wxchat');\n        const tel = this.post('tel') || '';\n        const stuNo = this.post('stuno') || '';\n        const idcard = this.post('idcard') || '';\n        const birthday= this.post('birthday');\n        const schoolid = this.post('schoolid');\n        const photo = this.post('photo');\n        const shstate = this.post('shstate');\n        const pwd = this.post('pwd');\n        const wxopenid = this.post('wxopenid');\n        const nickname = this.post('nickname');\n        const sex = this.post('sex');\n        const id = this.get('id');\n\n        let param = {\n            studentName:studentname,\n            wxchat: wxchat,\n            tel,\n            stuNo,\n            IDCard:idcard,\n            birthday,\n            schoolid,\n            photo,\n            shstate,\n            pwd,\n            wxopenid,\n            nickname,\n            sex\n        }; \n\n        if (think.isEmpty(id)) {\n            let model = this.model('student');\n            const insertid = await model.add(param);\n            return this.success('添加成功')\n        } else {\n            await this.model('student').where({studentID:id}).update(param);\n            return this.success('修改成功');\n        }\n    }\n\n    async deleteAction() {\n        const id = this.get('id');\n        const shstate = this.get('shstate');\n        const data = {\n            shstate: shstate\n        }\n        await this.model('student').where({studentID:id}).update(data);\n        return this.success('成功')\n    }\n}"
+    ]
+}

@@ -1,0 +1,577 @@
+{
+  "api": {
+    "port": 8360,
+    "workers": 0,
+    "stickyCluster": false,
+    "startServerTimeout": 3000,
+    "reloadSignal": "SIGUSR2",
+    "processKillTimeout": 10000,
+    "jsonpCallbackField": "callback",
+    "jsonContentType": "application/json",
+    "jsonpContentType": "application/javascript",
+    "errnoField": "errno",
+    "errmsgField": "errmsg",
+    "defaultErrno": 1000,
+    "validateDefaultErrno": 1001,
+    "default_module": "api",
+    "weixin": {
+      "appid": "",
+      "secret": "",
+      "mch_id": "",
+      "partner_key": "",
+      "notify_url": ""
+    },
+    "publicController": [
+      "index",
+      "User"
+    ],
+    "publicAction": [
+      "index",
+      "User/save"
+    ],
+    "cache": {
+      "type": "file",
+      "file": {
+        "timeout": 86400000,
+        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
+        "pathDepth": 1,
+        "gcInterval": 86400000
+      }
+    },
+    "model": {
+      "type": "mysql",
+      "mysql": {
+        "logConnect": true,
+        "logSql": true,
+        "database": "shculture",
+        "prefix": "culture_",
+        "encoding": "utf8",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "user": "root",
+        "password": "00000000",
+        "dateStrings": true
+      }
+    },
+    "session": {
+      "type": "file",
+      "file": {
+        "cookie": {
+          "name": "thinkjs"
+        },
+        "sessionPath": "/Users/kevinke/GitDemo/schoolCulture/runtime/session"
+      }
+    },
+    "view": {
+      "type": "nunjucks",
+      "nunjucks": {
+        "viewPath": "/Users/kevinke/GitDemo/schoolCulture/view",
+        "sep": "_",
+        "extname": ".html"
+      }
+    },
+    "logger": {
+      "type": "console",
+      "console": {},
+      "file": {
+        "backups": 10,
+        "absolute": true,
+        "maxLogSize": 51200,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      },
+      "dateFile": {
+        "level": "ALL",
+        "absolute": true,
+        "pattern": "-yyyy-MM-dd",
+        "alwaysIncludePattern": true,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      }
+    }
+  },
+  "bootstrap": {
+    "port": 8360,
+    "workers": 0,
+    "stickyCluster": false,
+    "startServerTimeout": 3000,
+    "reloadSignal": "SIGUSR2",
+    "processKillTimeout": 10000,
+    "jsonpCallbackField": "callback",
+    "jsonContentType": "application/json",
+    "jsonpContentType": "application/javascript",
+    "errnoField": "errno",
+    "errmsgField": "errmsg",
+    "defaultErrno": 1000,
+    "validateDefaultErrno": 1001,
+    "default_module": "api",
+    "weixin": {
+      "appid": "",
+      "secret": "",
+      "mch_id": "",
+      "partner_key": "",
+      "notify_url": ""
+    },
+    "cache": {
+      "type": "file",
+      "file": {
+        "timeout": 86400000,
+        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
+        "pathDepth": 1,
+        "gcInterval": 86400000
+      }
+    },
+    "model": {
+      "type": "mysql",
+      "mysql": {
+        "logConnect": true,
+        "logSql": true,
+        "database": "shculture",
+        "prefix": "culture_",
+        "encoding": "utf8",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "user": "root",
+        "password": "00000000",
+        "dateStrings": true
+      }
+    },
+    "session": {
+      "type": "file",
+      "file": {
+        "cookie": {
+          "name": "thinkjs"
+        },
+        "sessionPath": "/Users/kevinke/GitDemo/schoolCulture/runtime/session"
+      }
+    },
+    "view": {
+      "type": "nunjucks",
+      "nunjucks": {
+        "viewPath": "/Users/kevinke/GitDemo/schoolCulture/view",
+        "sep": "_",
+        "extname": ".html"
+      }
+    },
+    "logger": {
+      "type": "console",
+      "console": {},
+      "file": {
+        "backups": 10,
+        "absolute": true,
+        "maxLogSize": 51200,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      },
+      "dateFile": {
+        "level": "ALL",
+        "absolute": true,
+        "pattern": "-yyyy-MM-dd",
+        "alwaysIncludePattern": true,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      }
+    }
+  },
+  "common": {
+    "port": 8360,
+    "workers": 0,
+    "stickyCluster": false,
+    "startServerTimeout": 3000,
+    "reloadSignal": "SIGUSR2",
+    "processKillTimeout": 10000,
+    "jsonpCallbackField": "callback",
+    "jsonContentType": "application/json",
+    "jsonpContentType": "application/javascript",
+    "errnoField": "errno",
+    "errmsgField": "errmsg",
+    "defaultErrno": 1000,
+    "validateDefaultErrno": 1001,
+    "default_module": "api",
+    "weixin": {
+      "appid": "",
+      "secret": "",
+      "mch_id": "",
+      "partner_key": "",
+      "notify_url": ""
+    },
+    "cache": {
+      "type": "file",
+      "file": {
+        "timeout": 86400000,
+        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
+        "pathDepth": 1,
+        "gcInterval": 86400000
+      }
+    },
+    "model": {
+      "type": "mysql",
+      "mysql": {
+        "logConnect": true,
+        "logSql": true,
+        "database": "shculture",
+        "prefix": "culture_",
+        "encoding": "utf8",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "user": "root",
+        "password": "00000000",
+        "dateStrings": true
+      }
+    },
+    "session": {
+      "type": "file",
+      "file": {
+        "cookie": {
+          "name": "thinkjs"
+        },
+        "sessionPath": "/Users/kevinke/GitDemo/schoolCulture/runtime/session"
+      }
+    },
+    "view": {
+      "type": "nunjucks",
+      "nunjucks": {
+        "viewPath": "/Users/kevinke/GitDemo/schoolCulture/view",
+        "sep": "_",
+        "extname": ".html"
+      }
+    },
+    "logger": {
+      "type": "console",
+      "console": {},
+      "file": {
+        "backups": 10,
+        "absolute": true,
+        "maxLogSize": 51200,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      },
+      "dateFile": {
+        "level": "ALL",
+        "absolute": true,
+        "pattern": "-yyyy-MM-dd",
+        "alwaysIncludePattern": true,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      }
+    }
+  },
+  "config": {
+    "port": 8360,
+    "workers": 0,
+    "stickyCluster": false,
+    "startServerTimeout": 3000,
+    "reloadSignal": "SIGUSR2",
+    "processKillTimeout": 10000,
+    "jsonpCallbackField": "callback",
+    "jsonContentType": "application/json",
+    "jsonpContentType": "application/javascript",
+    "errnoField": "errno",
+    "errmsgField": "errmsg",
+    "defaultErrno": 1000,
+    "validateDefaultErrno": 1001,
+    "default_module": "api",
+    "weixin": {
+      "appid": "",
+      "secret": "",
+      "mch_id": "",
+      "partner_key": "",
+      "notify_url": ""
+    },
+    "cache": {
+      "type": "file",
+      "file": {
+        "timeout": 86400000,
+        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
+        "pathDepth": 1,
+        "gcInterval": 86400000
+      }
+    },
+    "model": {
+      "type": "mysql",
+      "mysql": {
+        "logConnect": true,
+        "logSql": true,
+        "database": "shculture",
+        "prefix": "culture_",
+        "encoding": "utf8",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "user": "root",
+        "password": "00000000",
+        "dateStrings": true
+      }
+    },
+    "session": {
+      "type": "file",
+      "file": {
+        "cookie": {
+          "name": "thinkjs"
+        },
+        "sessionPath": "/Users/kevinke/GitDemo/schoolCulture/runtime/session"
+      }
+    },
+    "view": {
+      "type": "nunjucks",
+      "nunjucks": {
+        "viewPath": "/Users/kevinke/GitDemo/schoolCulture/view",
+        "sep": "_",
+        "extname": ".html"
+      }
+    },
+    "logger": {
+      "type": "console",
+      "console": {},
+      "file": {
+        "backups": 10,
+        "absolute": true,
+        "maxLogSize": 51200,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      },
+      "dateFile": {
+        "level": "ALL",
+        "absolute": true,
+        "pattern": "-yyyy-MM-dd",
+        "alwaysIncludePattern": true,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      }
+    }
+  },
+  "controller": {
+    "port": 8360,
+    "workers": 0,
+    "stickyCluster": false,
+    "startServerTimeout": 3000,
+    "reloadSignal": "SIGUSR2",
+    "processKillTimeout": 10000,
+    "jsonpCallbackField": "callback",
+    "jsonContentType": "application/json",
+    "jsonpContentType": "application/javascript",
+    "errnoField": "errno",
+    "errmsgField": "errmsg",
+    "defaultErrno": 1000,
+    "validateDefaultErrno": 1001,
+    "default_module": "api",
+    "weixin": {
+      "appid": "",
+      "secret": "",
+      "mch_id": "",
+      "partner_key": "",
+      "notify_url": ""
+    },
+    "cache": {
+      "type": "file",
+      "file": {
+        "timeout": 86400000,
+        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
+        "pathDepth": 1,
+        "gcInterval": 86400000
+      }
+    },
+    "model": {
+      "type": "mysql",
+      "mysql": {
+        "logConnect": true,
+        "logSql": true,
+        "database": "shculture",
+        "prefix": "culture_",
+        "encoding": "utf8",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "user": "root",
+        "password": "00000000",
+        "dateStrings": true
+      }
+    },
+    "session": {
+      "type": "file",
+      "file": {
+        "cookie": {
+          "name": "thinkjs"
+        },
+        "sessionPath": "/Users/kevinke/GitDemo/schoolCulture/runtime/session"
+      }
+    },
+    "view": {
+      "type": "nunjucks",
+      "nunjucks": {
+        "viewPath": "/Users/kevinke/GitDemo/schoolCulture/view",
+        "sep": "_",
+        "extname": ".html"
+      }
+    },
+    "logger": {
+      "type": "console",
+      "console": {},
+      "file": {
+        "backups": 10,
+        "absolute": true,
+        "maxLogSize": 51200,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      },
+      "dateFile": {
+        "level": "ALL",
+        "absolute": true,
+        "pattern": "-yyyy-MM-dd",
+        "alwaysIncludePattern": true,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      }
+    }
+  },
+  "logic": {
+    "port": 8360,
+    "workers": 0,
+    "stickyCluster": false,
+    "startServerTimeout": 3000,
+    "reloadSignal": "SIGUSR2",
+    "processKillTimeout": 10000,
+    "jsonpCallbackField": "callback",
+    "jsonContentType": "application/json",
+    "jsonpContentType": "application/javascript",
+    "errnoField": "errno",
+    "errmsgField": "errmsg",
+    "defaultErrno": 1000,
+    "validateDefaultErrno": 1001,
+    "default_module": "api",
+    "weixin": {
+      "appid": "",
+      "secret": "",
+      "mch_id": "",
+      "partner_key": "",
+      "notify_url": ""
+    },
+    "cache": {
+      "type": "file",
+      "file": {
+        "timeout": 86400000,
+        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
+        "pathDepth": 1,
+        "gcInterval": 86400000
+      }
+    },
+    "model": {
+      "type": "mysql",
+      "mysql": {
+        "logConnect": true,
+        "logSql": true,
+        "database": "shculture",
+        "prefix": "culture_",
+        "encoding": "utf8",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "user": "root",
+        "password": "00000000",
+        "dateStrings": true
+      }
+    },
+    "session": {
+      "type": "file",
+      "file": {
+        "cookie": {
+          "name": "thinkjs"
+        },
+        "sessionPath": "/Users/kevinke/GitDemo/schoolCulture/runtime/session"
+      }
+    },
+    "view": {
+      "type": "nunjucks",
+      "nunjucks": {
+        "viewPath": "/Users/kevinke/GitDemo/schoolCulture/view",
+        "sep": "_",
+        "extname": ".html"
+      }
+    },
+    "logger": {
+      "type": "console",
+      "console": {},
+      "file": {
+        "backups": 10,
+        "absolute": true,
+        "maxLogSize": 51200,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      },
+      "dateFile": {
+        "level": "ALL",
+        "absolute": true,
+        "pattern": "-yyyy-MM-dd",
+        "alwaysIncludePattern": true,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      }
+    }
+  },
+  "model": {
+    "port": 8360,
+    "workers": 0,
+    "stickyCluster": false,
+    "startServerTimeout": 3000,
+    "reloadSignal": "SIGUSR2",
+    "processKillTimeout": 10000,
+    "jsonpCallbackField": "callback",
+    "jsonContentType": "application/json",
+    "jsonpContentType": "application/javascript",
+    "errnoField": "errno",
+    "errmsgField": "errmsg",
+    "defaultErrno": 1000,
+    "validateDefaultErrno": 1001,
+    "default_module": "api",
+    "weixin": {
+      "appid": "",
+      "secret": "",
+      "mch_id": "",
+      "partner_key": "",
+      "notify_url": ""
+    },
+    "cache": {
+      "type": "file",
+      "file": {
+        "timeout": 86400000,
+        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
+        "pathDepth": 1,
+        "gcInterval": 86400000
+      }
+    },
+    "model": {
+      "type": "mysql",
+      "mysql": {
+        "logConnect": true,
+        "logSql": true,
+        "database": "shculture",
+        "prefix": "culture_",
+        "encoding": "utf8",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "user": "root",
+        "password": "00000000",
+        "dateStrings": true
+      }
+    },
+    "session": {
+      "type": "file",
+      "file": {
+        "cookie": {
+          "name": "thinkjs"
+        },
+        "sessionPath": "/Users/kevinke/GitDemo/schoolCulture/runtime/session"
+      }
+    },
+    "view": {
+      "type": "nunjucks",
+      "nunjucks": {
+        "viewPath": "/Users/kevinke/GitDemo/schoolCulture/view",
+        "sep": "_",
+        "extname": ".html"
+      }
+    },
+    "logger": {
+      "type": "console",
+      "console": {},
+      "file": {
+        "backups": 10,
+        "absolute": true,
+        "maxLogSize": 51200,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      },
+      "dateFile": {
+        "level": "ALL",
+        "absolute": true,
+        "pattern": "-yyyy-MM-dd",
+        "alwaysIncludePattern": true,
+        "filename": "/Users/kevinke/GitDemo/schoolCulture/logs/app.log"
+      }
+    }
+  }
+}

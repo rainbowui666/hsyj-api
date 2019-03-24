@@ -1,0 +1,36 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/User.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "saveAction",
+        "userData",
+        "userName",
+        "get",
+        "pwd",
+        "id",
+        "roleid",
+        "think",
+        "isEmpty",
+        "insertid",
+        "model",
+        "add",
+        "sysuserid",
+        "where",
+        "sysUserID",
+        "update",
+        "delete",
+        "success",
+        "deleteAction"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,cAAN,GAAmB;AAAA;;AAAA;AACf,kBAAMC,WAAW;AACbC,0BAAU,MAAKC,GAAL,CAAS,UAAT,CADG;AAEbC,qBAAK,MAAKD,GAAL,CAAS,KAAT;AAFQ,aAAjB;;AAKA,gBAAIE,KAAK,MAAKF,GAAL,CAAS,IAAT,CAAT;AACA,gBAAIG,SAAS,MAAKH,GAAL,CAAS,QAAT,CAAb;;AAEA,gBAAII,MAAMC,OAAN,CAAcH,EAAd,CAAJ,EAAuB;AACnB;AACI;AACA,oBAAII,WAAW,MAAM,MAAKC,KAAL,CAAW,MAAX,EAAmBC,GAAnB,CAAuBV,QAAvB,CAArB;AACA,sBAAM,MAAKS,KAAL,CAAW,WAAX,EAAwBC,GAAxB,CAA4B,EAACC,WAAWH,QAAZ,EAAsBH,QAAQA,MAA9B,EAA5B,CAAN;AACJ;AACA;AACA;AACA;AACH,aATD,MASO;AACH,sBAAM,MAAKI,KAAL,CAAW,MAAX,EAAmBG,KAAnB,CAAyB,EAACC,WAAWT,EAAZ,EAAzB,EAA0CU,MAA1C,CAAiDd,QAAjD,CAAN;AACA,sBAAM,MAAKS,KAAL,CAAW,WAAX,EAAwBG,KAAxB,CAA8B,EAACD,WAAWP,EAAZ,EAA9B,EAA+CW,MAA/C,EAAN;AACA,sBAAM,MAAKN,KAAL,CAAW,WAAX,EAAwBC,GAAxB,CAA4B,EAACC,WAAWP,EAAZ,EAAgBC,QAAQA,MAAxB,EAA5B,CAAN;AAEH;;AAED,mBAAO,MAAKW,OAAL,CAAa,UAAb,CAAP;AAzBe;AA0BlB;;AAEKC,gBAAN,GAAqB;AAAA;;AAAA;AACjB,kBAAMb,KAAK,OAAKF,GAAL,CAAS,IAAT,CAAX;AACA,kBAAM,OAAKO,KAAL,CAAW,MAAX,EAAmBG,KAAnB,CAAyB,EAACC,WAAWT,EAAZ,EAAzB,EAA0CW,MAA1C,EAAN;AACA,kBAAM,OAAKN,KAAL,CAAW,WAAX,EAAwBG,KAAxB,CAA8B,EAACD,WAAWP,EAAZ,EAA9B,EAA+CW,MAA/C,EAAN;AACA,mBAAO,OAAKC,OAAL,CAAa,MAAb,CAAP;AAJiB;AAKpB;AAlC+B,CAApC",
+    "file": "../../../src/api/controller/User.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async saveAction() {\n        const userData = {\n            userName: this.get('userName'),\n            pwd: this.get('pwd')\n        }\n\n        let id = this.get('id');\n        let roleid = this.get('roleid');\n            \n        if (think.isEmpty(id)) {\n            // try {\n                // await think.startTrans();\n                let insertid = await this.model('User').add(userData)\n                await this.model('user_role').add({sysuserid: insertid, roleid: roleid});\n            //     await this.commit();\n            // } catch (e) {\n            //     await think.rollback();\n            // }\n        } else {\n            await this.model('User').where({sysUserID: id}).update(userData);\n            await this.model('user_role').where({sysuserid: id}).delete();\n            await this.model('user_role').add({sysuserid: id, roleid: roleid});\n\n        }\n        \n        return this.success(' success');\n    }\n\n    async deleteAction() {\n        const id = this.get('id');\n        await this.model('User').where({sysUserID: id}).delete();\n        await this.model('user_role').where({sysuserid: id}).delete();\n        return this.success('删除成功')\n    }\n}"
+    ]
+}

@@ -1,0 +1,34 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/common/config/middleware.js"
+    ],
+    "names": [
+        "path",
+        "require",
+        "isDev",
+        "think",
+        "env",
+        "kcors",
+        "module",
+        "exports",
+        "handle",
+        "options",
+        "logRequest",
+        "sendResponseTime",
+        "enable",
+        "root",
+        "join",
+        "ROOT_PATH",
+        "publicPath",
+        "isCli",
+        "debug",
+        "keepExtensions",
+        "limit"
+    ],
+    "mappings": "AAAA,MAAMA,OAAOC,QAAQ,MAAR,CAAb;AACA,MAAMC,QAAQC,MAAMC,GAAN,KAAc,aAA5B;AACA,MAAMC,QAAQJ,QAAQ,OAAR,CAAd;;AAEAK,OAAOC,OAAP,GAAiB,CACf;AACEC,UAAQH,KADV,EACiB;AACfI,WAAS;AAFX,CADe,EAKf;AACED,UAAQ,MADV;AAEEC,WAAS;AACPC,gBAAYR,KADL;AAEPS,sBAAkBT;AAFX;AAFX,CALe,EAYf;AACEM,UAAQ,UADV;AAEEI,UAAQV,KAFV;AAGEO,WAAS;AACPI,UAAMb,KAAKc,IAAL,CAAUX,MAAMY,SAAhB,EAA2B,KAA3B,CADC;AAEPC,gBAAY;AAFL;AAHX,CAZe,EAoBf;AACER,UAAQ,OADV;AAEEI,UAAQ,CAACT,MAAMc,KAFjB;AAGER,WAAS;AACPS,WAAOhB;AADA;AAHX,CApBe,EA2Bf;AACEM,UAAQ,SADV;AAEEC,WAAS;AACPU,oBAAgB,IADT;AAEPC,WAAO;AAFA;AAFX,CA3Be,EAkCf;AACEZ,UAAQ,QADV;AAEEC,WAAS;AAFX,CAlCe,EAsCf,OAtCe,EAuCf,YAvCe,CAAjB",
+    "file": "../../../src/common/config/middleware.js",
+    "sourcesContent": [
+        "const path = require('path');\nconst isDev = think.env === 'development';\nconst kcors = require('kcors');\n\nmodule.exports = [\n  {\n    handle: kcors, // 处理跨域\n    options: {}\n  },\n  {\n    handle: 'meta',\n    options: {\n      logRequest: isDev,\n      sendResponseTime: isDev\n    }\n  },\n  {\n    handle: 'resource',\n    enable: isDev,\n    options: {\n      root: path.join(think.ROOT_PATH, 'www'),\n      publicPath: /^\\/(static|favicon\\.ico)/\n    }\n  },\n  {\n    handle: 'trace',\n    enable: !think.isCli,\n    options: {\n      debug: isDev\n    }\n  },\n  {\n    handle: 'payload',\n    options: {\n      keepExtensions: true,\n      limit: '5mb'\n    }\n  },\n  {\n    handle: 'router',\n    options: {}\n  },\n  'logic',\n  'controller'\n];\n"
+    ]
+}
