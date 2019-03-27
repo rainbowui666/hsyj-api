@@ -1,0 +1,37 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/discuss.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "addAction",
+        "distype",
+        "get",
+        "targetid",
+        "studentid",
+        "content",
+        "post",
+        "shstate",
+        "model",
+        "data",
+        "insertid",
+        "add",
+        "success",
+        "listAction",
+        "query",
+        "updateAction",
+        "id",
+        "where",
+        "discussID",
+        "update"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,aAAN,GAAkB;AAAA;;AAAA;AACd,kBAAMC,UAAU,MAAKC,GAAL,CAAS,SAAT,CAAhB;AACA,kBAAMC,WAAW,MAAKD,GAAL,CAAS,UAAT,KAAwB,CAAzC;AACA,kBAAME,YAAY,MAAKF,GAAL,CAAS,WAAT,CAAlB;AACA,kBAAMG,UAAU,MAAKC,IAAL,CAAU,SAAV,CAAhB;AACA,kBAAMC,UAAU,MAAKD,IAAL,CAAU,SAAV,KAAwB,CAAxC;;AAIA,kBAAME,QAAQ,MAAKA,KAAL,CAAW,SAAX,CAAd;AACA,gBAAIC,OAAO;AACPR,uBADO,EACCE,QADD,EACUC,SADV,EACoBC,OADpB,EAC4BE;AAD5B,aAAX;;AAIA,gBAAIG,WAAW,MAAMF,MAAMG,GAAN,CAAUF,IAAV,CAArB;AACA,mBAAO,MAAKG,OAAL,CAAa,OAAb,CAAP;AAfc;AAgBjB;;AAEKC,cAAN,GAAmB;AAAA;;AAAA;AACf,kBAAML,QAAS,OAAKA,KAAL,CAAW,SAAX,CAAf;;AAEA,kBAAMC,OAAO,MAAMD,MAAMM,KAAN,CAAY,ieAAZ,CAAnB;AACA,mBAAO,OAAKF,OAAL,CAAaH,IAAb,CAAP;AAJe;AAKlB;;AAEKM,gBAAN,GAAqB;AAAA;;AAAA;AACjB,kBAAMC,KAAK,OAAKd,GAAL,CAAS,IAAT,CAAX;AACA,kBAAMK,UAAU,OAAKL,GAAL,CAAS,SAAT,CAAhB;AACA,kBAAMO,OAAO;AACTF;AADS,aAAb;;AAIA,kBAAM,OAAKC,KAAL,CAAW,SAAX,EAAsBS,KAAtB,CAA4B,EAACC,WAAUF,EAAX,EAA5B,EAA4CG,MAA5C,CAAmDV,IAAnD,CAAN;AACA,mBAAO,OAAKG,OAAL,CAAa,MAAb,CAAP;AARiB;AASpB;AAnC+B,CAApC",
+    "file": "../../../src/api/controller/discuss.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async addAction() {\n        const distype = this.get('distype');\n        const targetid = this.get('targetid') || 0;\n        const studentid = this.get('studentid');\n        const content = this.post('content');\n        const shstate = this.post('shstate') || 0;\n\n        \n\n        const model = this.model('discuss');\n        let data = {\n            distype,targetid,studentid,content,shstate\n        }\n\n        let insertid = await model.add(data);\n        return this.success('学留言成功')\n    }\n\n    async listAction() {\n        const model =  this.model('discuss');\n\n        const data = await model.query(\"select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,  case  when distype=0 then (select scenerytitle from culture_scenery where sceneryid=1) when distype=1 then (select activityname from culture_activity where activityID=1) when distype=2 then (select schoolname from culture_school where schoolID=1) when distype=3 then 'APP首页' end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where a.shstate=0\");\n        return this.success(data)\n    }\n\n    async updateAction() {\n        const id = this.get('id');\n        const shstate = this.get('shstate');\n        const data = {\n            shstate\n        }\n\n        await this.model('discuss').where({discussID:id}).update(data);\n        return this.success('修改成功')\n    }\n}"
+    ]
+}

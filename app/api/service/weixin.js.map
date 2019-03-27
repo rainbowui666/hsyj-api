@@ -1,0 +1,53 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/service/weixin.js"
+    ],
+    "names": [
+        "crypto",
+        "require",
+        "md5",
+        "rp",
+        "module",
+        "exports",
+        "think",
+        "Service",
+        "login",
+        "code",
+        "fullUserInfo",
+        "options",
+        "method",
+        "url",
+        "qs",
+        "grant_type",
+        "js_code",
+        "secret",
+        "config",
+        "appid",
+        "sessionData",
+        "JSON",
+        "parse",
+        "openid",
+        "sha1",
+        "createHash",
+        "update",
+        "rawData",
+        "toString",
+        "session_key",
+        "digest",
+        "signature",
+        "wechatUserInfo",
+        "decryptUserInfoData",
+        "encryptedData",
+        "iv",
+        "isEmpty",
+        "e",
+        "console",
+        "log"
+    ],
+    "mappings": ";;AAAA,MAAMA,SAASC,QAAQ,QAAR,CAAf;AACA,MAAMC,MAAMD,QAAQ,KAAR,CAAZ;AACA,MAAME,KAAKF,QAAQ,iBAAR,CAAX;;AAEAG,OAAOC,OAAP,GAAiB,cAAcC,MAAMC,OAApB,CAA4B;AACnCC,OAAN,CAAYC,IAAZ,EAAkBC,YAAlB,EAAgC;AAAA;;AAAA;AAC5B,UAAI;AACF;AACA,cAAMC,UAAU;AACdC,kBAAQ,KADM;AAEdC,eAAK,8CAFS;AAGdC,cAAI;AACFC,wBAAY,oBADV;AAEFC,qBAASP,IAFP;AAGFQ,oBAAQX,MAAMY,MAAN,CAAa,eAAb,CAHN;AAIFC,mBAAOb,MAAMY,MAAN,CAAa,cAAb;AAJL;AAHU,SAAhB;;AAWA,YAAIE,cAAc,MAAMjB,GAAGQ,OAAH,CAAxB;AACAS,sBAAcC,KAAKC,KAAL,CAAWF,WAAX,CAAd;AACA,YAAI,CAACA,YAAYG,MAAjB,EAAyB;AACvB,iBAAO,IAAP;AACD;;AAED;AACA,cAAMC,OAAOxB,OAAOyB,UAAP,CAAkB,MAAlB,EAA0BC,MAA1B,CAAiChB,aAAaiB,OAAb,CAAqBC,QAArB,KAAkCR,YAAYS,WAA/E,EAA4FC,MAA5F,CAAmG,KAAnG,CAAb;AACA,YAAIpB,aAAaqB,SAAb,KAA2BP,IAA/B,EAAqC;AACnC,iBAAO,IAAP;AACD;;AAED;AACA,cAAMQ,iBAAiB,MAAM,MAAKC,mBAAL,CAAyBb,YAAYS,WAArC,EAAkDnB,aAAawB,aAA/D,EAA8ExB,aAAayB,EAA3F,CAA7B;AACA,YAAI7B,MAAM8B,OAAN,CAAcJ,cAAd,CAAJ,EAAmC;AACjC,iBAAO,IAAP;AACD;AACD,eAAOA,cAAP;AACD,OA/BD,CA+BE,OAAOK,CAAP,EAAU;AACRC,gBAAQC,GAAR,CAAY,kBAAZ,EAAgCF,CAAhC;AACF,eAAO,IAAP;AACD;AAnC2B;AAoC7B;AArCsC,CAA7C",
+    "file": "../../../src/api/service/weixin.js",
+    "sourcesContent": [
+        "const crypto = require('crypto');\nconst md5 = require('md5');\nconst rp = require('request-promise');\n\nmodule.exports = class extends think.Service {\n    async login(code, fullUserInfo) {\n        try {\n          // 获取 session\n          const options = {\n            method: 'GET',\n            url: 'https://api.weixin.qq.com/sns/jscode2session',\n            qs: {\n              grant_type: 'authorization_code',\n              js_code: code,\n              secret: think.config('weixin.secret'),\n              appid: think.config('weixin.appid')\n            }\n          };\n    \n          let sessionData = await rp(options);\n          sessionData = JSON.parse(sessionData);\n          if (!sessionData.openid) {\n            return null;\n          }\n    \n          // 验证用户信息完整性\n          const sha1 = crypto.createHash('sha1').update(fullUserInfo.rawData.toString() + sessionData.session_key).digest('hex');\n          if (fullUserInfo.signature !== sha1) {\n            return null;\n          }\n    \n          // 解析用户数据\n          const wechatUserInfo = await this.decryptUserInfoData(sessionData.session_key, fullUserInfo.encryptedData, fullUserInfo.iv);\n          if (think.isEmpty(wechatUserInfo)) {\n            return null;\n          }\n          return wechatUserInfo;\n        } catch (e) {\n            console.log('weixin.login err', e)\n          return null;\n        }\n      }\n}"
+    ]
+}

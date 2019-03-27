@@ -1,0 +1,43 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/auth.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "loginAction",
+        "code",
+        "post",
+        "fullUserInfo",
+        "tel",
+        "schoolid",
+        "studentname",
+        "stuNo",
+        "newUserInfo",
+        "model",
+        "where",
+        "studentName",
+        "find",
+        "TokenSerivce",
+        "service",
+        "sessionKey",
+        "create",
+        "user_id",
+        "studentID",
+        "think",
+        "isEmpty",
+        "fail",
+        "success",
+        "token",
+        "userInfo",
+        "logoutAction"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC5BI,aAAN,GAAoB;AAAA;;AAAA;AAClB,YAAMC,OAAO,MAAKC,IAAL,CAAU,MAAV,CAAb;AACA,YAAMC,eAAe,MAAKD,IAAL,CAAU,UAAV,CAArB;AACA,YAAME,MAAM,MAAKF,IAAL,CAAU,KAAV,CAAZ;AACA,YAAMG,WAAW,MAAKH,IAAL,CAAU,UAAV,CAAjB;AACA,YAAMI,cAAc,MAAKJ,IAAL,CAAU,aAAV,CAApB;AACA,YAAMK,QAAQ,MAAKL,IAAL,CAAU,OAAV,CAAd;;AAEA;AACA;AACA;AACA;AACA;;AAEA;AACA;AACA;AACE;AACF;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;;AAEA;AACA,YAAMM,cAAc,MAAM,MAAKC,KAAL,CAAW,SAAX,EAAsBC,KAAtB,CAA4B,EAAEN,KAAIA,GAAN,EAAWC,UAASA,QAApB,EAA6BM,aAAYL,WAAzC,EAAsDC,OAAMA,KAA5D,EAA5B,EAAiGK,IAAjG,EAA1B;;AAEA,YAAMC,eAAe,MAAKC,OAAL,CAAa,OAAb,EAAsB,KAAtB,CAArB;AACA,YAAMC,aAAa,MAAMF,aAAaG,MAAb,CAAoB,EAAEC,SAAST,YAAYU,SAAvB,EAApB,CAAzB;;AAEA,UAAIC,MAAMC,OAAN,CAAcZ,WAAd,KAA8BW,MAAMC,OAAN,CAAcL,UAAd,CAAlC,EAA6D;AAC3D,eAAO,MAAKM,IAAL,CAAU,MAAV,CAAP;AACD;;AAED,aAAO,MAAKC,OAAL,CAAa,EAAEC,OAAOR,UAAT,EAAqBS,UAAUhB,WAA/B,EAAb,CAAP;AAvCkB;AAwCnB;;AAEKiB,cAAN,GAAqB;AAAA;;AAAA;AACnB,aAAO,OAAKH,OAAL,EAAP;AADmB;AAEpB;AA7CiC,CAApC",
+    "file": "../../../src/api/controller/auth.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n  async loginAction() {\n    const code = this.post('code');\n    const fullUserInfo = this.post('userInfo');\n    const tel = this.post('tel');\n    const schoolid = this.post('schoolid');\n    const studentname = this.post('studentname');\n    const stuNo = this.post('stuno');\n\n    // 解释用户数据\n    // const userInfo = await this.service('weixin', 'api').login(code, fullUserInfo);\n    // if (think.isEmpty(userInfo)) {\n    //   return this.fail('登录失败');\n    // }\n\n    // 根据openid查找用户是否已经注册\n    // let userId = await this.model('student').where({ wxopenid: userInfo.openId }).getField('studentId', true);\n    // if (think.isEmpty(userId)) {\n      // 注册\n    //   userId = await this.model('user').add({\n    //     username: '微信用户' + think.uuid(6),\n    //     pwd: '',\n    //     tel: '',\n    //     wxopenid: userInfo.openId,\n    //     photo: userInfo.avatarUrl || '',\n    //     sex: userInfo.gender || 1, // 性别 0：未知、1：男、2：女\n    //     nickname: userInfo.nickName\n    //   });\n    // }\n\n    // 查询用户信息\n    const newUserInfo = await this.model('student').where({ tel:tel, schoolid:schoolid,studentName:studentname, stuNo:stuNo }).find();\n\n    const TokenSerivce = this.service('token', 'api');\n    const sessionKey = await TokenSerivce.create({ user_id: newUserInfo.studentID });\n\n    if (think.isEmpty(newUserInfo) || think.isEmpty(sessionKey)) {\n      return this.fail('登录失败');\n    }\n\n    return this.success({ token: sessionKey, userInfo: newUserInfo });\n  }\n\n  async logoutAction() {\n    return this.success();\n  }\n};\n"
+    ]
+}

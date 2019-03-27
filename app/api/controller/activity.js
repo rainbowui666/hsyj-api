@@ -1,5 +1,175 @@
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 const Base = require('./base.js');
 const fs = require('fs');
 
-module.exports = class extends Base {};
+module.exports = class extends Base {
+    list2Action() {
+        var _this = this;
+
+        return _asyncToGenerator(function* () {
+            const page = _this.get('page') || 1;
+            const size = _this.get('size') || 10;
+
+            const model = _this.model('question');
+            model._pk = 'questionID';
+            const list = yield model.field(['q.questionID', 'q.questiontitle', 'q.answera', 'q.answerb', 'q.answerc', 'q.answerd', 'q.rightanswer', 's.sceneryid', 's.activityid', 'cs.sceneryTitle', 'act.startAddress']).alias('q').join({
+                table: 'activity_scenery',
+                join: 'left',
+                as: 's',
+                on: ['q.questionID', 's.questionID']
+            }).join({
+                table: 'scenery',
+                join: 'left',
+                as: 'cs',
+                on: ['cs.sceneryid', 's.sceneryid']
+            }).join({
+                table: 'activity',
+                join: 'left',
+                as: 'act',
+                on: ['act.activityID', 's.activityid']
+            }).page(page, size).countSelect();
+
+            return _this.success(list);
+        })();
+    }
+
+    addEdit1Action() {
+        var _this2 = this;
+
+        return _asyncToGenerator(function* () {
+            const activityName = _this2.post('activityname');
+            const sponsor = _this2.post('sponsor') || '';
+            const meetingPlace = _this2.post('meetingplace') || '';
+            const secondSponsor = _this2.post('secondsponsor') || '';
+            const needSchoolRang = _this2.post('needschoolrang');
+
+            const startDate = _this2.post('startdate');
+            const endDate = _this2.post('enddate');
+            const shdesc = _this2.post('shdesc');
+
+            const shstate = _this2.post('shstate');
+            const startAddress = _this2.post('startaddress');
+            const needSchoolPass = _this2.post('needschoolpass');
+            const needSceneryPass = _this2.post('needscenerypass');
+            const settingStart = _this2.post('settingstart');
+            const startSceneryid = _this2.post('startsceneryid');
+
+            const settingEnd = _this2.post('settingend');
+            const endSceneryid = _this2.post('endsceneryid');
+            const isGroup = _this2.post('isgroup');
+            const groupNum = _this2.post('groupnum');
+
+            const id = _this2.get('id');
+
+            let param = {
+                activityName,
+                sponsor,
+                meetingPlace,
+                secondSponsor,
+                needSchoolRang,
+                startDate,
+                endDate,
+                shdesc,
+                shstate,
+                startAddress,
+                needSchoolPass,
+                needSceneryPass,
+                settingStart,
+                startSceneryid,
+                settingEnd,
+                endSceneryid,
+                isGroup,
+                groupNum
+            };
+            if (think.isEmpty(id)) {
+                let model = _this2.model('activity');
+                const insertid = yield model.add(param);
+
+                // 上传活动图片
+                if (insertid) {
+                    return _this2.json({
+                        insertid: insertid
+                    });
+                }
+            } else {
+                // 1 删除source, 2修改
+                yield _this2.model('source').where({ targetid: id }).delete();
+                yield _this2.model('activity').where({ activityID: id }).update(param);
+                return _this2.success('活动修改成功');
+            }
+        })();
+    }
+
+    addEdit2Action() {
+        var _this3 = this;
+
+        return _asyncToGenerator(function* () {
+            const sceneryid = _this3.post('sceneryid');
+            const questiontitle = _this3.post('questiontitle');
+            const questiontype = _this3.post('questiontype') || 0;
+            const answera = _this3.post('answera');
+            const answerb = _this3.post('answerb');
+            const answerc = _this3.post('answerc');
+            const answerd = _this3.post('answerd');
+            const rightanswer = _this3.post('rightanswer');
+            const id = _this3.get('id');
+            const activityid = _this3.get('activityid');
+
+            const questionData = {
+                sceneryid: sceneryid,
+                questionTitle: questiontitle,
+                questionType: questiontype,
+                answerA: answera,
+                answerB: answerb,
+                answerC: answerc,
+                answerD: answerd,
+                rightAnswer: rightanswer
+            };
+
+            if (think.isEmpty(id)) {
+                const questId = yield _this3.model('question').add(questionData);
+                if (questId) {
+                    yield _this3.model('activity_scenery').add({
+                        sceneryid, questionid: questId, activityid: activityid
+                    });
+                }
+                return _this3.success('第二步成功');
+            } else {
+                yield _this3.model('activity_scenery').where({ questionid: id }).delete();
+                yield _this3.model('question').where({ questionID: id }).update(questionData);
+                yield _this3.model('activity_scenery').add({
+                    sceneryid, questionid: id, activityid: activityid
+                });
+                return _this3.success('修改成功');
+            }
+        })();
+    }
+
+    deleteAction() {
+        var _this4 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this4.get('id');
+            const data = {
+                shstate: 1
+            };
+            yield _this4.model('activity').where({ activityID: id }).update(data);
+            return _this4.success('活动删除成功');
+        })();
+    }
+
+    delete2Action() {
+        var _this5 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this5.get('id');
+            const data = {
+                shstate: 1
+            };
+            yield _this5.model('question').where({ questionID: id }).update(data);
+            return _this5.success('活动第二步问题删除成功');
+        })();
+    }
+};
 //# sourceMappingURL=activity.js.map
