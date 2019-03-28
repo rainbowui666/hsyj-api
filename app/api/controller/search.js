@@ -22,8 +22,10 @@ module.exports = class extends Base {
             const arrdata = [];
             for (const item of data) {
                 if (item.msgtype == 'scenery') {
+                    item.pics = yield _this.model('scenery').getPicsbyid(item.id);
                     item.shstate = yield _this.model('scenery').getstate(item.id);
                 } else {
+                    item.pics = yield _this.model('school').getPicsbyid(item.id);
                     item.shstate = yield _this.model('school').getstate(item.id);
                 }
                 arrdata.push(item);

@@ -17,8 +17,10 @@ module.exports = class extends Base {
         const arrdata = [];
         for (const item of data) {
             if (item.msgtype == 'scenery') {
+                item.pics = await this.model('scenery').getPicsbyid(item.id);
                 item.shstate = await this.model('scenery').getstate(item.id);
             } else {
+                item.pics = await this.model('school').getPicsbyid(item.id);
                 item.shstate = await this.model('school').getstate(item.id);
             }
             arrdata.push(item)
