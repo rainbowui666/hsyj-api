@@ -18,17 +18,17 @@ module.exports = class extends think.Model {
         return _asyncToGenerator(function* () {
             const model = _this2.model('student_scenery');
             model._pk = 'sceneryid';
-            const checkin = yield model.where({ sceneryid: id, shstate: 1 }).count('sceneryid');
+            // const checkin = await model.where({sceneryid: id, shstate: 1}).count('sceneryid');
             const wantto = yield model.where({ sceneryid: id, shstate: 0 }).count('sceneryid');
-            const sharenum = yield model.where({ sceneryid: id, shstate: 4 }).count('sceneryid');
+            // const sharenum = await model.where({sceneryid: id, shstate: 4}).count('sceneryid');
 
             const modeldis = _this2.model('discuss');
             modeldis._pk = 'discussID';
             const disnum = yield modeldis.where({ distype: 0, targetid: id, shstate: 1 }).count('discussID');
             return {
-                checkin: checkin,
+                // checkin: checkin,
                 wantto: wantto,
-                sharenum: sharenum,
+                // sharenum: sharenum,
                 disnum: disnum
             };
         })();

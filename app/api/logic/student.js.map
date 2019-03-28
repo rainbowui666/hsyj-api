@@ -1,0 +1,18 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/logic/student.js"
+    ],
+    "names": [
+        "module",
+        "exports",
+        "think",
+        "Logic",
+        "addEditAction"
+    ],
+    "mappings": "AAAAA,OAAOC,OAAP,GAAiB,cAAcC,MAAMC,KAApB,CAA0B;AACzCC,kBAAgB,CAEf;AAHwC,CAA3C",
+    "file": "../../../src/api/logic/student.js",
+    "sourcesContent": [
+        "module.exports = class extends think.Logic {\n  addEditAction() {\n\n  }\n};\n"
+    ]
+}

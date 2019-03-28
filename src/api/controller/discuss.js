@@ -6,9 +6,7 @@ module.exports = class extends Base {
         const targetid = this.get('targetid') || 0;
         const studentid = this.get('studentid');
         const content = this.post('content');
-        const shstate = this.post('shstate') || 0;
-
-        
+        const shstate = this.post('shstate') || 0;   
 
         const model = this.model('discuss');
         let data = {
@@ -21,9 +19,11 @@ module.exports = class extends Base {
 
     async listAction() {
         const model =  this.model('discuss');
-
-        const data = await model.query("select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,  case  when distype=0 then (select scenerytitle from culture_scenery where sceneryid=1) when distype=1 then (select activityname from culture_activity where activityID=1) when distype=2 then (select schoolname from culture_school where schoolID=1) when distype=3 then 'APP首页' end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where a.shstate=0");
-        return this.success(data)
+        const pageindex = this.get('pageindex') || 1;
+        const pagesize = this.get('pagesize') || 5;
+        const start = (pageindex -1) * pagesize;
+        const data = await model.query("select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,  case  when distype=0 then (select scenerytitle from culture_scenery where sceneryid=1) when distype=1 then (select activityname from culture_activity where activityID=1) when distype=2 then (select schoolname from culture_school where schoolID=1) when distype=3 then 'APP首页' end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where a.shstate=0 and a.discussid limit "+start+","+pagesize+" ");
+        return this.success({pageindex:pageindex,pagesize:pagesize,data})
     }
 
     async updateAction() {
