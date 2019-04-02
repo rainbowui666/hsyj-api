@@ -14,7 +14,7 @@ module.exports = class extends Base {
         }
 
         let insertid = await model.add(data);
-        return this.success('学留言成功')
+        return this.success('留言成功')
     }
 
     async listAction() {

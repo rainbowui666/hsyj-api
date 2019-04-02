@@ -25,6 +25,18 @@ module.exports = class extends Base {
         return this.success(data)
     }
 
+    async getscenerydetailAction() {
+        const id = this.get('id');
+        const model = this.model('scenery');
+        model._pk = 'sceneryID';
+        const data = await model.where({sceneryID: id}).find();
+        if (!think.isEmpty(data)) {
+            data.pics = await this.model('scenery').getPicsbyid(data.sceneryID);
+            data.discussList = await this.model('discuss').getDiscussById(id,0);
+        }
+        return this.success(data);
+    }
+
     async deleteAction() {
         const id = this.get('id');
         const data = {
@@ -37,11 +49,11 @@ module.exports = class extends Base {
     async detailAction() {
         const id = this.get('id');
         const model = this.model('scenery');
-        const data = await model.where({schoolID: id}).find();
+        const data = await model.where({sceneryID: id}).find();
 
         const arrdata = [];
         // for (const item of data.data) {
-            data.scenery = await this.model('school').getScenerybyid(data.schoolID);
+            data.scenery = await this.model('school').getScenerybyid(data.sceneryID);
         //     // item.shstate = await this.model('school').getstate(item.schoolID);
         //     arrdata.push(item);
         // }

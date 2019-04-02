@@ -1,0 +1,27 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/student_scenery.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "addEditAction",
+        "studentid",
+        "get",
+        "sceneryid",
+        "shstate",
+        "data",
+        "insertid",
+        "model",
+        "add",
+        "success"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,iBAAN,GAAsB;AAAA;;AAAA;AAClB,kBAAMC,YAAY,MAAKC,GAAL,CAAS,WAAT,CAAlB;AACA,kBAAMC,YAAY,MAAKD,GAAL,CAAS,WAAT,CAAlB;AACA,kBAAME,UAAU,MAAKF,GAAL,CAAS,SAAT,CAAhB;AACA,gBAAIG,OAAO;AACPJ,yBADO,EACGE,SADH,EACaC;AADb,aAAX;AAGA,kBAAME,WAAW,MAAM,MAAKC,KAAL,CAAW,iBAAX,EAA8BC,GAA9B,CAAkCH,IAAlC,CAAvB;;AAEA,mBAAO,MAAKI,OAAL,CAAa,MAAb,CAAP;AATkB;AAUrB;AAX+B,CAApC",
+    "file": "../../../src/api/controller/student_scenery.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async addEditAction() {\n        const studentid = this.get('studentid');\n        const sceneryid = this.get('sceneryid');\n        const shstate = this.get('shstate');\n        let data = {\n            studentid,sceneryid,shstate\n        }\n        const insertid = await this.model('student_scenery').add(data);\n\n        return this.success('添加成功');\n    }\n}"
+    ]
+}

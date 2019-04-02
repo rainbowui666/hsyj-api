@@ -19,7 +19,7 @@ module.exports = class extends Base {
             };
 
             let insertid = yield model.add(data);
-            return _this.success('学留言成功');
+            return _this.success('留言成功');
         })();
     }
 

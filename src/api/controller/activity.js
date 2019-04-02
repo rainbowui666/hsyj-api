@@ -2,6 +2,33 @@ const Base = require('./base.js');
 const fs = require('fs');
 
 module.exports = class extends Base {
+    async frontListAction() {
+        const page = this.get('page') || 1;
+        const size = this.get('size') || 10;
+        const studentid = this.get('studentid');
+        const model = this.model('activity');
+        model._pk = 'activityID';
+        const endDate = new Date();
+        const date = endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate()+' 00:00:00'
+        const data = await model.where({shstate: 0, endDate:{'>': date}}).page(page,size).countSelect();
+
+        const arrdata = [];
+
+        for (const item of data.data) {
+            item.pics = await this.model('activity').getPicsbyid(item.activityID);
+            console.log(Number(new Date(item.startDate)), Number(new Date()), Number(new Date(item.endDate)))
+            if (Number(new Date(item.startDate)) <= Number(new Date()) <= Number(new Date(item.endDate))) {
+                item.status='进行中';
+            } else {
+                item.status = '';
+            }
+            // item.shstate = await this.model('school').getstate(item.schoolID);
+            arrdata.push(item);
+        }
+        data.data = arrdata;
+
+        return this.success(data)
+    }
     async list2Action() {
         const page = this.get('page') || 1;
         const size = this.get('size') || 10;

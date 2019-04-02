@@ -1,0 +1,22 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/model/student_activity.js"
+    ],
+    "names": [
+        "_",
+        "require",
+        "module",
+        "exports",
+        "think",
+        "Model",
+        "getStudentIsJoinActivity",
+        "studentid",
+        "activityid"
+    ],
+    "mappings": ";;AAAA,MAAMA,IAAIC,QAAQ,QAAR,CAAV;;AAEAC,OAAOC,OAAP,GAAiB,cAAcC,MAAMC,KAApB,CAA0B;AACjCC,4BAAN,CAA+BC,SAA/B,EAA0CC,UAA1C,EAAsD;AAAA;AAErD;AAHsC,CAA3C",
+    "file": "../../../src/api/model/student_activity.js",
+    "sourcesContent": [
+        "const _ = require('lodash');\n\nmodule.exports = class extends think.Model {\n    async getStudentIsJoinActivity(studentid, activityid) {\n            \n    }\n}"
+    ]
+}

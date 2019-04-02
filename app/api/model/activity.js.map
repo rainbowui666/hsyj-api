@@ -1,0 +1,27 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/model/activity.js"
+    ],
+    "names": [
+        "_",
+        "require",
+        "module",
+        "exports",
+        "think",
+        "Model",
+        "getPicsbyid",
+        "id",
+        "data",
+        "model",
+        "where",
+        "sourceType",
+        "targetid",
+        "select"
+    ],
+    "mappings": ";;AAAA,MAAMA,IAAIC,QAAQ,QAAR,CAAV;;AAEAC,OAAOC,OAAP,GAAiB,cAAcC,MAAMC,KAApB,CAA0B;AACjCC,eAAN,CAAkBC,EAAlB,EAAsB;AAAA;;AAAA;AAClB,kBAAMC,OAAO,MAAM,MAAKC,KAAL,CAAW,QAAX,EAAqBC,KAArB,CAA2B,EAACC,YAAY,CAAb,EAAgBC,UAAUL,EAA1B,EAA3B,EAA0DM,MAA1D,EAAnB;AACA,mBAAOL,IAAP;AAFkB;AAGrB;AAJsC,CAA3C",
+    "file": "../../../src/api/model/activity.js",
+    "sourcesContent": [
+        "const _ = require('lodash');\n\nmodule.exports = class extends think.Model {\n    async getPicsbyid(id) {\n        const data = await this.model('source').where({sourceType: 2, targetid: id}).select();\n        return data;\n    }\n}"
+    ]
+}

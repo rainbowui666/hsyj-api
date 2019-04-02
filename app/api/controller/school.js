@@ -42,12 +42,15 @@ module.exports = class extends Base {
             const data = yield model.where({ schoolID: id }).find();
 
             const arrdata = [];
-            // for (const item of data.data) {
-            data.scenery = yield _this2.model('school').getScenerybyid(data.schoolID);
-            //     // item.shstate = await this.model('school').getstate(item.schoolID);
-            //     arrdata.push(item);
-            // }
-            // data.data = arrdata;
+            if (!think.isEmpty(data)) {
+                // for (const item of data.data) {
+                data.scenery = yield _this2.model('school').getScenerybyid(data.schoolID);
+                data.discussList = yield _this2.model('discuss').getDiscussById(id, 2);
+                //     // item.shstate = await this.model('school').getstate(item.schoolID);
+                //     arrdata.push(item);
+                // }
+                // data.data = arrdata;
+            }
             return _this2.success(data);
         })();
     }
