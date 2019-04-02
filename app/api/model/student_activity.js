@@ -4,7 +4,13 @@ const _ = require('lodash');
 
 module.exports = class extends think.Model {
     getStudentIsJoinActivity(studentid, activityid) {
-        return _asyncToGenerator(function* () {})();
+        var _this = this;
+
+        return _asyncToGenerator(function* () {
+            const data = yield _this.model('student_activity').where({ studentID: studentid, activityid: activityid }).select();
+
+            return data;
+        })();
     }
 };
 //# sourceMappingURL=student_activity.js.map

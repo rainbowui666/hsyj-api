@@ -27,7 +27,15 @@ module.exports = class extends Base {
                 } else {
                     item.status = '';
                 }
-                // item.shstate = await this.model('school').getstate(item.schoolID);
+                let joindate = yield _this.model('student_activity').getStudentIsJoinActivity(studentid, item.activityID);
+                if (Number(new Date()) > Number(new Date(item.endDate)) && joindate && joindate.length > 0) {
+                    item.hasjoin = '已完成';
+                } else if (item.hasjoin = joindate && joindate.length > 0) {
+                    item.hasjoin = '已报名';
+                } else {
+                    item.hasjoin = '';
+                }
+                item.shstate = yield _this.model('activity').getstate(item.activityID);
                 arrdata.push(item);
             }
             data.data = arrdata;

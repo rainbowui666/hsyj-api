@@ -11,5 +11,27 @@ module.exports = class extends think.Model {
             return data;
         })();
     }
+
+    getstate(id) {
+        var _this2 = this;
+
+        return _asyncToGenerator(function* () {
+            const model = _this2.model('student_activity');
+            model._pk = 'activityid';
+            // const checkin = await model.where({sceneryid: id, shstate: 1}).count('sceneryid');
+            const wantto = yield model.where({ activityid: id, shstate: 0 }).count('activityid');
+            // const sharenum = await model.where({sceneryid: id, shstate: 4}).count('sceneryid');
+
+            const modeldis = _this2.model('discuss');
+            modeldis._pk = 'discussID';
+            const disnum = yield modeldis.where({ distype: 1, targetid: id, shstate: 1 }).count('discussID');
+            return {
+                // checkin: checkin,
+                wantto: wantto,
+                // sharenum: sharenum,
+                disnum: disnum
+            };
+        })();
+    }
 };
 //# sourceMappingURL=activity.js.map
