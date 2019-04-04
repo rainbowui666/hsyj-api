@@ -1,0 +1,28 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/group.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "addEditAction",
+        "id",
+        "get",
+        "groupname",
+        "param",
+        "activityid",
+        "groupName",
+        "insertid",
+        "model",
+        "add",
+        "success"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,iBAAN,GAAsB;AAAA;;AAAA;AAClB,kBAAMC,KAAK,MAAKC,GAAL,CAAS,IAAT,CAAX;AACA,kBAAMC,YAAY,MAAKD,GAAL,CAAS,WAAT,CAAlB;;AAEA,gBAAIE,QAAQ;AACRC,4BAAWJ,EADH;AAERK,2BAAUH;AAFF,aAAZ;;AAKA,kBAAMI,WAAW,MAAMC,MAAMC,GAAN,CAAUL,KAAV,CAAvB;AACA,mBAAO,MAAKM,OAAL,CAAa,MAAb,CAAP;AAVkB;AAWrB;AAZ+B,CAApC",
+    "file": "../../../src/api/controller/group.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async addEditAction() {\n        const id = this.get('id');\n        const groupname = this.get('groupname');\n\n        let param = {\n            activityid:id,\n            groupName:groupname\n        }\n\n        const insertid = await model.add(param);\n        return this.success('添加成功')\n    }\n}"
+    ]
+}

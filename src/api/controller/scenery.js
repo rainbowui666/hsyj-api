@@ -32,6 +32,7 @@ module.exports = class extends Base {
         const data = await model.where({sceneryID: id}).find();
         if (!think.isEmpty(data)) {
             data.pics = await this.model('scenery').getPicsbyid(data.sceneryID);
+            data.shstate = await this.model('scenery').getstate(data.sceneryID);
             data.discussList = await this.model('discuss').getDiscussById(id,0);
         }
         return this.success(data);

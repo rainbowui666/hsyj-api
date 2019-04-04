@@ -1,0 +1,32 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/api/controller/question.js"
+    ],
+    "names": [
+        "Base",
+        "require",
+        "module",
+        "exports",
+        "getQuestionbyActidAction",
+        "id",
+        "get",
+        "ac_scmodel",
+        "model",
+        "data",
+        "field",
+        "alias",
+        "join",
+        "table",
+        "as",
+        "on",
+        "where",
+        "find",
+        "success"
+    ],
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,4BAAN,GAAiC;AAAA;;AAAA;AAC7B;AACA,kBAAMC,KAAK,MAAKC,GAAL,CAAS,IAAT,CAAX;AACA,kBAAMC,aAAa,MAAKC,KAAL,CAAW,kBAAX,CAAnB;AACA,kBAAMC,OAAO,MAAMF,WAAWG,KAAX,CAAiB,CAAC,MAAD,EAAQ,iBAAR,EAA0B,gBAA1B,EAA2C,WAA3C,EAAuD,WAAvD,EAC/B,WAD+B,EACnB,WADmB,EACP,eADO,CAAjB,EAElBC,KAFkB,CAEZ,IAFY,EAGlBC,IAHkB,CAGb;AACFC,uBAAO,UADL;AAEFD,sBAAK,MAFH;AAGFE,oBAAI,GAHF;AAIFC,oBAAG,CAAC,eAAD,EAAiB,cAAjB;AAJD,aAHa,EAQhBC,KARgB,CAQV,EAAC,iBAAgBX,EAAjB,EARU,EAQYY,IARZ,EAAnB;AASA,mBAAO,MAAKC,OAAL,CAAaT,IAAb,CAAP;AAb6B;AAchC;AAf+B,CAApC",
+    "file": "../../../src/api/controller/question.js",
+    "sourcesContent": [
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async getQuestionbyActidAction() {\n        // const model = this.model('question');\n        const id = this.get('id');\n        const ac_scmodel = this.model('activity_scenery');\n        const data = await ac_scmodel.field(['sc.*','q.questionTitle','q.questionType','q.answerA','q.answerB'\n            ,'q.answerC','q.answerD','q.rightAnswer'])\n        .alias('sc')\n        .join({\n            table: 'question',\n            join:'left',\n            as: 'q',\n            on:['sc.questionid','q.questionID']\n        }).where({'sc.activityid':id}).find()\n        return this.success(data);\n    }\n}"
+    ]
+}

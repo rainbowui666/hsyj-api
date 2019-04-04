@@ -41,6 +41,7 @@ module.exports = class extends Base {
             const data = yield model.where({ sceneryID: id }).find();
             if (!think.isEmpty(data)) {
                 data.pics = yield _this2.model('scenery').getPicsbyid(data.sceneryID);
+                data.shstate = yield _this2.model('scenery').getstate(data.sceneryID);
                 data.discussList = yield _this2.model('discuss').getDiscussById(id, 0);
             }
             return _this2.success(data);

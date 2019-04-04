@@ -30,8 +30,42 @@ module.exports = class extends Base {
             const model = _this2.model('discuss');
             const pageindex = _this2.get('pageindex') || 1;
             const pagesize = _this2.get('pagesize') || 5;
+            const shstate = _this2.get('shstate') || 0;
+            const distype = _this2.get('distype');
+            const sceneryid = _this2.get('sceneryid');
+            const activityID = _this2.get('activityid');
+            const schoolid = _this2.get('schoolid');
+
+            let typeconition = '';
+            let scenerycondition = '';
+            let activitycondition = '';
+            let schoolcondition = '';
+            if (think.isEmpty(distype)) {
+                typeconition = '1=1 ';
+            } else {
+                typeconition = 'a.distype=' + distype;
+            }
+
+            if (think.isEmpty(sceneryid)) {
+                scenerycondition = '1=1 ';
+            } else {
+                scenerycondition = 'sceneryid=' + sceneryid;
+            }
+
+            if (think.isEmpty(activityID)) {
+                activitycondition = '1=1 ';
+            } else {
+                activitycondition = 'activityID=' + activityID;
+            }
+
+            if (think.isEmpty(schoolid)) {
+                schoolcondition = '1=1 ';
+            } else {
+                schoolcondition = 'schoolID=' + schoolid;
+            }
+
             const start = (pageindex - 1) * pagesize;
-            const data = yield model.query("select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,  case  when distype=0 then (select scenerytitle from culture_scenery where sceneryid=1) when distype=1 then (select activityname from culture_activity where activityID=1) when distype=2 then (select schoolname from culture_school where schoolID=1) when distype=3 then 'APP首页' end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where a.shstate=0 and a.discussid limit " + start + "," + pagesize + " ");
+            const data = yield model.query("select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,  case  when distype=0 then (select scenerytitle from culture_scenery where " + scenerycondition + ") when distype=1 then (select activityname from culture_activity where " + activitycondition + ") when distype=2 then (select schoolname from culture_school where " + schoolcondition + ") when distype=3 then 'APP首页' end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where " + typeconition + " and a.shstate=" + shstate + " and a.discussid limit " + start + "," + pagesize + " ");
             return _this2.success({ pageindex: pageindex, pagesize: pagesize, data });
         })();
     }

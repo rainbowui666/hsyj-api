@@ -6,4 +6,13 @@ module.exports = class extends think.Model {
         
         return data;
     }
+
+    async studentJoinActivityAndAnswer(studentid, activityid,questionid) {
+        const data = await this.model('student_activity').where({studentID:studentid,activityid:activityid,shstate:1}).select();
+        const questiondata = await this.model('question').where({questionID:questionid}).select();
+
+        return {
+            data,questiondata
+        }
+    }
 }

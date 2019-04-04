@@ -12,5 +12,18 @@ module.exports = class extends think.Model {
             return data;
         })();
     }
+
+    studentJoinActivityAndAnswer(studentid, activityid, questionid) {
+        var _this2 = this;
+
+        return _asyncToGenerator(function* () {
+            const data = yield _this2.model('student_activity').where({ studentID: studentid, activityid: activityid, shstate: 1 }).select();
+            const questiondata = yield _this2.model('question').where({ questionID: questionid }).select();
+
+            return {
+                data, questiondata
+            };
+        })();
+    }
 };
 //# sourceMappingURL=student_activity.js.map

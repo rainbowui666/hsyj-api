@@ -37,6 +37,59 @@ module.exports = class extends Base {
 
         return this.success(data)
     }
+
+    async getactivitydetailAction() {
+        const id = this.get('id');
+        const studentid = this.get('studentid');
+        const model = this.model('activity');
+        model._pk = 'activityID';
+        const data = await model.where({activityID: id}).find();
+        if (!think.isEmpty(data)) {
+            data.pics = await this.model('activity').getPicsbyid(data.activityID);
+            // data.discussList = await this.model('discuss').getDiscussById(id,1);
+            data.shstate = await this.model('activity').getstate(data.activityID);
+            let joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,data.activityID);
+            if (Number(new Date()) > Number(new Date(data.endDate)) && joindate && joindate.length > 0) {
+                data.hasjoin = '已完成'
+            } else if(data.hasjoin = joindate && joindate.length > 0) {
+                data.hasjoin = '已报名' 
+            } else {
+                data.hasjoin = '';
+            }
+        }
+        return this.success(data);
+    }
+
+    async getActivityDiscussListAction() {
+        const id = this.get('id');
+        const model = this.model('activity');
+        model._pk = 'activityID';
+        const data = await model.where({activityID: id}).find();
+        if (!think.isEmpty(data)) {
+            data.discussList = await this.model('discuss').getDiscussById(id,1);
+            
+        }
+        return this.success(data);
+    }
+
+    async getActivitySceneryListAction() {
+        const studentid = this.get('studentid');
+        const model =  this.model('activity_scenery');
+        const pageindex = this.get('pageindex') || 1;
+        const pagesize = this.get('pagesize') || 5;
+        const start = (pageindex -1) * pagesize;
+        const data = await model.query("select s.*,a.activityName,a.startSceneryid,a.endSceneryid,sc.schoolid,sc.address,sc.shdesc,sc.longitude,sc.latitude,sc.sctype,sc.shstate,sc.sceneryTitle from culture_activity_scenery as s left join culture_activity a on a.activityID=s.activityid left join culture_scenery sc on s.sceneryid=sc.sceneryID where a.activityID limit "+start+","+pagesize+" ");
+        
+        const arrdata = [];
+        for (const item of data) {
+            item.shstate = await this.model('activity').getstate(item.activityid);
+            // item.question = await this.model('student_activity').studentJoinActivityAndAnswer(studentid,item.activityID,item.questionid)
+            arrdata.push(item)
+        }
+        data.data = arrdata;
+        return this.success({pageindex:pageindex,pagesize:pagesize,data})
+    }
+
     async list2Action() {
         const page = this.get('page') || 1;
         const size = this.get('size') || 10;
