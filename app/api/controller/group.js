@@ -7,16 +7,32 @@ module.exports = class extends Base {
         var _this = this;
 
         return _asyncToGenerator(function* () {
-            const id = _this.get('id');
-            const groupname = _this.get('groupname');
+            const id = _this.post('id');
+            const groupname = _this.post('groupname');
 
             let param = {
                 activityid: id,
                 groupName: groupname
             };
 
-            const insertid = yield model.add(param);
+            const insertid = yield _this.model('group').add(param);
             return _this.success('添加成功');
+        })();
+    }
+
+    joinGroupAction() {
+        var _this2 = this;
+
+        return _asyncToGenerator(function* () {
+            const groupid = _this2.get('groupid');
+            const studentid = _this2.get('studentid');
+            const activityid = _this2.get('activityid');
+            let para = {
+                groupid, studentid, activityid
+            };
+
+            let insertid = yield _this2.model('student_group').add(para);
+            return _this2.success('加入成功');
         })();
     }
 };

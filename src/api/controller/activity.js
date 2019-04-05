@@ -60,6 +60,29 @@ module.exports = class extends Base {
         return this.success(data);
     }
 
+    async getactivitydetailForGroupAction() {
+        const id = this.get('id');
+        const studentid = this.get('studentid');
+        const model = this.model('activity');
+        model._pk = 'activityID';
+        const data = await model.where({activityID: id}).find();
+        if (!think.isEmpty(data)) {
+            data.pics = await this.model('activity').getPicsbyid(data.activityID);
+            // data.discussList = await this.model('discuss').getDiscussById(id,1);
+            data.shstate = await this.model('activity').getstate(data.activityID);
+            let joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,data.activityID);
+            if (Number(new Date()) > Number(new Date(data.endDate)) && joindate && joindate.length > 0) {
+                data.hasjoin = '已完成'
+            } else if(data.hasjoin = joindate && joindate.length > 0) {
+                data.hasjoin = '已报名' 
+            } else {
+                data.hasjoin = '';
+            }
+            data.group=await this.model('group').where({activityid:data.activityID}).select();
+        }
+        return this.success(data);
+    }
+
     async getActivityDiscussListAction() {
         const id = this.get('id');
         const model = this.model('activity');

@@ -1,0 +1,14 @@
+node_modules/
+
+# IDE config
+.idea
+
+# output
+output/
+output.tar.gz
+
+runtime/
+app/
+
+config.development.js
+adapter.development.js
