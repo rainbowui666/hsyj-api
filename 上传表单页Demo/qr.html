@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		
+		<input type="text" id="username">
+		<input type="text" id="pwd">
+		<input type="text" id="captchacode">
+		<a onclick="logintest()" id="ddd">
+		<span>login</span>
+		</a>
+		<a onclick="changecaptch()" id="codelink">
+		<img id="test1" src="http://127.0.0.1:8360/api/auth/createCaptcha?v="+Math.random()/>
+		</a>
+		<script type="text/javascript" src="http://knowledge.ebaotech.com/rainbow/doc/core/js/jquery.min.js"></script>
+	</body>
+</html>
+<script>
+	function changecaptch(){
+		document.getElementById('test1').src = "http://127.0.0.1:8360/api/auth/createCaptcha?v="+Math.random()
+	}
+	
+	function logintest(){
+		var code = $('#captchacode').val();
+		var username = $('#username').val();
+		var pwd = $('#pwd').val();
+		$.ajax({
+            		type: "POST",
+			   dataType: 'json',
+			   async:false,
+			   data:{
+					"captchacode":code,
+					"username":username,
+					"pwd":pwd
+				},
+			   url: 'http://127.0.0.1:8360/api/auth/adminLogin',
+			   success: function(msg){
+			   	console.log(msg)
+			   }
+            })
+	}
+
+</script>

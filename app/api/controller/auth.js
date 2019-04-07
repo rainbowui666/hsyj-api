@@ -1,6 +1,9 @@
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 const Base = require('./base.js');
+var svgCaptcha = require('svg-captcha');
+const cookieParase = require('cookie-parser');
+var http = require('http');
 
 module.exports = class extends Base {
   loginAction() {
@@ -54,6 +57,63 @@ module.exports = class extends Base {
 
     return _asyncToGenerator(function* () {
       return _this2.success();
+    })();
+  }
+
+  createCaptchaAction() {
+    var _this3 = this;
+
+    return _asyncToGenerator(function* () {
+      var captcha = svgCaptcha.create({
+        // 翻转颜色  
+        inverse: false,
+        // 字体大小  
+        fontSize: 36,
+        // 噪声线条数  
+        noise: 2,
+        // 宽度  
+        width: 80,
+        // 高度  
+        height: 30
+      });
+      // 保存到session,忽略大小写  
+      _this3.ctx.req.session = captcha.text.toLowerCase();
+      console.log(_this3.ctx.req.session); //0xtg 生成的验证码
+      //保存到cookie 方便前端调用验证
+      _this3.cache('captcha', _this3.ctx.req.session);
+      _this3.ctx.type = 'image/svg+xml';
+      _this3.ctx.res.write(String(captcha.data));
+      _this3.ctx.res.end();
+    })();
+  }
+  adminLoginAction() {
+    var _this4 = this;
+
+    return _asyncToGenerator(function* () {
+      const captchacode = _this4.post('captchacode');
+      const authcaptha = yield _this4.cache('captcha');
+      if (think.isEmpty(captchacode)) {
+        return _this4.fail('验证码为空');
+      }
+
+      if (captchacode != authcaptha) {
+        console.log('fail', captchacode, authcaptha);
+        return _this4.fail('验证码错误');
+      }
+
+      const username = _this4.post('username');
+      const pwd = _this4.post('pwd');
+      const data = yield _this4.model('User').where({ userName: username, pwd: pwd }).find();
+      if (think.isEmpty(data)) {
+        return _this4.error(403, '账号或密码错误');
+      }
+      const id = data.sysUserID;
+
+      const model = _this4.model('User');
+      const userData = yield model.query("select u.*,ur.roleid,r.roleName,rp.permissionid,p.permissionName from culture_user u inner join culture_user_role ur on u.sysUserID=ur.sysuserid inner join culture_role r on r.roleID=ur.roleid inner join culture_role_permission rp on rp.roleid=r.roleID inner join culture_permission p on p.permissionID=rp.permissionid where u.sysuserid=" + id);
+      _this4.session('userinfo', userData);
+
+      return _this4.success(userData);
     })();
   }
 };
