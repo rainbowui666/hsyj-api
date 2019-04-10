@@ -64,6 +64,8 @@ module.exports = class extends Base {
         const latitude = this.post('latitude');
         const soundurl = this.post('soundurl');
         const videourl = this.post('videourl');
+        const areaid = this.post('areaid');
+        const parentid = this.post('parentid') || 0;
         const id = this.get('id');
 
         let param = {
@@ -75,7 +77,7 @@ module.exports = class extends Base {
             longitude: longitude,
             latitude: latitude,
             soundurl,
-            videourl
+            videourl,areaid,parentid
         }; 
         if (think.isEmpty(id)) {
             let model = this.model('school');
