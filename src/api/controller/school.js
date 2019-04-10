@@ -25,6 +25,10 @@ module.exports = class extends Base {
         return this.success(data)
     }
 
+    async getAreaAction() {
+        const data = await this.model('area').select();
+        return this.success(data)
+    }
     async detailAction() {
         const id = this.get('id');
         const model = this.model('school');
