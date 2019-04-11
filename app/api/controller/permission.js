@@ -34,7 +34,8 @@ module.exports = class extends Base {
             const id = _this2.get('schoolid');
             const permissionid = _this2.get('permissionid');
             const data = {
-                schoolid: id, permissionid: permissionid
+                schoolid: id,
+                permissionid: permissionid
             };
             let insertid = yield _this2.model('permission_school').add(data);
             return _this2.success('分配成功');

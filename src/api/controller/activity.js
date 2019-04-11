@@ -131,7 +131,7 @@ module.exports = class extends Base {
             item.sceneryCount = await this.model('activity_scenery').where({activityid:item.activityID}).count('activityid');
             item.questionCount = 1; //await this.model('question').where({activityid:item.activityID}).count('activityid');
             // console.log(Number(new Date(item.startDate)), Number(new Date()), Number(new Date(item.endDate)))
-            
+        
             item.needSchoolRangName = await this.model('school').getSchoolNameByIds(item.needSchoolRang);
             // item.shstate = await this.model('activity').getstate(item.activityID);
             arrdata.push(item);
