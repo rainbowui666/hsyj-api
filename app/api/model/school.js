@@ -32,17 +32,35 @@ module.exports = class extends think.Model {
         })();
     }
 
-    getstate(id) {
+    getSchoolNameByIds(ids) {
         var _this3 = this;
 
         return _asyncToGenerator(function* () {
-            const model = _this3.model('student_school');
+            let str = '';
+            if (think.isEmpty(ids)) return '';
+            let arr = ids.split(',');
+            for (let i = 0; i < arr.length; i++) {
+                let name = yield _this3.model('school').field(['schoolName']).where({ schoolID: arr[i] }).find();
+                str += name.schoolName + ',';
+            }
+            if (str && str.length > 0) {
+                str = str.substr(0, str.length - 1);
+            }
+            return str;
+        })();
+    }
+
+    getstate(id) {
+        var _this4 = this;
+
+        return _asyncToGenerator(function* () {
+            const model = _this4.model('student_school');
             model._pk = 'schoolid';
             // const checkin = await model.where({schoolid: id, shstate: 1}).count('schoolid');
             const wantto = yield model.where({ schoolid: id, shstate: 0 }).count('schoolid');
             // const sharenum = await model.where({schoolid: id, shstate: 4}).count('schoolid');
 
-            const modeldis = _this3.model('discuss');
+            const modeldis = _this4.model('discuss');
             modeldis._pk = 'discussID';
             const disnum = yield modeldis.where({ distype: 2, targetid: id, shstate: 1 }).count('discussID');
             return {

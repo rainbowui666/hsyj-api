@@ -35,6 +35,7 @@ module.exports = class extends Base {
                 } else {
                     item.hasjoin = '';
                 }
+                item.needSchoolRangName = yield _this.model('school').getSchoolNameByIds(item.needSchoolRang);
                 item.shstate = yield _this.model('activity').getstate(item.activityID);
                 arrdata.push(item);
             }
@@ -134,14 +135,45 @@ module.exports = class extends Base {
         })();
     }
 
-    list2Action() {
+    listAction() {
         var _this6 = this;
 
         return _asyncToGenerator(function* () {
             const page = _this6.get('page') || 1;
             const size = _this6.get('size') || 10;
+            const studentid = _this6.get('studentid');
+            const model = _this6.model('activity');
+            model._pk = 'activityID';
+            const endDate = new Date();
+            const date = endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate() + ' 00:00:00';
+            const data = yield model.where({ shstate: 0, endDate: { '>': date } }).page(page, size).countSelect();
 
-            const model = _this6.model('question');
+            const arrdata = [];
+
+            for (const item of data.data) {
+                item.pics = yield _this6.model('activity').getPicsbyid(item.activityID);
+                item.sceneryCount = yield _this6.model('activity_scenery').where({ activityid: item.activityID }).count('activityid');
+                item.questionCount = 1; //await this.model('question').where({activityid:item.activityID}).count('activityid');
+                // console.log(Number(new Date(item.startDate)), Number(new Date()), Number(new Date(item.endDate)))
+
+                item.needSchoolRangName = yield _this6.model('school').getSchoolNameByIds(item.needSchoolRang);
+                // item.shstate = await this.model('activity').getstate(item.activityID);
+                arrdata.push(item);
+            }
+            data.data = arrdata;
+
+            return _this6.success(data);
+        })();
+    }
+
+    list2Action() {
+        var _this7 = this;
+
+        return _asyncToGenerator(function* () {
+            const page = _this7.get('page') || 1;
+            const size = _this7.get('size') || 10;
+
+            const model = _this7.model('question');
             model._pk = 'questionID';
             const list = yield model.field(['q.questionID', 'q.questiontitle', 'q.answera', 'q.answerb', 'q.answerc', 'q.answerd', 'q.rightanswer', 's.sceneryid', 's.activityid', 'cs.sceneryTitle', 'act.startAddress']).alias('q').join({
                 table: 'activity_scenery',
@@ -160,37 +192,37 @@ module.exports = class extends Base {
                 on: ['act.activityID', 's.activityid']
             }).page(page, size).countSelect();
 
-            return _this6.success(list);
+            return _this7.success(list);
         })();
     }
 
     addEdit1Action() {
-        var _this7 = this;
+        var _this8 = this;
 
         return _asyncToGenerator(function* () {
-            const activityName = _this7.post('activityname');
-            const sponsor = _this7.post('sponsor') || '';
-            const meetingPlace = _this7.post('meetingplace') || '';
-            const secondSponsor = _this7.post('secondsponsor') || '';
-            const needSchoolRang = _this7.post('needschoolrang');
+            const activityName = _this8.post('activityname');
+            const sponsor = _this8.post('sponsor') || '';
+            const meetingPlace = _this8.post('meetingplace') || '';
+            const secondSponsor = _this8.post('secondsponsor') || '';
+            const needSchoolRang = _this8.post('needschoolrang');
 
-            const startDate = _this7.post('startdate');
-            const endDate = _this7.post('enddate');
-            const shdesc = _this7.post('shdesc');
+            const startDate = _this8.post('startdate');
+            const endDate = _this8.post('enddate');
+            const shdesc = _this8.post('shdesc');
 
-            const shstate = _this7.post('shstate');
-            const startAddress = _this7.post('startaddress');
-            const needSchoolPass = _this7.post('needschoolpass');
-            const needSceneryPass = _this7.post('needscenerypass');
-            const settingStart = _this7.post('settingstart');
-            const startSceneryid = _this7.post('startsceneryid');
+            const shstate = _this8.post('shstate');
+            const startAddress = _this8.post('startaddress');
+            const needSchoolPass = _this8.post('needschoolpass');
+            const needSceneryPass = _this8.post('needscenerypass');
+            const settingStart = _this8.post('settingstart');
+            const startSceneryid = _this8.post('startsceneryid');
 
-            const settingEnd = _this7.post('settingend');
-            const endSceneryid = _this7.post('endsceneryid');
-            const isGroup = _this7.post('isgroup');
-            const groupNum = _this7.post('groupnum');
+            const settingEnd = _this8.post('settingend');
+            const endSceneryid = _this8.post('endsceneryid');
+            const isGroup = _this8.post('isgroup');
+            const groupNum = _this8.post('groupnum');
 
-            const id = _this7.get('id');
+            const id = _this8.get('id');
 
             let param = {
                 activityName,
@@ -213,38 +245,38 @@ module.exports = class extends Base {
                 groupNum
             };
             if (think.isEmpty(id)) {
-                let model = _this7.model('activity');
+                let model = _this8.model('activity');
                 const insertid = yield model.add(param);
 
                 // 上传活动图片
                 if (insertid) {
-                    return _this7.json({
+                    return _this8.json({
                         insertid: insertid
                     });
                 }
             } else {
                 // 1 删除source, 2修改
-                yield _this7.model('source').where({ targetid: id }).delete();
-                yield _this7.model('activity').where({ activityID: id }).update(param);
-                return _this7.success('活动修改成功');
+                yield _this8.model('source').where({ targetid: id }).delete();
+                yield _this8.model('activity').where({ activityID: id }).update(param);
+                return _this8.success('活动修改成功');
             }
         })();
     }
 
     addEdit2Action() {
-        var _this8 = this;
+        var _this9 = this;
 
         return _asyncToGenerator(function* () {
-            const sceneryid = _this8.post('sceneryid');
-            const questiontitle = _this8.post('questiontitle');
-            const questiontype = _this8.post('questiontype') || 0;
-            const answera = _this8.post('answera');
-            const answerb = _this8.post('answerb');
-            const answerc = _this8.post('answerc');
-            const answerd = _this8.post('answerd');
-            const rightanswer = _this8.post('rightanswer');
-            const id = _this8.get('id');
-            const activityid = _this8.get('activityid');
+            const sceneryid = _this9.post('sceneryid');
+            const questiontitle = _this9.post('questiontitle');
+            const questiontype = _this9.post('questiontype') || 0;
+            const answera = _this9.post('answera');
+            const answerb = _this9.post('answerb');
+            const answerc = _this9.post('answerc');
+            const answerd = _this9.post('answerd');
+            const rightanswer = _this9.post('rightanswer');
+            const id = _this9.get('id');
+            const activityid = _this9.get('activityid');
 
             const questionData = {
                 sceneryid: sceneryid,
@@ -258,38 +290,25 @@ module.exports = class extends Base {
             };
 
             if (think.isEmpty(id)) {
-                const questId = yield _this8.model('question').add(questionData);
+                const questId = yield _this9.model('question').add(questionData);
                 if (questId) {
-                    yield _this8.model('activity_scenery').add({
+                    yield _this9.model('activity_scenery').add({
                         sceneryid, questionid: questId, activityid: activityid
                     });
                 }
-                return _this8.success('第二步成功');
+                return _this9.success('第二步成功');
             } else {
-                yield _this8.model('activity_scenery').where({ questionid: id }).delete();
-                yield _this8.model('question').where({ questionID: id }).update(questionData);
-                yield _this8.model('activity_scenery').add({
+                yield _this9.model('activity_scenery').where({ questionid: id }).delete();
+                yield _this9.model('question').where({ questionID: id }).update(questionData);
+                yield _this9.model('activity_scenery').add({
                     sceneryid, questionid: id, activityid: activityid
                 });
-                return _this8.success('修改成功');
+                return _this9.success('修改成功');
             }
         })();
     }
 
     deleteAction() {
-        var _this9 = this;
-
-        return _asyncToGenerator(function* () {
-            const id = _this9.get('id');
-            const data = {
-                shstate: 1
-            };
-            yield _this9.model('activity').where({ activityID: id }).update(data);
-            return _this9.success('活动删除成功');
-        })();
-    }
-
-    delete2Action() {
         var _this10 = this;
 
         return _asyncToGenerator(function* () {
@@ -297,8 +316,21 @@ module.exports = class extends Base {
             const data = {
                 shstate: 1
             };
-            yield _this10.model('question').where({ questionID: id }).update(data);
-            return _this10.success('活动第二步问题删除成功');
+            yield _this10.model('activity').where({ activityID: id }).update(data);
+            return _this10.success('活动删除成功');
+        })();
+    }
+
+    delete2Action() {
+        var _this11 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this11.get('id');
+            const data = {
+                shstate: 1
+            };
+            yield _this11.model('question').where({ questionID: id }).update(data);
+            return _this11.success('活动第二步问题删除成功');
         })();
     }
 };

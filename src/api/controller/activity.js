@@ -30,6 +30,7 @@ module.exports = class extends Base {
             } else {
                 item.hasjoin = '';
             }
+            item.needSchoolRangName = await this.model('school').getSchoolNameByIds(item.needSchoolRang);
             item.shstate = await this.model('activity').getstate(item.activityID);
             arrdata.push(item);
         }
@@ -111,6 +112,33 @@ module.exports = class extends Base {
         }
         data.data = arrdata;
         return this.success({pageindex:pageindex,pagesize:pagesize,data})
+    }
+
+    async listAction() {
+        const page = this.get('page') || 1;
+        const size = this.get('size') || 10;
+        const studentid = this.get('studentid');
+        const model = this.model('activity');
+        model._pk = 'activityID';
+        const endDate = new Date();
+        const date = endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate()+' 00:00:00'
+        const data = await model.where({shstate: 0, endDate:{'>': date}}).page(page,size).countSelect();
+
+        const arrdata = [];
+
+        for (const item of data.data) {
+            item.pics = await this.model('activity').getPicsbyid(item.activityID);
+            item.sceneryCount = await this.model('activity_scenery').where({activityid:item.activityID}).count('activityid');
+            item.questionCount = 1; //await this.model('question').where({activityid:item.activityID}).count('activityid');
+            // console.log(Number(new Date(item.startDate)), Number(new Date()), Number(new Date(item.endDate)))
+            
+            item.needSchoolRangName = await this.model('school').getSchoolNameByIds(item.needSchoolRang);
+            // item.shstate = await this.model('activity').getstate(item.activityID);
+            arrdata.push(item);
+        }
+        data.data = arrdata;
+
+        return this.success(data)
     }
 
     async list2Action() {

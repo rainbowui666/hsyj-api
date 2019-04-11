@@ -27,14 +27,28 @@ module.exports = class extends Base {
         })();
     }
 
-    deleteAction() {
+    assignSchoolAction() {
         var _this2 = this;
 
         return _asyncToGenerator(function* () {
-            const id = _this2.get('id');
-            yield _this2.model('permission').where({ permissionID: id }).delete();
+            const id = _this2.get('schoolid');
+            const permissionid = _this2.get('permissionid');
+            const data = {
+                schoolid: id, permissionid: permissionid
+            };
+            let insertid = yield _this2.model('permission_school').add(data);
+            return _this2.success('分配成功');
+        })();
+    }
 
-            return _this2.success('删除成功');
+    deleteAction() {
+        var _this3 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this3.get('id');
+            yield _this3.model('permission').where({ permissionID: id }).delete();
+
+            return _this3.success('删除成功');
         })();
     }
 };

@@ -21,6 +21,16 @@ module.exports = class extends Base {
         return this.success(' success');
     }
 
+    async assignSchoolAction() {
+        const id = this.get('schoolid');
+        const permissionid = this.get('permissionid')
+        const data = {
+            schoolid: id,permissionid:permissionid
+        }
+        let insertid = await this.model('permission_school').add(data);
+        return this.success('分配成功');
+    }
+
     async deleteAction() {
         const id = this.get('id');
         await this.model('permission').where({permissionID: id}).delete();

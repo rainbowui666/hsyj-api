@@ -105,12 +105,12 @@ module.exports = class extends Base {
       const pwd = _this4.post('pwd');
       const data = yield _this4.model('User').where({ userName: username, pwd: pwd }).find();
       if (think.isEmpty(data)) {
-        return _this4.error(403, '账号或密码错误');
+        return _this4.fail(403, '账号或密码错误');
       }
       const id = data.sysUserID;
 
       const model = _this4.model('User');
-      const userData = yield model.query("select u.*,ur.roleid,r.roleName,rp.permissionid,p.permissionName from culture_user u inner join culture_user_role ur on u.sysUserID=ur.sysuserid inner join culture_role r on r.roleID=ur.roleid inner join culture_role_permission rp on rp.roleid=r.roleID inner join culture_permission p on p.permissionID=rp.permissionid where u.sysuserid=" + id);
+      const userData = yield model.query("select u.*,ur.roleid,r.roleName,rp.permissionid,p.permissionName,ps.schoolid from culture_user u inner join culture_user_role ur on u.sysUserID=ur.sysuserid inner join culture_role r on r.roleID=ur.roleid inner join culture_role_permission rp on rp.roleid=r.roleID inner join culture_permission p on p.permissionID=rp.permissionid inner join culture_permission_school ps on ps.permissionid=p.permissionID where u.sysuserid=" + id);
       _this4.session('userinfo', userData);
 
       return _this4.success(userData);
