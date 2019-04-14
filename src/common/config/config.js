@@ -9,6 +9,6 @@ module.exports = {
     notify_url: '' // 微信异步通知，例：https://www.nideshop.com/api/pay/notify
   },
   image:{
-    user:'/usr/local/nginx/static/images/'
+    user:'/usr/local/nginx/html/static/images/'
   }
 };

@@ -16,4 +16,10 @@ module.exports = class extends Base {
             return this.success('学校添加成功')
         }
     }
+
+    async deleteAction(){
+        const id = this.get('sourceid');
+        const date = await this.model('source').where({sourceID:id}).delete();
+        return this.success('删除成功')
+    }
 }

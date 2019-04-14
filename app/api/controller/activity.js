@@ -1,6 +1,7 @@
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 const Base = require('./base.js');
+const _ = require('lodash');
 const fs = require('fs');
 
 module.exports = class extends Base {
@@ -121,17 +122,26 @@ module.exports = class extends Base {
             const model = _this5.model('activity_scenery');
             const pageindex = _this5.get('pageindex') || 1;
             const pagesize = _this5.get('pagesize') || 5;
+            const idcondition = _this5.get('activityid') ? 'a.activityID=' + _this5.get('activityid') : '1=1';
             const start = (pageindex - 1) * pagesize;
-            const data = yield model.query("select s.*,a.activityName,a.startSceneryid,a.endSceneryid,sc.schoolid,sc.address,sc.shdesc,sc.longitude,sc.latitude,sc.sctype,sc.shstate,sc.sceneryTitle from culture_activity_scenery as s left join culture_activity a on a.activityID=s.activityid left join culture_scenery sc on s.sceneryid=sc.sceneryID where a.activityID limit " + start + "," + pagesize + " ");
+            const data = yield model.query("select s.*,a.activityName,a.startSceneryid,a.endSceneryid,sc.schoolid,sc.address,sc.shdesc,sc.longitude,sc.latitude,sc.sctype,sc.shstate,sc.sceneryTitle from culture_activity_scenery as s left join culture_activity a on a.activityID=s.activityid left join culture_scenery sc on s.sceneryid=sc.sceneryID where " + idcondition + " and a.activityID limit " + start + "," + pagesize + " ");
 
             const arrdata = [];
+            let arrScen = [];
+            let arrSchool = [];
             for (const item of data) {
+                item.pics = yield _this5.model('activity').getPicsbyid(item.activityid);
                 item.shstate = yield _this5.model('activity').getstate(item.activityid);
+                arrScen.push(item.sceneryid);
+                arrSchool.push(item.schoolid);
                 // item.question = await this.model('student_activity').studentJoinActivityAndAnswer(studentid,item.activityID,item.questionid)
                 arrdata.push(item);
             }
+            arrScen = _.uniq(arrScen);
+            arrSchool = _.uniq(arrSchool);
+
             data.data = arrdata;
-            return _this5.success({ pageindex: pageindex, pagesize: pagesize, data });
+            return _this5.success({ pageindex: pageindex, pagesize: pagesize, arrScenery: arrScen, arrSchool: arrSchool, data });
         })();
     }
 

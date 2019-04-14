@@ -22,5 +22,15 @@ module.exports = class extends Base {
             }
         })();
     }
+
+    deleteAction() {
+        var _this2 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this2.get('sourceid');
+            const date = yield _this2.model('source').where({ sourceID: id }).delete();
+            return _this2.success('删除成功');
+        })();
+    }
 };
 //# sourceMappingURL=source.js.map

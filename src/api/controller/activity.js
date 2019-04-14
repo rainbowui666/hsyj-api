@@ -1,4 +1,5 @@
 const Base = require('./base.js');
+const _ = require('lodash');
 const fs = require('fs');
 
 module.exports = class extends Base {
@@ -101,17 +102,26 @@ module.exports = class extends Base {
         const model =  this.model('activity_scenery');
         const pageindex = this.get('pageindex') || 1;
         const pagesize = this.get('pagesize') || 5;
+        const idcondition = this.get('activityid') ? 'a.activityID=' + this.get('activityid') : '1=1';
         const start = (pageindex -1) * pagesize;
-        const data = await model.query("select s.*,a.activityName,a.startSceneryid,a.endSceneryid,sc.schoolid,sc.address,sc.shdesc,sc.longitude,sc.latitude,sc.sctype,sc.shstate,sc.sceneryTitle from culture_activity_scenery as s left join culture_activity a on a.activityID=s.activityid left join culture_scenery sc on s.sceneryid=sc.sceneryID where a.activityID limit "+start+","+pagesize+" ");
+        const data = await model.query("select s.*,a.activityName,a.startSceneryid,a.endSceneryid,sc.schoolid,sc.address,sc.shdesc,sc.longitude,sc.latitude,sc.sctype,sc.shstate,sc.sceneryTitle from culture_activity_scenery as s left join culture_activity a on a.activityID=s.activityid left join culture_scenery sc on s.sceneryid=sc.sceneryID where "+idcondition+" and a.activityID limit "+start+","+pagesize+" ");
         
         const arrdata = [];
+        let arrScen = [];
+        let arrSchool = []
         for (const item of data) {
+            item.pics = await this.model('activity').getPicsbyid(item.activityid);
             item.shstate = await this.model('activity').getstate(item.activityid);
+            arrScen.push(item.sceneryid);
+            arrSchool.push(item.schoolid)
             // item.question = await this.model('student_activity').studentJoinActivityAndAnswer(studentid,item.activityID,item.questionid)
             arrdata.push(item)
         }
+        arrScen = _.uniq(arrScen);
+        arrSchool = _.uniq(arrSchool);
+        
         data.data = arrdata;
-        return this.success({pageindex:pageindex,pagesize:pagesize,data})
+        return this.success({pageindex:pageindex,pagesize:pagesize,arrScenery:arrScen,arrSchool:arrSchool,data})
     }
 
     async listAction() {

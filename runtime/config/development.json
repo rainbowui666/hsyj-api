@@ -22,7 +22,7 @@
       "notify_url": ""
     },
     "image": {
-      "user": "/usr/local/nginx/static/images/"
+      "user": "/usr/local/nginx/html/static/images/"
     },
     "publicController": [
       "index",
@@ -114,7 +114,7 @@
       "notify_url": ""
     },
     "image": {
-      "user": "/usr/local/nginx/static/images/"
+      "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
       "type": "file",
@@ -198,7 +198,7 @@
       "notify_url": ""
     },
     "image": {
-      "user": "/usr/local/nginx/static/images/"
+      "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
       "type": "file",
@@ -282,7 +282,7 @@
       "notify_url": ""
     },
     "image": {
-      "user": "/usr/local/nginx/static/images/"
+      "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
       "type": "file",
@@ -366,7 +366,7 @@
       "notify_url": ""
     },
     "image": {
-      "user": "/usr/local/nginx/static/images/"
+      "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
       "type": "file",
@@ -450,7 +450,7 @@
       "notify_url": ""
     },
     "image": {
-      "user": "/usr/local/nginx/static/images/"
+      "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
       "type": "file",
@@ -534,7 +534,7 @@
       "notify_url": ""
     },
     "image": {
-      "user": "/usr/local/nginx/static/images/"
+      "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
       "type": "file",
