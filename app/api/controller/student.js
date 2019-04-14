@@ -49,17 +49,64 @@ module.exports = class extends Base {
         })();
     }
 
-    deleteAction() {
+    getStudentListAction() {
         var _this2 = this;
 
         return _asyncToGenerator(function* () {
-            const id = _this2.get('id');
-            const shstate = _this2.get('shstate');
+            const pageindex = _this2.post('pageindex') || 1;
+            const pagesize = _this2.post('pagesize') || 10;
+
+            const stuno = _this2.post('stuno');
+            const studentName = _this2.post('studentname');
+            const tel = _this2.post('tel');
+            const wxchat = _this2.post('wxchat');
+
+            let stunocondition = '';
+            let studentnamecondition = '';
+            let telcondition = '';
+            let wxcondition = '';
+
+            if (think.isEmpty(stuno)) {
+                stunocondition = '1=1 ';
+            } else {
+                stunocondition = "stuNo='" + stuno + "'";
+            }
+
+            if (think.isEmpty(studentName)) {
+                studentnamecondition = '1=1 ';
+            } else {
+                studentnamecondition = "studentName='" + studentName + "'";
+            }
+
+            if (think.isEmpty(tel)) {
+                telcondition = '1=1 ';
+            } else {
+                telcondition = "tel='" + tel + "'";
+            }
+
+            if (think.isEmpty(wxchat)) {
+                wxcondition = '1=1 ';
+            } else {
+                wxcondition = "wxchat='" + wxchat + "'";
+            }
+
+            const start = (pageindex - 1) * pagesize;
+            const model = _this2.model('student');
+            const data = yield model.query("select * from culture_student where " + stunocondition + " and " + studentnamecondition + " and " + telcondition + " and " + wxcondition + " and studentID limit " + start + "," + pagesize + " ");
+            return _this2.success({ pageindex: pageindex, pagesize: pagesize, data });
+        })();
+    }
+    deleteAction() {
+        var _this3 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this3.get('id');
+            const shstate = _this3.get('shstate');
             const data = {
                 shstate: shstate
             };
-            yield _this2.model('student').where({ studentID: id }).update(data);
-            return _this2.success('成功');
+            yield _this3.model('student').where({ studentID: id }).update(data);
+            return _this3.success('成功');
         })();
     }
 };

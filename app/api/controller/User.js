@@ -37,14 +37,24 @@ module.exports = class extends Base {
         })();
     }
 
-    deleteAction() {
+    getUserListBySchoolidAction() {
         var _this2 = this;
 
         return _asyncToGenerator(function* () {
-            const id = _this2.get('userid');
-            yield _this2.model('User').where({ sysUserID: id }).delete();
+            const schoolid = _this2.get('schoolid');
+            const data = yield _this2.model('User').where({ schoolid: schoolid }).select();
+            return _this2.success(data);
+        })();
+    }
+
+    deleteAction() {
+        var _this3 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this3.get('userid');
+            yield _this3.model('User').where({ sysUserID: id }).delete();
             // await this.model('user_role').where({sysuserid: id}).delete();
-            return _this2.success('删除成功');
+            return _this3.success('删除成功');
         })();
     }
 };

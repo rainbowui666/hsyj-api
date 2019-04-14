@@ -32,6 +32,12 @@ module.exports = class extends Base {
         return this.success(' success');
     }
 
+    async getUserListBySchoolidAction() {
+        const schoolid = this.get('schoolid');
+        const data = await this.model('User').where({schoolid:schoolid}).select();
+        return this.success(data)
+    }
+    
     async deleteAction() {
         const id = this.get('userid');
         await this.model('User').where({sysUserID: id}).delete();
