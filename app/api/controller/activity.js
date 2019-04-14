@@ -141,12 +141,20 @@ module.exports = class extends Base {
         return _asyncToGenerator(function* () {
             const page = _this6.get('page') || 1;
             const size = _this6.get('size') || 10;
+            let userinfo = yield _this6.cache('userinfo');
+            console.log('session', userinfo[0]);
+
             const studentid = _this6.get('studentid');
             const model = _this6.model('activity');
             model._pk = 'activityID';
             const endDate = new Date();
             const date = endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate() + ' 00:00:00';
-            const data = yield model.where({ shstate: 0, endDate: { '>': date } }).page(page, size).countSelect();
+            let data = {};
+            if (userinfo[0].usertype == 0) {
+                data = yield model.where({ shstate: 0, endDate: { '>': date }, createbyuserid: userinfo[0].sysUserID }).page(page, size).countSelect();
+            } else {
+                data = yield model.where({ shstate: 0, endDate: { '>': date } }).page(page, size).countSelect();
+            }
 
             const arrdata = [];
 
@@ -172,25 +180,46 @@ module.exports = class extends Base {
         return _asyncToGenerator(function* () {
             const page = _this7.get('page') || 1;
             const size = _this7.get('size') || 10;
+            let userinfo = yield _this7.cache('userinfo');
 
             const model = _this7.model('question');
             model._pk = 'questionID';
-            const list = yield model.field(['q.questionID', 'q.questiontitle', 'q.answera', 'q.answerb', 'q.answerc', 'q.answerd', 'q.rightanswer', 's.sceneryid', 's.activityid', 'cs.sceneryTitle', 'act.startAddress']).alias('q').join({
-                table: 'activity_scenery',
-                join: 'left',
-                as: 's',
-                on: ['q.questionID', 's.questionID']
-            }).join({
-                table: 'scenery',
-                join: 'left',
-                as: 'cs',
-                on: ['cs.sceneryid', 's.sceneryid']
-            }).join({
-                table: 'activity',
-                join: 'left',
-                as: 'act',
-                on: ['act.activityID', 's.activityid']
-            }).page(page, size).countSelect();
+            let list = [];
+            if (userinfo[0].usertype == 0) {
+                list = yield model.field(['q.questionID', 'q.questiontitle', 'q.answera', 'q.answerb', 'q.answerc', 'q.answerd', 'q.rightanswer', 's.sceneryid', 's.activityid', 'cs.sceneryTitle', 'act.startAddress']).alias('q').join({
+                    table: 'activity_scenery',
+                    join: 'left',
+                    as: 's',
+                    on: ['q.questionID', 's.questionID']
+                }).join({
+                    table: 'scenery',
+                    join: 'left',
+                    as: 'cs',
+                    on: ['cs.sceneryid', 's.sceneryid']
+                }).join({
+                    table: 'activity',
+                    join: 'left',
+                    as: 'act',
+                    on: ['act.activityID', 's.activityid']
+                }).where({ createbyuserid: userinfo[0].sysUserID }).page(page, size).countSelect();
+            } else {
+                list = yield model.field(['q.questionID', 'q.questiontitle', 'q.answera', 'q.answerb', 'q.answerc', 'q.answerd', 'q.rightanswer', 's.sceneryid', 's.activityid', 'cs.sceneryTitle', 'act.startAddress']).alias('q').join({
+                    table: 'activity_scenery',
+                    join: 'left',
+                    as: 's',
+                    on: ['q.questionID', 's.questionID']
+                }).join({
+                    table: 'scenery',
+                    join: 'left',
+                    as: 'cs',
+                    on: ['cs.sceneryid', 's.sceneryid']
+                }).join({
+                    table: 'activity',
+                    join: 'left',
+                    as: 'act',
+                    on: ['act.activityID', 's.activityid']
+                }).page(page, size).countSelect();
+            }
 
             return _this7.success(list);
         })();
@@ -223,6 +252,8 @@ module.exports = class extends Base {
             const groupNum = _this8.post('groupnum');
 
             const id = _this8.get('id');
+            let userinfo = yield _this8.cache('userinfo');
+            // console.log('session',userinfo[0])
 
             let param = {
                 activityName,
@@ -242,7 +273,7 @@ module.exports = class extends Base {
                 settingEnd,
                 endSceneryid,
                 isGroup,
-                groupNum
+                groupNum, createbyuserid: userinfo[0].sysUserID
             };
             if (think.isEmpty(id)) {
                 let model = _this8.model('activity');

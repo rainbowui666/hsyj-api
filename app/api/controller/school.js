@@ -11,15 +11,19 @@ module.exports = class extends Base {
             const page = _this.get('page') || 1;
             const size = _this.get('size') || 10;
             const schoolname = _this.get('schoolname') || '';
+            const areaid = _this.get('areaid') || '';
 
             const model = _this.model('school');
             model._pk = 'schoolID';
             var data;
-            if (schoolname == '') {
+            if (think.isEmpty(schoolname) && think.isEmpty(areaid)) {
                 data = yield model.page(page, size).countSelect();
-            } else {
+            } else if (!think.isEmpty(schoolname)) {
                 data = yield model.where({ schoolName: ['like', `%${schoolname}%`] }).page(page, size).countSelect();
+            } else {
+                data = yield model.where({ areaid: areaid }).page(page, size).countSelect();
             }
+
             const arrdata = [];
             for (const item of data.data) {
                 item.pics = yield _this.model('school').getPicsbyid(item.schoolID);
@@ -31,20 +35,53 @@ module.exports = class extends Base {
         })();
     }
 
-    getAreaAction() {
+    getSchoolListAction() {
         var _this2 = this;
 
         return _asyncToGenerator(function* () {
-            const data = yield _this2.model('area').select();
+            const page = _this2.get('page') || 1;
+            const size = _this2.get('size') || 10;
+            const schoolname = _this2.get('schoolname') || '';
+            const areaid = _this2.get('areaid') || '';
+            let userinfo = yield _this2.cache('userinfo');
+
+            const model = _this2.model('school');
+            model._pk = 'schoolID';
+            var data;
+            if (think.isEmpty(schoolname) && think.isEmpty(areaid)) {
+                data = yield model.where({ schoolID: userinfo[0].schoolid }).page(page, size).countSelect();
+            } else if (!think.isEmpty(schoolname)) {
+                data = yield model.where({ schoolName: ['like', `%${schoolname}%`], schoolID: userinfo[0].schoolid }).page(page, size).countSelect();
+            } else {
+                data = yield model.where({ areaid: areaid, schoolID: userinfo[0].schoolid }).page(page, size).countSelect();
+            }
+
+            const arrdata = [];
+            for (const item of data.data) {
+                item.pics = yield _this2.model('school').getPicsbyid(item.schoolID);
+                item.shstate = yield _this2.model('school').getstate(item.schoolID);
+                arrdata.push(item);
+            }
+            data.data = arrdata;
             return _this2.success(data);
         })();
     }
-    detailAction() {
+
+    getAreaAction() {
         var _this3 = this;
 
         return _asyncToGenerator(function* () {
-            const id = _this3.get('id');
-            const model = _this3.model('school');
+            const data = yield _this3.model('area').select();
+            return _this3.success(data);
+        })();
+    }
+
+    detailAction() {
+        var _this4 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this4.get('id');
+            const model = _this4.model('school');
             // model._pk = 'schoolID';
 
             const data = yield model.where({ schoolID: id }).find();
@@ -52,46 +89,47 @@ module.exports = class extends Base {
             const arrdata = [];
             if (!think.isEmpty(data)) {
                 // for (const item of data.data) {
-                data.scenery = yield _this3.model('school').getScenerybyid(data.schoolID);
-                data.discussList = yield _this3.model('discuss').getDiscussById(id, 2);
+                data.scenery = yield _this4.model('school').getScenerybyid(data.schoolID);
+                data.discussList = yield _this4.model('discuss').getDiscussById(id, 2);
                 //     // item.shstate = await this.model('school').getstate(item.schoolID);
                 //     arrdata.push(item);
                 // }
                 // data.data = arrdata;
             }
-            return _this3.success(data);
+            return _this4.success(data);
         })();
     }
 
     deleteAction() {
-        var _this4 = this;
+        var _this5 = this;
 
         return _asyncToGenerator(function* () {
-            const id = _this4.get('id');
+            const id = _this5.get('id');
             const data = {
                 shstate: 1
             };
-            yield _this4.model('school').where({ schoolID: id }).update(data);
-            return _this4.success('学校删除成功');
+            yield _this5.model('school').where({ schoolID: id }).update(data);
+            return _this5.success('学校删除成功');
         })();
     }
 
     addEditAction() {
-        var _this5 = this;
+        var _this6 = this;
 
         return _asyncToGenerator(function* () {
-            const schoolname = _this5.post('schoolname');
-            const province = _this5.post('province') || '';
-            const city = _this5.post('city') || '';
-            const address = _this5.post('address') || '';
-            const schooldesc = _this5.post('schooldesc');
-            const longitude = _this5.post('longitude');
-            const latitude = _this5.post('latitude');
-            const soundurl = _this5.post('soundurl');
-            const videourl = _this5.post('videourl');
-            const areaid = _this5.post('areaid');
-            const parentid = _this5.post('parentid') || 0;
-            const id = _this5.get('id');
+            const schoolname = _this6.post('schoolname');
+            const province = _this6.post('province') || '';
+            const city = _this6.post('city') || '';
+            const address = _this6.post('address') || '';
+            const schooldesc = _this6.post('schooldesc');
+            const longitude = _this6.post('longitude');
+            const latitude = _this6.post('latitude');
+            const soundurl = _this6.post('soundurl');
+            const videourl = _this6.post('videourl');
+            const areaid = _this6.post('areaid');
+            const parentid = _this6.post('parentid') || 0;
+            const id = _this6.get('id');
+            let userinfo = yield _this6.cache('userinfo');
 
             let param = {
                 schoolName: schoolname,
@@ -102,10 +140,11 @@ module.exports = class extends Base {
                 longitude: longitude,
                 latitude: latitude,
                 soundurl,
-                videourl, areaid, parentid
+                videourl, areaid, parentid,
+                createbyuserid: userinfo[0].sysUserID
             };
             if (think.isEmpty(id)) {
-                let model = _this5.model('school');
+                let model = _this6.model('school');
                 const insertid = yield model.add(param);
 
                 // 上传学校图片
@@ -116,15 +155,15 @@ module.exports = class extends Base {
                     //     sourceAddress: sourceaddress,
                     //     targetid: insertid
                     // });
-                    return _this5.json({
+                    return _this6.json({
                         insertid: insertid
                     });
                 }
             } else {
                 // 1 删除source, 2修改
-                yield _this5.model('source').where({ targetid: id }).delete();
-                yield _this5.model('school').where({ schoolID: id }).update(param);
-                return _this5.success('学校修改成功');
+                yield _this6.model('source').where({ targetid: id }).delete();
+                yield _this6.model('school').where({ schoolID: id }).update(param);
+                return _this6.success('学校修改成功');
             }
         })();
     }

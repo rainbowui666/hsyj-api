@@ -117,13 +117,21 @@ module.exports = class extends Base {
     async listAction() {
         const page = this.get('page') || 1;
         const size = this.get('size') || 10;
+        let userinfo = await this.cache('userinfo');
+        console.log('session',userinfo[0])
+
         const studentid = this.get('studentid');
         const model = this.model('activity');
         model._pk = 'activityID';
         const endDate = new Date();
         const date = endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate()+' 00:00:00'
-        const data = await model.where({shstate: 0, endDate:{'>': date}}).page(page,size).countSelect();
-
+        let data = {};
+        if (userinfo[0].usertype == 0) {
+            data = await model.where({shstate: 0, endDate:{'>': date}, createbyuserid: userinfo[0].sysUserID}).page(page,size).countSelect();
+        } else {
+            data = await model.where({shstate: 0, endDate:{'>': date}}).page(page,size).countSelect();
+        }
+        
         const arrdata = [];
 
         for (const item of data.data) {
@@ -144,31 +152,56 @@ module.exports = class extends Base {
     async list2Action() {
         const page = this.get('page') || 1;
         const size = this.get('size') || 10;
-        
+        let userinfo = await this.cache('userinfo');
+
         const model = this.model('question');
         model._pk = 'questionID';
-        const list = await model.field(['q.questionID','q.questiontitle','q.answera','q.answerb','q.answerc','q.answerd','q.rightanswer',
-            's.sceneryid','s.activityid','cs.sceneryTitle','act.startAddress'])
-        .alias('q')
-        .join({
-            table:'activity_scenery',
-            join:'left',
-            as: 's',
-            on: ['q.questionID', 's.questionID']
-        })
-        .join({
-            table:'scenery',
-            join: 'left',
-            as: 'cs',
-            on: ['cs.sceneryid','s.sceneryid']
-        })
-        .join({
-            table:'activity',
-            join:'left',
-            as: 'act',
-            on: ['act.activityID','s.activityid']
-        }).page(page, size).countSelect();
-
+        let list = [];
+        if (userinfo[0].usertype == 0) {
+            list = await model.field(['q.questionID','q.questiontitle','q.answera','q.answerb','q.answerc','q.answerd','q.rightanswer',
+                's.sceneryid','s.activityid','cs.sceneryTitle','act.startAddress'])
+            .alias('q')
+            .join({
+                table:'activity_scenery',
+                join:'left',
+                as: 's',
+                on: ['q.questionID', 's.questionID']
+            })
+            .join({
+                table:'scenery',
+                join: 'left',
+                as: 'cs',
+                on: ['cs.sceneryid','s.sceneryid']
+            })
+            .join({
+                table:'activity',
+                join:'left',
+                as: 'act',
+                on: ['act.activityID','s.activityid']
+            }).where({createbyuserid: userinfo[0].sysUserID}).page(page, size).countSelect();
+        } else {
+            list = await model.field(['q.questionID','q.questiontitle','q.answera','q.answerb','q.answerc','q.answerd','q.rightanswer',
+                's.sceneryid','s.activityid','cs.sceneryTitle','act.startAddress'])
+            .alias('q')
+            .join({
+                table:'activity_scenery',
+                join:'left',
+                as: 's',
+                on: ['q.questionID', 's.questionID']
+            })
+            .join({
+                table:'scenery',
+                join: 'left',
+                as: 'cs',
+                on: ['cs.sceneryid','s.sceneryid']
+            })
+            .join({
+                table:'activity',
+                join:'left',
+                as: 'act',
+                on: ['act.activityID','s.activityid']
+            }).page(page, size).countSelect();
+        }
         
         return this.success(list)
     }
@@ -197,6 +230,8 @@ module.exports = class extends Base {
         const groupNum = this.post('groupnum');
 
         const id = this.get('id');
+        let userinfo = await this.cache('userinfo');
+        // console.log('session',userinfo[0])
 
         let param = {
             activityName,
@@ -216,7 +251,7 @@ module.exports = class extends Base {
             settingEnd,
             endSceneryid,
             isGroup,
-            groupNum
+            groupNum,createbyuserid: userinfo[0].sysUserID
         }; 
         if (think.isEmpty(id)) {
             let model = this.model('activity');
