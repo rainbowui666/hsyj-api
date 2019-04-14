@@ -21,6 +21,9 @@
       "partner_key": "",
       "notify_url": ""
     },
+    "image": {
+      "user": "/usr/local/nginx/static/images/"
+    },
     "publicController": [
       "index",
       "User"
@@ -110,6 +113,9 @@
       "partner_key": "",
       "notify_url": ""
     },
+    "image": {
+      "user": "/usr/local/nginx/static/images/"
+    },
     "cache": {
       "type": "file",
       "file": {
@@ -190,6 +196,9 @@
       "mch_id": "",
       "partner_key": "",
       "notify_url": ""
+    },
+    "image": {
+      "user": "/usr/local/nginx/static/images/"
     },
     "cache": {
       "type": "file",
@@ -272,6 +281,9 @@
       "partner_key": "",
       "notify_url": ""
     },
+    "image": {
+      "user": "/usr/local/nginx/static/images/"
+    },
     "cache": {
       "type": "file",
       "file": {
@@ -352,6 +364,9 @@
       "mch_id": "",
       "partner_key": "",
       "notify_url": ""
+    },
+    "image": {
+      "user": "/usr/local/nginx/static/images/"
     },
     "cache": {
       "type": "file",
@@ -434,6 +449,9 @@
       "partner_key": "",
       "notify_url": ""
     },
+    "image": {
+      "user": "/usr/local/nginx/static/images/"
+    },
     "cache": {
       "type": "file",
       "file": {
@@ -514,6 +532,9 @@
       "mch_id": "",
       "partner_key": "",
       "notify_url": ""
+    },
+    "image": {
+      "user": "/usr/local/nginx/static/images/"
     },
     "cache": {
       "type": "file",

@@ -7,6 +7,9 @@ module.exports = {
     mch_id: '', // 商户帐号ID
     partner_key: '', // 微信支付密钥
     notify_url: '' // 微信异步通知，例：https://www.nideshop.com/api/pay/notify
+  },
+  image: {
+    user: '/usr/local/nginx/static/images/'
   }
 };
 //# sourceMappingURL=config.js.map

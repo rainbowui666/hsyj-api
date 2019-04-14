@@ -20,10 +20,11 @@ module.exports = class extends Base {
         } else if (extension.indexOf('.png') != -1) {
             extension = '.png';
         }
-        const filename = '/static/upload/' + think.uuid(16) + extension;
+        //   const filename = '/static/upload/' + think.uuid(16) + extension;
+        const filename = this.config('image.user') + think.uuid(16) + extension;
 
         const is = fs.createReadStream(fileInfo.path);
-        const os = fs.createWriteStream(think.ROOT_PATH + '/www' + filename);
+        const os = fs.createWriteStream(filename);
         is.pipe(os);
 
         if (fileInfo) {
