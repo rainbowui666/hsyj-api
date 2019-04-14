@@ -111,7 +111,7 @@ module.exports = class extends Base {
 
       const model = _this4.model('User');
       // let userData = await model.query("select u.*,ur.roleid,r.roleName,rp.permissionid,p.permissionName,ps.schoolid from culture_user u inner join culture_user_role ur on u.sysUserID=ur.sysuserid inner join culture_role r on r.roleID=ur.roleid inner join culture_role_permission rp on rp.roleid=r.roleID inner join culture_permission p on p.permissionID=rp.permissionid inner join culture_permission_school ps on ps.permissionid=p.permissionID where u.sysuserid="+id);
-      let userData = yield model.query("select u.*,s.schoolName from culture_user u left join culture_school s on u.schoolid=s.schoolID where u.sysuserid=" + id);
+      let userData = yield model.query("select u.*,s.schoolName from culture_User u left join culture_school s on u.schoolid=s.schoolID where u.sysuserid=" + id);
 
       const TokenSerivce = _this4.service('token', 'api');
       const sessionKey = yield TokenSerivce.create({ user_id: userData.sysUserID });
