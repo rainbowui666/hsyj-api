@@ -21,7 +21,8 @@ module.exports = class extends Base {
             extension = '.png'
           }
         //   const filename = '/static/upload/' + think.uuid(16) + extension;
-        const filename = this.config('image.user')+ think.uuid(16) + extension;
+        let exname = think.uuid(16) + extension;
+        const filename = this.config('image.user')+ exname;
       
           const is = fs.createReadStream(fileInfo.path);
           const os = fs.createWriteStream(filename);
@@ -31,7 +32,7 @@ module.exports = class extends Base {
             self.json({
                 error: 0,
                 errmsg: 'ok',
-                filename: filename,
+                filename: exname,
                 success: true //只有success返回true才认为上传成功
             });
         }else {
