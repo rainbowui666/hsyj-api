@@ -52,16 +52,25 @@ module.exports = class extends Base {
     })();
   }
 
-  logoutAction() {
+  getUserInfoAction() {
     var _this2 = this;
 
     return _asyncToGenerator(function* () {
-      return _this2.success();
+      const sysuserid = _this2.get('sysuserid');
+      const data = yield _this2.model('User').where({ sysUserID: sysuserid }).find();
+      return _this2.success(data);
+    })();
+  }
+  logoutAction() {
+    var _this3 = this;
+
+    return _asyncToGenerator(function* () {
+      return _this3.success();
     })();
   }
 
   createCaptchaAction() {
-    var _this3 = this;
+    var _this4 = this;
 
     return _asyncToGenerator(function* () {
       var captcha = svgCaptcha.create({
@@ -77,54 +86,63 @@ module.exports = class extends Base {
         height: 30
       });
       // 保存到session,忽略大小写  
-      _this3.ctx.req.session = captcha.text.toLowerCase();
-      console.log(_this3.ctx.req.session); //0xtg 生成的验证码
+      _this4.ctx.req.session = captcha.text.toLowerCase();
+      console.log(_this4.ctx.req.session); //0xtg 生成的验证码
       //保存到cookie 方便前端调用验证
-      _this3.cache('captcha', _this3.ctx.req.session);
-      _this3.ctx.type = 'image/svg+xml';
-      _this3.ctx.res.write(String(captcha.data));
-      _this3.ctx.res.end();
+      _this4.cache('captcha', _this4.ctx.req.session);
+      _this4.ctx.type = 'image/svg+xml';
+      _this4.ctx.res.write(String(captcha.data));
+      _this4.ctx.res.end();
     })();
   }
   adminLoginAction() {
-    var _this4 = this;
+    var _this5 = this;
 
     return _asyncToGenerator(function* () {
-      const captchacode = _this4.post('captchacode');
-      const authcaptha = yield _this4.cache('captcha');
+      const captchacode = _this5.post('captchacode');
+      const authcaptha = yield _this5.cache('captcha');
       if (think.isEmpty(captchacode)) {
-        return _this4.fail('验证码为空');
+        return _this5.fail('验证码为空');
       }
 
       if (captchacode != authcaptha) {
         console.log('fail', captchacode, authcaptha);
-        return _this4.fail('验证码错误');
+        return _this5.fail('验证码错误');
       }
 
-      const username = _this4.post('username');
-      const pwd = _this4.post('pwd');
-      const data = yield _this4.model('User').where({ userName: username, pwd: pwd }).find();
+      const username = _this5.post('username');
+      const pwd = _this5.post('pwd');
+      const data = yield _this5.model('User').where({ userName: username, pwd: pwd }).find();
       if (think.isEmpty(data)) {
-        return _this4.fail(403, '账号或密码错误');
+        return _this5.fail(403, '账号或密码错误');
       }
       const id = data.sysUserID;
 
-      const model = _this4.model('User');
+      const model = _this5.model('User');
       // let userData = await model.query("select u.*,ur.roleid,r.roleName,rp.permissionid,p.permissionName,ps.schoolid from culture_user u inner join culture_user_role ur on u.sysUserID=ur.sysuserid inner join culture_role r on r.roleID=ur.roleid inner join culture_role_permission rp on rp.roleid=r.roleID inner join culture_permission p on p.permissionID=rp.permissionid inner join culture_permission_school ps on ps.permissionid=p.permissionID where u.sysuserid="+id);
       let userData = yield model.query("select u.*,s.schoolName from culture_User u left join culture_school s on u.schoolid=s.schoolID where u.sysuserid=" + id);
 
-      const TokenSerivce = _this4.service('token', 'api');
+      const TokenSerivce = _this5.service('token', 'api');
       const sessionKey = yield TokenSerivce.create({ user_id: userData.sysUserID });
 
       if (think.isEmpty(userData) || think.isEmpty(sessionKey)) {
-        return _this4.fail('登录失败');
+        return _this5.fail('登录失败');
       }
       userData[0].token = sessionKey;
-      _this4.cache('userinfo', userData);
+      _this5.cache('userinfo', userData);
       // console.log(userData)
       // return this.success({ token: sessionKey, userInfo: newUserInfo });
 
-      return _this4.success({ userData });
+      return _this5.success({ userData });
+    })();
+  }
+
+  adminLogoutAction() {
+    var _this6 = this;
+
+    return _asyncToGenerator(function* () {
+      _this6.cache('userinfo', null);
+      return _this6.success('成功退出登录');
     })();
   }
 };

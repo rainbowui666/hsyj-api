@@ -122,7 +122,8 @@ module.exports = class extends Base {
             const model = _this5.model('activity_scenery');
             const pageindex = _this5.get('pageindex') || 1;
             const pagesize = _this5.get('pagesize') || 5;
-            const idcondition = _this5.get('activityid') ? 'a.activityID=' + _this5.get('activityid') : '1=1';
+            const activityid = _this5.get('activityid');
+            const idcondition = activityid ? 'a.activityID=' + activityid : '1=1';
             const start = (pageindex - 1) * pagesize;
             const data = yield model.query("select s.*,a.activityName,a.startSceneryid,a.endSceneryid,sc.schoolid,sc.address,sc.shdesc,sc.longitude,sc.latitude,sc.sctype,sc.shstate,sc.sceneryTitle from culture_activity_scenery as s left join culture_activity a on a.activityID=s.activityid left join culture_scenery sc on s.sceneryid=sc.sceneryID where " + idcondition + " and a.activityID limit " + start + "," + pagesize + " ");
 
@@ -137,11 +138,13 @@ module.exports = class extends Base {
                 // item.question = await this.model('student_activity').studentJoinActivityAndAnswer(studentid,item.activityID,item.questionid)
                 arrdata.push(item);
             }
+            let complateSceneryNum = yield _this5.model('attention_activity').where({ studentid: studentid, activityid: activityid }).count();
+            let complateSchoolNum = yield _this5.model('student_school').where({ studentid: studentid, shstate: 1 }).count();
             arrScen = _.uniq(arrScen);
             arrSchool = _.uniq(arrSchool);
 
             data.data = arrdata;
-            return _this5.success({ pageindex: pageindex, pagesize: pagesize, arrScenery: arrScen, arrSchool: arrSchool, data });
+            return _this5.success({ pageindex: pageindex, pagesize: pagesize, totalScenery: arrScen, totalSchool: arrSchool, complateSceneryNum: complateSceneryNum, complateSchoolNum: complateSchoolNum, data });
         })();
     }
 

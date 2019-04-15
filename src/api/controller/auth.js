@@ -46,6 +46,11 @@ module.exports = class extends Base {
     return this.success({ token: sessionKey, userInfo: newUserInfo });
   }
 
+  async getUserInfoAction() {
+    const sysuserid = this.get('sysuserid');
+    const data = await this.model('User').where({sysUserID:sysuserid}).find()
+    return this.success(data);
+  }
   async logoutAction() {
     return this.success();
   }
@@ -108,5 +113,10 @@ module.exports = class extends Base {
     // return this.success({ token: sessionKey, userInfo: newUserInfo });
 
     return this.success({userData})
+  }
+
+  async adminLogoutAction() {
+    this.cache('userinfo', null);
+    return this.success('成功退出登录');
   }
 };
