@@ -126,6 +126,8 @@ module.exports = class extends Base {
             const idcondition = activityid ? 'a.activityID=' + activityid : '1=1';
             const start = (pageindex - 1) * pagesize;
             const data = yield model.query("select s.*,a.activityName,a.startSceneryid,a.endSceneryid,sc.schoolid,sc.address,sc.shdesc,sc.longitude,sc.latitude,sc.sctype,sc.shstate,sc.sceneryTitle from culture_activity_scenery as s left join culture_activity a on a.activityID=s.activityid left join culture_scenery sc on s.sceneryid=sc.sceneryID where " + idcondition + " and a.activityID limit " + start + "," + pagesize + " ");
+            const counta = yield model.query("select count(*) t from (select s.*,a.activityName,a.startSceneryid,a.endSceneryid,sc.schoolid,sc.address,sc.shdesc,sc.longitude,sc.latitude,sc.sctype,sc.shstate,sc.sceneryTitle from culture_activity_scenery as s left join culture_activity a on a.activityID=s.activityid left join culture_scenery sc on s.sceneryid=sc.sceneryID where " + idcondition + " ) t");
+            const pagecount = Math.ceil(counta[0].t / pagesize);
 
             const arrdata = [];
             let arrScen = [];
@@ -144,7 +146,7 @@ module.exports = class extends Base {
             arrSchool = _.uniq(arrSchool);
 
             data.data = arrdata;
-            return _this5.success({ pageindex: pageindex, pagesize: pagesize, totalScenery: arrScen, totalSchool: arrSchool, complateSceneryNum: complateSceneryNum, complateSchoolNum: complateSchoolNum, data });
+            return _this5.success({ counta: counta[0].t, pagecount: pagecount, pageindex: pageindex, pagesize: pagesize, totalScenery: arrScen, totalSchool: arrSchool, complateSceneryNum: complateSceneryNum, complateSchoolNum: complateSchoolNum, data });
         })();
     }
 
@@ -155,7 +157,7 @@ module.exports = class extends Base {
             const page = _this6.get('page') || 1;
             const size = _this6.get('size') || 10;
             let userinfo = yield _this6.cache('userinfo');
-            console.log('session', userinfo[0]);
+            console.log('session', userinfo);
 
             const studentid = _this6.get('studentid');
             const model = _this6.model('activity');
@@ -198,7 +200,7 @@ module.exports = class extends Base {
             const model = _this7.model('question');
             model._pk = 'questionID';
             let list = [];
-            if (userinfo[0].usertype == 0) {
+            if (userinfo && userinfo[0] && userinfo[0].usertype == 0) {
                 list = yield model.field(['q.questionID', 'q.questiontitle', 'q.answera', 'q.answerb', 'q.answerc', 'q.answerd', 'q.rightanswer', 's.sceneryid', 's.activityid', 'cs.sceneryTitle', 'act.startAddress']).alias('q').join({
                     table: 'activity_scenery',
                     join: 'left',
@@ -214,7 +216,7 @@ module.exports = class extends Base {
                     join: 'left',
                     as: 'act',
                     on: ['act.activityID', 's.activityid']
-                }).where({ createbyuserid: userinfo[0].sysUserID }).page(page, size).countSelect();
+                }).order('activityid desc').where({ createbyuserid: userinfo[0].sysUserID }).page(page, size).countSelect();
             } else {
                 list = yield model.field(['q.questionID', 'q.questiontitle', 'q.answera', 'q.answerb', 'q.answerc', 'q.answerd', 'q.rightanswer', 's.sceneryid', 's.activityid', 'cs.sceneryTitle', 'act.startAddress']).alias('q').join({
                     table: 'activity_scenery',
@@ -231,7 +233,7 @@ module.exports = class extends Base {
                     join: 'left',
                     as: 'act',
                     on: ['act.activityID', 's.activityid']
-                }).page(page, size).countSelect();
+                }).order('activityid desc').page(page, size).countSelect();
             }
 
             return _this7.success(list);

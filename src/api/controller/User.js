@@ -40,7 +40,8 @@ module.exports = class extends Base {
     
     async deleteAction() {
         const id = this.get('userid');
-        await this.model('User').where({sysUserID: id}).delete();
+        await this.model('User').where({sysUserID: id}).update({shstate:1});
+        // await this.model('User').where({sysUserID: id}).delete();
         // await this.model('user_role').where({sysuserid: id}).delete();
         return this.success('删除成功')
     }

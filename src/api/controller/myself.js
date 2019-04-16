@@ -17,7 +17,9 @@ module.exports = class extends Base {
         model._pk = "studentID";
 
         const data = await model.query("select ssc.*, sc.schoolid,sc.longitude,sc.latitude,sc.sceneryTitle from culture_student_scenery ssc left join culture_scenery sc on ssc.sceneryid=sc.sceneryID where ssc.shstate=1 and ssc.studentid="+id+" limit "+start+","+pagesize+"");
-        
+        const counta = await model.query("select count(*) t from (select ssc.*, sc.schoolid,sc.longitude,sc.latitude,sc.sceneryTitle from culture_student_scenery ssc left join culture_scenery sc on ssc.sceneryid=sc.sceneryID where ssc.shstate=1 and ssc.studentid="+id+" ) t");
+        const pagecount = Math.ceil(counta[0].t / pagesize);
+
         const arrdata = [];
         for (const item of data) {
             item.pics = await this.model('scenery').getPicsbyid(item.sceneryid);
@@ -25,7 +27,7 @@ module.exports = class extends Base {
         }
         data.data = arrdata;
 
-        return this.success(data)
+        return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
     }
 
     async getMyActivityListAction() {
@@ -36,6 +38,9 @@ module.exports = class extends Base {
         const model =  this.model('student');
         model._pk = "studentID"
         const data = await model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" limit "+start+","+pagesize+"");
+        const counta = await model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" ) t");
+        const pagecount = Math.ceil(counta[0].t / pagesize);
+
         const arrdata = [];
         for (const item of data) {
             item.pics = await this.model('activity').getPicsbyid(item.activityid);
@@ -50,6 +55,6 @@ module.exports = class extends Base {
             arrdata.push(item);
         }
         data.data = arrdata;
-        return this.success(data);
+        return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
     }
 }

@@ -17,7 +17,9 @@ module.exports = class extends Base {
             // const data = await scenerymodel.field(['sceneryid as id', 'scenerytitle as title', "'scenery' as msgtype", 'longitude','latitude']).where({scenerytitle: ['like', `%${keyword}%`]})
             // .union("select schoolid as id,schoolname as title, 'school' as msgtype,longitude,latitude from culture_school where schoolname like '%"+keyword+"%'")
             // .page(pageindex, pagesize).countSelect()
-            var data = yield scenerymodel.query("Select * from (select sceneryid as id,scenerytitle as title, 'scenery' as msgtype,longitude,latitude from culture_scenery where scenerytitle like '%" + keyword + "%' UNION all select schoolid as id,schoolname as title, 'school' as msgtype,longitude,latitude from culture_school where schoolname like '%" + keyword + "%') as aa where id limit " + start + "," + pagesize + "");
+            var data = yield scenerymodel.query("Select * from (select sceneryid as id,scenerytitle as title, 'scenery' as msgtype,longitude,latitude from culture_scenery where scenerytitle like '%" + keyword + "%' UNION all select schoolid as id,schoolname as title, 'school' as msgtype,longitude,latitude from culture_school where schoolname like '%" + keyword + "%') as aa where id order by id desc limit " + start + "," + pagesize + "");
+            var counta = yield scenerymodel.query("select count(*) t from (Select * from (select sceneryid as id,scenerytitle as title, 'scenery' as msgtype,longitude,latitude from culture_scenery where scenerytitle like '%" + keyword + "%' UNION all select schoolid as id,schoolname as title, 'school' as msgtype,longitude,latitude from culture_school where schoolname like '%" + keyword + "%') as aa ) t ");
+            const pagecount = Math.ceil(counta[0].t / pagesize);
 
             const arrdata = [];
             for (const item of data) {
@@ -31,7 +33,7 @@ module.exports = class extends Base {
                 arrdata.push(item);
             }
             data.data = arrdata;
-            return _this.success({ pageindex: pageindex, pagesize: pagesize, data });
+            return _this.success({ counta: counta[0].t, pagecount: pagecount, pageindex: pageindex, pagesize: pagesize, data });
         })();
     }
 };

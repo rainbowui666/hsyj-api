@@ -17,11 +17,11 @@ module.exports = class extends Base {
             model._pk = 'schoolID';
             var data;
             if (think.isEmpty(schoolname) && think.isEmpty(areaid)) {
-                data = yield model.page(page, size).countSelect();
+                data = yield model.where({ shstate: 0 }).page(page, size).order('schoolID desc').countSelect();
             } else if (!think.isEmpty(schoolname)) {
-                data = yield model.where({ schoolName: ['like', `%${schoolname}%`] }).page(page, size).countSelect();
+                data = yield model.where({ schoolName: ['like', `%${schoolname}%`], shstate: 0 }).order('schoolID desc').page(page, size).countSelect();
             } else {
-                data = yield model.where({ areaid: areaid }).page(page, size).countSelect();
+                data = yield model.where({ areaid: areaid, shstate: 0 }).page(page, size).order('schoolID desc').countSelect();
             }
 
             const arrdata = [];
@@ -80,7 +80,7 @@ module.exports = class extends Base {
         var _this4 = this;
 
         return _asyncToGenerator(function* () {
-            const id = _this4.get('id');
+            const id = _this4.get('schoolid');
             const model = _this4.model('school');
             // model._pk = 'schoolID';
 

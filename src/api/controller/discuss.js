@@ -64,8 +64,10 @@ module.exports = class extends Base {
         }
 
         const start = (pageindex -1) * pagesize;
-        const data = await model.query("select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,  case  when distype=0 then (select scenerytitle from culture_scenery where "+scenerycondition+" limit 1) when distype=1 then (select activityname from culture_activity where "+activitycondition+" limit 1) when distype=2 then (select schoolname from culture_school where "+schoolcondition+" limit 1) when distype=3 then \"APP首页\" end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where "+typeconition+" and "+statusconditionn+" and a.discussid limit "+start+","+pagesize+" ");
-        return this.success({pageindex:pageindex,pagesize:pagesize,data})
+        const data = await model.query("select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,  case  when distype=0 then (select scenerytitle from culture_scenery where "+scenerycondition+" limit 1) when distype=1 then (select activityname from culture_activity where "+activitycondition+" limit 1) when distype=2 then (select schoolname from culture_school where "+schoolcondition+" limit 1) when distype=3 then \"APP首页\" end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where "+typeconition+" and "+statusconditionn+" and a.discussid order by discussID desc limit "+start+","+pagesize+" ");
+        const counta = await model.query("select count(*) t from (select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,  case  when distype=0 then (select scenerytitle from culture_scenery where "+scenerycondition+" limit 1) when distype=1 then (select activityname from culture_activity where "+activitycondition+" limit 1) when distype=2 then (select schoolname from culture_school where "+schoolcondition+" limit 1) when distype=3 then \"APP首页\" end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where "+typeconition+" and "+statusconditionn+" ) t ");
+        const pagecount = Math.ceil(counta[0].t / pagesize); //(counta[0].t + parseInt(pagesize - 1)) / pagesize;
+        return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
     }
 
     async updateAction() {

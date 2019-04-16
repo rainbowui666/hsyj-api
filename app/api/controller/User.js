@@ -52,7 +52,8 @@ module.exports = class extends Base {
 
         return _asyncToGenerator(function* () {
             const id = _this3.get('userid');
-            yield _this3.model('User').where({ sysUserID: id }).delete();
+            yield _this3.model('User').where({ sysUserID: id }).update({ shstate: 1 });
+            // await this.model('User').where({sysUserID: id}).delete();
             // await this.model('user_role').where({sysuserid: id}).delete();
             return _this3.success('删除成功');
         })();

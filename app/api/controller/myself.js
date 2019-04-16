@@ -26,6 +26,8 @@ module.exports = class extends Base {
             model._pk = "studentID";
 
             const data = yield model.query("select ssc.*, sc.schoolid,sc.longitude,sc.latitude,sc.sceneryTitle from culture_student_scenery ssc left join culture_scenery sc on ssc.sceneryid=sc.sceneryID where ssc.shstate=1 and ssc.studentid=" + id + " limit " + start + "," + pagesize + "");
+            const counta = yield model.query("select count(*) t from (select ssc.*, sc.schoolid,sc.longitude,sc.latitude,sc.sceneryTitle from culture_student_scenery ssc left join culture_scenery sc on ssc.sceneryid=sc.sceneryID where ssc.shstate=1 and ssc.studentid=" + id + " ) t");
+            const pagecount = Math.ceil(counta[0].t / pagesize);
 
             const arrdata = [];
             for (const item of data) {
@@ -34,7 +36,7 @@ module.exports = class extends Base {
             }
             data.data = arrdata;
 
-            return _this2.success(data);
+            return _this2.success({ counta: counta[0].t, pagecount: pagecount, pageindex: pageindex, pagesize: pagesize, data });
         })();
     }
 
@@ -49,6 +51,9 @@ module.exports = class extends Base {
             const model = _this3.model('student');
             model._pk = "studentID";
             const data = yield model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " limit " + start + "," + pagesize + "");
+            const counta = yield model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " ) t");
+            const pagecount = Math.ceil(counta[0].t / pagesize);
+
             const arrdata = [];
             for (const item of data) {
                 item.pics = yield _this3.model('activity').getPicsbyid(item.activityid);
@@ -63,7 +68,7 @@ module.exports = class extends Base {
                 arrdata.push(item);
             }
             data.data = arrdata;
-            return _this3.success(data);
+            return _this3.success({ counta: counta[0].t, pagecount: pagecount, pageindex: pageindex, pagesize: pagesize, data });
         })();
     }
 };

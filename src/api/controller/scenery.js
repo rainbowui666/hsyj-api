@@ -11,9 +11,9 @@ module.exports = class extends Base {
 
         var data;
         if (scenerytitle == '') {
-            data = await model.page(page, size).countSelect();
+            data = await model.where({shstate:0}).page(page, size).order('sceneryID desc').countSelect();
         } else {
-            data = await model.where({sceneryTitle: ['like', `%${scenerytitle}%`]}).page(page, size).countSelect();
+            data = await model.where({sceneryTitle: ['like', `%${scenerytitle}%`], shstate:0}).order('sceneryID desc').page(page, size).countSelect();
         }
         const arrdata = [];
         for (const item of data.data) {

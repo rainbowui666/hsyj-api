@@ -95,12 +95,14 @@ module.exports = class extends Base {
       _this4.ctx.res.end();
     })();
   }
+
   adminLoginAction() {
     var _this5 = this;
 
     return _asyncToGenerator(function* () {
       const captchacode = _this5.post('captchacode');
       const authcaptha = yield _this5.cache('captcha');
+      console.log('adminLogin', captchacode, authcaptha);
       if (think.isEmpty(captchacode)) {
         return _this5.fail('验证码为空');
       }
