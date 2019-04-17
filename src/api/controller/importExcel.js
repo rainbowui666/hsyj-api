@@ -11,16 +11,24 @@ module.exports = class extends Base {
         let excelData = [];
         let paramsArr = [];
         let fromTo;
+        let arrschool = [];
         for (var sheet in workbook.Sheets) {
             if (workbook.Sheets.hasOwnProperty(sheet)) {
             fromTo = workbook.Sheets[sheet]['!ref'];
             //解析excel文件得到数据
-            excelData = excelData.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]));
+            // excelData = excelData.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]));
+            arrschool.push(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]))
             }
         }
         // if (think.isEmpty(fileInfo)) {
         //     return this.fail('保存失败');
         //   }
-        console.log(excelData)
+        // let sheetsData = Collect(excelData).map(item => {
+        //     return {
+        //     a        : item['序号'],
+        //     d: item['学术']
+        //     }
+        //     }).all();
+        console.log(arrschool)
     }
 }

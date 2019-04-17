@@ -298,7 +298,7 @@ module.exports = class extends Base {
                 // 上传活动图片
                 if (insertid) {
                     let arr = [];
-                    let arrScenery = needSceneryRang.split(',');
+                    let arrScenery = needSceneryRang && needSceneryRang.indexOf(',') != -1 ? needSceneryRang.split(',') : [];
                     for (let i = 0; i < arrScenery.length; i++) {
                         arr.push({ activityid: insertid, sceneryid: needSceneryRang[i] });
                     }
