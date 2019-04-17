@@ -2,7 +2,6 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 const Base = require('./base.js');
 var svgCaptcha = require('svg-captcha');
-const cookieParase = require('cookie-parser');
 var http = require('http');
 
 module.exports = class extends Base {

@@ -25,6 +25,12 @@ module.exports = class extends Base {
         return this.success(data)
     }
 
+    async getSceneryListBySchoolidsAction() {
+        const schoolids = this.get('schoolids');
+        const data = await this.model('scenery').where({schoolid:['IN', schoolids]}).select();
+        return this.success(data)
+    }
+
     async getscenerydetailAction() {
         const id = this.get('id');
         const model = this.model('scenery');

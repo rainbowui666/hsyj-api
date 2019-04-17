@@ -31,68 +31,78 @@ module.exports = class extends Base {
         })();
     }
 
-    getscenerydetailAction() {
+    getSceneryListBySchoolidsAction() {
         var _this2 = this;
 
         return _asyncToGenerator(function* () {
-            const id = _this2.get('id');
-            const model = _this2.model('scenery');
-            model._pk = 'sceneryID';
-            const data = yield model.where({ sceneryID: id }).find();
-            if (!think.isEmpty(data)) {
-                data.pics = yield _this2.model('scenery').getPicsbyid(data.sceneryID);
-                data.shstate = yield _this2.model('scenery').getstate(data.sceneryID);
-                data.discussList = yield _this2.model('discuss').getDiscussById(id, 0);
-            }
+            const schoolids = _this2.get('schoolids');
+            const data = yield _this2.model('scenery').where({ schoolid: ['IN', schoolids] }).select();
             return _this2.success(data);
         })();
     }
 
-    deleteAction() {
+    getscenerydetailAction() {
         var _this3 = this;
 
         return _asyncToGenerator(function* () {
             const id = _this3.get('id');
-            const data = {
-                shstate: 1
-            };
-            yield _this3.model('scenery').where({ sceneryID: id }).update(data);
-            return _this3.success('删除成功');
+            const model = _this3.model('scenery');
+            model._pk = 'sceneryID';
+            const data = yield model.where({ sceneryID: id }).find();
+            if (!think.isEmpty(data)) {
+                data.pics = yield _this3.model('scenery').getPicsbyid(data.sceneryID);
+                data.shstate = yield _this3.model('scenery').getstate(data.sceneryID);
+                data.discussList = yield _this3.model('discuss').getDiscussById(id, 0);
+            }
+            return _this3.success(data);
         })();
     }
 
-    detailAction() {
+    deleteAction() {
         var _this4 = this;
 
         return _asyncToGenerator(function* () {
             const id = _this4.get('id');
-            const model = _this4.model('scenery');
+            const data = {
+                shstate: 1
+            };
+            yield _this4.model('scenery').where({ sceneryID: id }).update(data);
+            return _this4.success('删除成功');
+        })();
+    }
+
+    detailAction() {
+        var _this5 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this5.get('id');
+            const model = _this5.model('scenery');
             const data = yield model.where({ sceneryID: id }).find();
 
             const arrdata = [];
             // for (const item of data.data) {
-            data.scenery = yield _this4.model('school').getScenerybyid(data.sceneryID);
+            data.scenery = yield _this5.model('school').getScenerybyid(data.sceneryID);
             //     // item.shstate = await this.model('school').getstate(item.schoolID);
             //     arrdata.push(item);
             // }
             // data.data = arrdata;
-            return _this4.success(data);
+            return _this5.success(data);
         })();
     }
 
     addEditAction() {
-        var _this5 = this;
+        var _this6 = this;
 
         return _asyncToGenerator(function* () {
-            const sceneryTitle = _this5.post('scenerytitle');
-            const schoolid = _this5.post('schoolid');
-            const address = _this5.post('address') || '';
-            const shdesc = _this5.post('shdesc');
-            const longitude = _this5.post('longitude');
-            const latitude = _this5.post('latitude');
-            const soundurl = _this5.post('soundurl');
-            const videourl = _this5.post('videourl');
-            const id = _this5.get('id');
+            const sceneryTitle = _this6.post('scenerytitle');
+            const schoolid = _this6.post('schoolid');
+            const address = _this6.post('address') || '';
+            const shdesc = _this6.post('shdesc');
+            const longitude = _this6.post('longitude');
+            const latitude = _this6.post('latitude');
+            const soundurl = _this6.post('soundurl');
+            const videourl = _this6.post('videourl');
+            const id = _this6.get('id');
 
             let param = {
                 sceneryTitle: sceneryTitle,
@@ -105,20 +115,20 @@ module.exports = class extends Base {
                 videourl
             };
             if (think.isEmpty(id)) {
-                let model = _this5.model('scenery');
+                let model = _this6.model('scenery');
                 const insertid = yield model.add(param);
 
                 // 上传景点图片
                 if (insertid) {
-                    return _this5.json({
+                    return _this6.json({
                         insertid: insertid
                     });
                 }
             } else {
                 // 1 删除source, 2修改
-                yield _this5.model('source').where({ targetid: id }).delete();
-                yield _this5.model('scenery').where({ sceneryID: id }).update(param);
-                return _this5.success('景点修改成功');
+                yield _this6.model('source').where({ targetid: id }).delete();
+                yield _this6.model('scenery').where({ sceneryID: id }).update(param);
+                return _this6.success('景点修改成功');
             }
         })();
     }

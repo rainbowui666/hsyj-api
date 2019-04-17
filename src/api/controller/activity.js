@@ -227,6 +227,7 @@ module.exports = class extends Base {
         const meetingPlace = this.post('meetingplace') || '';
         const secondSponsor = this.post('secondsponsor') || '';
         const needSchoolRang= this.post('needschoolrang');
+        const needSceneryRang = this.post('needsceneryrang');
 
         const startDate = this.post('startdate');
         const endDate = this.post('enddate');
@@ -274,6 +275,12 @@ module.exports = class extends Base {
             
             // 上传活动图片
             if (insertid) {
+                let arr = [];
+                let arrScenery =  needSceneryRang.split(',');
+                for (let i = 0; i < arrScenery.length; i++) {
+                    arr.push({activityid: insertid, sceneryid: needSceneryRang[i]});
+                }
+                await this.model('activity_scenery').addMany(arr);
                 return this.json({
                         insertid:insertid
                     });
