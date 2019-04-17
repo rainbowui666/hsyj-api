@@ -302,7 +302,10 @@ module.exports = class extends Base {
                     for (let i = 0; i < arrScenery.length; i++) {
                         arr.push({ activityid: insertid, sceneryid: needSceneryRang[i] });
                     }
-                    yield _this8.model('activity_scenery').addMany(arr);
+                    console.log(arr);
+                    if (arr && arr.length > 0) {
+                        yield _this8.model('activity_scenery').addMany(arr);
+                    }
                     return _this8.json({
                         insertid: insertid
                     });
