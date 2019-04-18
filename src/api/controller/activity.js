@@ -291,7 +291,18 @@ module.exports = class extends Base {
         } else {
             // 1 删除source, 2修改
             await this.model('source').where({targetid:id}).delete();
+            await this.model('activity_scenery').where({activityid:id}).delete();
             await this.model('activity').where({activityID:id}).update(param);
+
+            let arrScenery =  needSceneryRang && needSceneryRang.indexOf(',') != -1 ? needSceneryRang.split(','):[];
+            for (let i = 0; i < arrScenery.length; i++) {
+                arr.push({activityid: insertid, sceneryid: needSceneryRang[i]});
+            }
+            // console.log(arr)
+            if (arr && arr.length > 0) {
+                await this.model('activity_scenery').addMany(arr);
+            }
+
             return this.success('活动修改成功')
         }
         
