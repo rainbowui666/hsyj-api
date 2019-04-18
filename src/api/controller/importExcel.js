@@ -20,6 +20,26 @@ module.exports = class extends Base {
             arrschool.push(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]))
             }
         }
+
+        if (arrschool && arrschool.length > 0) {
+            let arrPublic  = arrschool[0]; // 公办
+            let arrppubschool = []
+            for (let i = 0; i < arrPublic.length; i++) {
+                arrppubschool.push({schoolName: arrPublic[i]['学  校'], ispublic: 1});
+            }
+            await this.model('school').addMany(arrppubschool);
+
+            if (arrschool.length > 1) {
+                let arrprivate = arrschool[1]; // 民办
+                let arrprivateschool = []
+                for (let i = 0; i < arrprivate.length; i++) {
+                    arrprivateschool.push({schoolName:arrprivate[i]['学  校'], ispublic: 0});
+                }
+                await this.model('school').addMany(arrprivateschool);
+            }
+            
+        }
+
         // if (think.isEmpty(fileInfo)) {
         //     return this.fail('保存失败');
         //   }
@@ -29,6 +49,6 @@ module.exports = class extends Base {
         //     d: item['学术']
         //     }
         //     }).all();
-        console.log(arrschool)
+        return this.success(arrschool);
     }
 }

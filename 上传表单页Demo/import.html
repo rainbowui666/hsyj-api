@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="fine-uploader.css">
+    <title>Fine Uploader</title>
+</head>
+<body>
+<div id="fine-uploader-wrapper">
+    <div class="qq-uploader-selector qq-uploader">
+        <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+            <div class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+        </div>
+        <!--<div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+            <span>拖拽上传区域</span>
+        </div>-->
+        <div class="qq-upload-button-selector qq-upload-button">
+            <div>选择文件</div>
+        </div>
+            <span class="qq-drop-processing-selector qq-drop-processing">
+                <span>上传进度</span>
+                <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+            </span>
+        <ul class="qq-upload-list-selector qq-upload-list">
+            <li>
+                <div class="qq-progress-bar-container-selector">
+                    <div class="qq-progress-bar-selector qq-progress-bar"></div>
+                </div>
+                <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                <span class="qq-edit-filename-icon-selector qq-edit-filename-icon"></span>
+                <span class="qq-upload-file-selector qq-upload-file"></span>
+                <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+                <span class="qq-upload-size-selector qq-upload-size"></span>
+                <a class="qq-upload-cancel-selector qq-upload-cancel" href="#">取消</a>
+                <a class="qq-upload-retry-selector qq-upload-retry" href="#">重试</a>
+                <a class="qq-upload-delete-selector qq-upload-delete" href="#">删除</a>
+                <span class="qq-upload-status-text-selector qq-upload-status-text"></span>
+            </li>
+        </ul>
+    </div>
+</div>
+<button id="upload-btn">上传按钮</button>
+<script type="text/javascript" src="fine-uploader.js"></script>
+<script type="text/javascript" src="https://rainbow.ebaotech.com/js/jquery.min.js"></script>
+<script type="text/javascript">
+var insertid = 0;
+var uploader = new qq.FineUploader({
+    element: document.getElementById("fine-uploader-wrapper"), //上传按钮
+    request: {
+        endpoint: 'http://127.0.0.1:8360/api/importExcel/import' //上传接口地址
+    },
+    multiple: true, //是否多个文件
+    autoUpload: false, //是否支持上传
+    validation: {
+        allowedExtensions: ['xlsx', 'xls'], //上传文件约束条件
+        sizeLimit: 2048000 //bytes 2000KB
+    },
+    callbacks: {
+        onSubmit: function(id, fileName) {
+            //文件开始提交
+            console.log(fileName,'文件开始提交');
+        },
+        onUpload: function(id, fileName) {
+            //文件开始上传
+            console.log(fileName,'文件开始提交');
+        },
+        onProgress: function(id, fileName, loaded,  total) {
+            //文件正在上传
+            console.log(fileName,'已上传'+(loaded/total)*100+'%');
+        },
+        onComplete: function(id, fileName, responseJSON) {
+            //文件上传成功
+            console.log(fileName,'上传成功，返回信息为：',responseJSON,id);
+            
+        },
+        onCancel: function(id, fileName) {
+            //取消文件上传
+            console.log('取消',fileName,'上传');
+        }
+    },
+    messages: {
+        noFilesError: '没有选中文件'
+    },
+    text: {
+        formatProgress: "{percent}% of {total_size}",
+        failUpload: "上传失败",
+        waitingForResponse: "上传中...",
+        paused: "暂停"
+    },
+    template: 'fine-uploader-wrapper', //ID
+    debug: true
+});
+ 
+document.getElementById('upload-btn').onclick = function() {
+	// 没有文件上传, 直接调用接口
+   
+     uploader.uploadStoredFiles();
+  
+}
+</script>
+</body>
+</html>
