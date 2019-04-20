@@ -240,35 +240,64 @@ module.exports = class extends Base {
         })();
     }
 
-    addEdit1Action() {
+    getActivityQuestionDetailAction() {
         var _this8 = this;
 
         return _asyncToGenerator(function* () {
-            const activityName = _this8.post('activityname');
-            const sponsor = _this8.post('sponsor') || '';
-            const meetingPlace = _this8.post('meetingplace') || '';
-            const secondSponsor = _this8.post('secondsponsor') || '';
-            const needSchoolRang = _this8.post('needschoolrang');
-            const needSceneryRang = _this8.post('needsceneryrang');
+            const questionid = _this8.get('questionid');
+            const activityid = _this8.get('activityid');
+            const model = _this8.model('question');
+            // model._pk = 'questionID';
 
-            const startDate = _this8.post('startdate');
-            const endDate = _this8.post('enddate');
-            const shdesc = _this8.post('shdesc');
+            let data = yield model.field(['q.questionID', 'q.questiontitle', 'q.answera', 'q.answerb', 'q.answerc', 'q.answerd', 'q.rightanswer', 's.sceneryid', 's.activityid', 'cs.sceneryTitle', 'act.startAddress']).alias('q').join({
+                table: 'activity_scenery',
+                join: 'left',
+                as: 's',
+                on: ['q.questionID', 's.questionID']
+            }).join({
+                table: 'scenery',
+                join: 'left',
+                as: 'cs',
+                on: ['cs.sceneryid', 's.sceneryid']
+            }).join({
+                table: 'activity',
+                join: 'left',
+                as: 'act',
+                on: ['act.activityID', 's.activityid']
+            }).where({ 'q.questionID': questionid, 's.activityid': activityid }).find();
+            return _this8.success(data);
+        })();
+    }
 
-            const shstate = _this8.post('shstate');
-            const startAddress = _this8.post('startaddress');
-            const needSchoolPass = _this8.post('needschoolpass');
-            const needSceneryPass = _this8.post('needscenerypass');
-            const settingStart = _this8.post('settingstart');
-            const startSceneryid = _this8.post('startsceneryid');
+    addEdit1Action() {
+        var _this9 = this;
 
-            const settingEnd = _this8.post('settingend');
-            const endSceneryid = _this8.post('endsceneryid');
-            const isGroup = _this8.post('isgroup');
-            const groupNum = _this8.post('groupnum');
+        return _asyncToGenerator(function* () {
+            const activityName = _this9.post('activityname');
+            const sponsor = _this9.post('sponsor') || '';
+            const meetingPlace = _this9.post('meetingplace') || '';
+            const secondSponsor = _this9.post('secondsponsor') || '';
+            const needSchoolRang = _this9.post('needschoolrang');
+            const needSceneryRang = _this9.post('needsceneryrang');
 
-            const id = _this8.get('id');
-            let userinfo = yield _this8.cache('userinfo');
+            const startDate = _this9.post('startdate');
+            const endDate = _this9.post('enddate');
+            const shdesc = _this9.post('shdesc');
+
+            const shstate = _this9.post('shstate');
+            const startAddress = _this9.post('startaddress');
+            const needSchoolPass = _this9.post('needschoolpass');
+            const needSceneryPass = _this9.post('needscenerypass');
+            const settingStart = _this9.post('settingstart');
+            const startSceneryid = _this9.post('startsceneryid');
+
+            const settingEnd = _this9.post('settingend');
+            const endSceneryid = _this9.post('endsceneryid');
+            const isGroup = _this9.post('isgroup');
+            const groupNum = _this9.post('groupnum');
+
+            const id = _this9.get('id');
+            let userinfo = yield _this9.cache('userinfo');
             // console.log('session',userinfo[0])
 
             let param = {
@@ -292,7 +321,7 @@ module.exports = class extends Base {
                 groupNum, createbyuserid: userinfo[0].sysUserID
             };
             if (think.isEmpty(id)) {
-                let model = _this8.model('activity');
+                let model = _this9.model('activity');
                 const insertid = yield model.add(param);
 
                 // 上传活动图片
@@ -304,17 +333,17 @@ module.exports = class extends Base {
                     }
                     console.log(arr);
                     if (arr && arr.length > 0) {
-                        yield _this8.model('activity_scenery').addMany(arr);
+                        yield _this9.model('activity_scenery').addMany(arr);
                     }
-                    return _this8.json({
+                    return _this9.json({
                         insertid: insertid
                     });
                 }
             } else {
                 // 1 删除source, 2修改
-                yield _this8.model('source').where({ targetid: id }).delete();
-                yield _this8.model('activity_scenery').where({ activityid: id }).delete();
-                yield _this8.model('activity').where({ activityID: id }).update(param);
+                yield _this9.model('source').where({ targetid: id }).delete();
+                yield _this9.model('activity_scenery').where({ activityid: id }).delete();
+                yield _this9.model('activity').where({ activityID: id }).update(param);
 
                 let arrScenery = needSceneryRang && needSceneryRang.indexOf(',') != -1 ? needSceneryRang.split(',') : [];
                 for (let i = 0; i < arrScenery.length; i++) {
@@ -322,28 +351,28 @@ module.exports = class extends Base {
                 }
                 // console.log(arr)
                 if (arr && arr.length > 0) {
-                    yield _this8.model('activity_scenery').addMany(arr);
+                    yield _this9.model('activity_scenery').addMany(arr);
                 }
 
-                return _this8.success('活动修改成功');
+                return _this9.success('活动修改成功');
             }
         })();
     }
 
     addEdit2Action() {
-        var _this9 = this;
+        var _this10 = this;
 
         return _asyncToGenerator(function* () {
-            const sceneryid = _this9.post('sceneryid');
-            const questiontitle = _this9.post('questiontitle');
-            const questiontype = _this9.post('questiontype') || 0;
-            const answera = _this9.post('answera');
-            const answerb = _this9.post('answerb');
-            const answerc = _this9.post('answerc');
-            const answerd = _this9.post('answerd');
-            const rightanswer = _this9.post('rightanswer');
-            const id = _this9.get('id');
-            const activityid = _this9.get('activityid');
+            const sceneryid = _this10.post('sceneryid');
+            const questiontitle = _this10.post('questiontitle');
+            const questiontype = _this10.post('questiontype') || 0;
+            const answera = _this10.post('answera');
+            const answerb = _this10.post('answerb');
+            const answerc = _this10.post('answerc');
+            const answerd = _this10.post('answerd');
+            const rightanswer = _this10.post('rightanswer');
+            const id = _this10.get('id');
+            const activityid = _this10.get('activityid');
 
             const questionData = {
                 sceneryid: sceneryid,
@@ -357,38 +386,25 @@ module.exports = class extends Base {
             };
 
             if (think.isEmpty(id)) {
-                const questId = yield _this9.model('question').add(questionData);
+                const questId = yield _this10.model('question').add(questionData);
                 if (questId) {
-                    yield _this9.model('activity_scenery').add({
+                    yield _this10.model('activity_scenery').add({
                         sceneryid, questionid: questId, activityid: activityid
                     });
                 }
-                return _this9.success('第二步成功');
+                return _this10.success('第二步成功');
             } else {
-                yield _this9.model('activity_scenery').where({ questionid: id }).delete();
-                yield _this9.model('question').where({ questionID: id }).update(questionData);
-                yield _this9.model('activity_scenery').add({
+                yield _this10.model('activity_scenery').where({ questionid: id }).delete();
+                yield _this10.model('question').where({ questionID: id }).update(questionData);
+                yield _this10.model('activity_scenery').add({
                     sceneryid, questionid: id, activityid: activityid
                 });
-                return _this9.success('修改成功');
+                return _this10.success('修改成功');
             }
         })();
     }
 
     deleteAction() {
-        var _this10 = this;
-
-        return _asyncToGenerator(function* () {
-            const id = _this10.get('id');
-            const data = {
-                shstate: 1
-            };
-            yield _this10.model('activity').where({ activityID: id }).update(data);
-            return _this10.success('活动删除成功');
-        })();
-    }
-
-    delete2Action() {
         var _this11 = this;
 
         return _asyncToGenerator(function* () {
@@ -396,8 +412,21 @@ module.exports = class extends Base {
             const data = {
                 shstate: 1
             };
-            yield _this11.model('question').where({ questionID: id }).update(data);
-            return _this11.success('活动第二步问题删除成功');
+            yield _this11.model('activity').where({ activityID: id }).update(data);
+            return _this11.success('活动删除成功');
+        })();
+    }
+
+    delete2Action() {
+        var _this12 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this12.get('id');
+            const data = {
+                shstate: 1
+            };
+            yield _this12.model('question').where({ questionID: id }).update(data);
+            return _this12.success('活动第二步问题删除成功');
         })();
     }
 };

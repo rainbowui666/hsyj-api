@@ -221,6 +221,36 @@ module.exports = class extends Base {
         return this.success(list)
     }
 
+    async getActivityQuestionDetailAction() {
+        const questionid = this.get('questionid');
+        const activityid = this.get('activityid');
+        const model = this.model('question');
+        // model._pk = 'questionID';
+
+        let data =  await model.field(['q.questionID','q.questiontitle','q.answera','q.answerb','q.answerc','q.answerd','q.rightanswer',
+        's.sceneryid','s.activityid','cs.sceneryTitle','act.startAddress'])
+        .alias('q')
+        .join({
+            table:'activity_scenery',
+            join:'left',
+            as: 's',
+            on: ['q.questionID', 's.questionID']
+        })
+        .join({
+            table:'scenery',
+            join: 'left',
+            as: 'cs',
+            on: ['cs.sceneryid','s.sceneryid']
+        })
+        .join({
+            table:'activity',
+            join:'left',
+            as: 'act',
+            on: ['act.activityID','s.activityid']
+        }).where({'q.questionID': questionid, 's.activityid': activityid}).find();
+        return this.success(data)
+    }
+
     async addEdit1Action() {
         const activityName = this.post('activityname');
         const sponsor = this.post('sponsor') || '';
