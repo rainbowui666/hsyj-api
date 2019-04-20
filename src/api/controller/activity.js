@@ -4,8 +4,8 @@ const fs = require('fs');
 
 module.exports = class extends Base {
     async frontListAction() {
-        const page = this.get('page') || 1;
-        const size = this.get('size') || 10;
+        const page = this.get('pageindex') || 1;
+        const size = this.get('pagesize') || 10;
         const studentid = this.get('studentid');
         const model = this.model('activity');
         model._pk = 'activityID';
@@ -130,8 +130,8 @@ module.exports = class extends Base {
     }
 
     async listAction() {
-        const page = this.get('page') || 1;
-        const size = this.get('size') || 10;
+        const page = this.get('pageindex') || 1;
+        const size = this.get('pagesize') || 10;
         let userinfo = await this.cache('userinfo');
         console.log('session',userinfo)
 
@@ -165,14 +165,23 @@ module.exports = class extends Base {
     }
 
     async list2Action() {
-        const page = this.get('page') || 1;
-        const size = this.get('size') || 10;
+        const page = this.get('pageindex') || 1;
+        const size = this.get('pagesize') || 10;
         let userinfo = await this.cache('userinfo');
+        const activityid = this.get('activityid');
+
 
         const model = this.model('question');
         model._pk = 'questionID';
         let list = [];
         if (userinfo && userinfo[0] && userinfo[0].usertype == 0) {
+            console.log('aaa')
+            let condition = {};
+            if (think.isEmpty(activityid)) {
+                condition = {createbyuserid: userinfo[0].sysUserID};
+            } else {
+                condition = {'s.activityid':activityid,createbyuserid: userinfo[0].sysUserID};
+            }
             list = await model.field(['q.questionID','q.questiontitle','q.answera','q.answerb','q.answerc','q.answerd','q.rightanswer',
                 's.sceneryid','s.activityid','cs.sceneryTitle','act.startAddress'])
             .alias('q')
@@ -193,8 +202,15 @@ module.exports = class extends Base {
                 join:'left',
                 as: 'act',
                 on: ['act.activityID','s.activityid']
-            }).order('activityid desc').where({createbyuserid: userinfo[0].sysUserID}).page(page, size).countSelect();
+            }).order('activityid desc').where(condition).page(page, size).countSelect();
         } else {
+            console.log('bbb')
+            let condition = {};
+            if (think.isEmpty(activityid)) {
+                condition = {1: 1};
+            } else {
+                condition['s.activityid'] = activityid;
+            }
             list = await model.field(['q.questionID','q.questiontitle','q.answera','q.answerb','q.answerc','q.answerd','q.rightanswer',
                 's.sceneryid','s.activityid','cs.sceneryTitle','act.startAddress'])
             .alias('q')
@@ -215,7 +231,7 @@ module.exports = class extends Base {
                 join:'left',
                 as: 'act',
                 on: ['act.activityID','s.activityid']
-            }).order('activityid desc').page(page, size).countSelect();
+            }).where(condition).order('activityid desc').page(page, size).countSelect();
         }
         
         return this.success(list)

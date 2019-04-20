@@ -2,8 +2,8 @@ const Base = require('./base.js');
 
 module.exports = class extends Base {
     async indexAction() {
-        const page = this.get('page') || 1;
-        const size = this.get('size') || 10;
+        const page = this.get('pageindex') || 1;
+        const size = this.get('pagesize') || 10;
         const scenerytitle = this.get('scenerytitle') || '';
 
         const model = this.model('scenery');

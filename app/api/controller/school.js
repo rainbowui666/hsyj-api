@@ -8,8 +8,8 @@ module.exports = class extends Base {
         var _this = this;
 
         return _asyncToGenerator(function* () {
-            const page = _this.get('page') || 1;
-            const size = _this.get('size') || 10;
+            const page = _this.get('pageindex') || 1;
+            const size = _this.get('pagesize') || 10;
             const schoolname = _this.get('schoolname') || '';
             const areaid = _this.get('areaid') || '';
 
@@ -39,8 +39,8 @@ module.exports = class extends Base {
         var _this2 = this;
 
         return _asyncToGenerator(function* () {
-            const page = _this2.get('page') || 1;
-            const size = _this2.get('size') || 10;
+            const page = _this2.get('pageindex') || 1;
+            const size = _this2.get('pagesize') || 10;
             const schoolname = _this2.get('schoolname') || '';
             const areaid = _this2.get('areaid') || '';
             let userinfo = yield _this2.cache('userinfo');

@@ -7,8 +7,8 @@ module.exports = class extends Base {
         var _this = this;
 
         return _asyncToGenerator(function* () {
-            const page = _this.get('page') || 1;
-            const size = _this.get('size') || 10;
+            const page = _this.get('pageindex') || 1;
+            const size = _this.get('pagesize') || 10;
             const scenerytitle = _this.get('scenerytitle') || '';
 
             const model = _this.model('scenery');

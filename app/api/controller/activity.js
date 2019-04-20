@@ -9,8 +9,8 @@ module.exports = class extends Base {
         var _this = this;
 
         return _asyncToGenerator(function* () {
-            const page = _this.get('page') || 1;
-            const size = _this.get('size') || 10;
+            const page = _this.get('pageindex') || 1;
+            const size = _this.get('pagesize') || 10;
             const studentid = _this.get('studentid');
             const model = _this.model('activity');
             model._pk = 'activityID';
@@ -154,8 +154,8 @@ module.exports = class extends Base {
         var _this6 = this;
 
         return _asyncToGenerator(function* () {
-            const page = _this6.get('page') || 1;
-            const size = _this6.get('size') || 10;
+            const page = _this6.get('pageindex') || 1;
+            const size = _this6.get('pagesize') || 10;
             let userinfo = yield _this6.cache('userinfo');
             console.log('session', userinfo);
 
@@ -193,14 +193,22 @@ module.exports = class extends Base {
         var _this7 = this;
 
         return _asyncToGenerator(function* () {
-            const page = _this7.get('page') || 1;
-            const size = _this7.get('size') || 10;
+            const page = _this7.get('pageindex') || 1;
+            const size = _this7.get('pagesize') || 10;
             let userinfo = yield _this7.cache('userinfo');
+            const activityid = _this7.get('activityid');
 
             const model = _this7.model('question');
             model._pk = 'questionID';
             let list = [];
             if (userinfo && userinfo[0] && userinfo[0].usertype == 0) {
+                console.log('aaa');
+                let condition = {};
+                if (think.isEmpty(activityid)) {
+                    condition = { createbyuserid: userinfo[0].sysUserID };
+                } else {
+                    condition = { 's.activityid': activityid, createbyuserid: userinfo[0].sysUserID };
+                }
                 list = yield model.field(['q.questionID', 'q.questiontitle', 'q.answera', 'q.answerb', 'q.answerc', 'q.answerd', 'q.rightanswer', 's.sceneryid', 's.activityid', 'cs.sceneryTitle', 'act.startAddress']).alias('q').join({
                     table: 'activity_scenery',
                     join: 'left',
@@ -216,8 +224,15 @@ module.exports = class extends Base {
                     join: 'left',
                     as: 'act',
                     on: ['act.activityID', 's.activityid']
-                }).order('activityid desc').where({ createbyuserid: userinfo[0].sysUserID }).page(page, size).countSelect();
+                }).order('activityid desc').where(condition).page(page, size).countSelect();
             } else {
+                console.log('bbb');
+                let condition = {};
+                if (think.isEmpty(activityid)) {
+                    condition = { 1: 1 };
+                } else {
+                    condition['s.activityid'] = activityid;
+                }
                 list = yield model.field(['q.questionID', 'q.questiontitle', 'q.answera', 'q.answerb', 'q.answerc', 'q.answerd', 'q.rightanswer', 's.sceneryid', 's.activityid', 'cs.sceneryTitle', 'act.startAddress']).alias('q').join({
                     table: 'activity_scenery',
                     join: 'left',
@@ -233,7 +248,7 @@ module.exports = class extends Base {
                     join: 'left',
                     as: 'act',
                     on: ['act.activityID', 's.activityid']
-                }).order('activityid desc').page(page, size).countSelect();
+                }).where(condition).order('activityid desc').page(page, size).countSelect();
             }
 
             return _this7.success(list);
