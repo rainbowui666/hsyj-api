@@ -26,11 +26,21 @@
         "date",
         "where",
         "sourceID",
-        "delete"
+        "delete",
+        "getListBytargetidAndSourceTypeAction",
+        "pageindex",
+        "pagesize",
+        "_pk",
+        "para",
+        "think",
+        "isEmpty",
+        "data",
+        "page",
+        "countSelect"
     ],
-    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,aAAN,GAAkB;AAAA;;AAAA;AACd,kBAAMC,aAAa,MAAKC,IAAL,CAAU,YAAV,CAAnB;AACA,kBAAMC,WAAW,MAAKD,IAAL,CAAU,UAAV,CAAjB;AACA,kBAAME,gBAAgB,MAAKF,IAAL,CAAU,eAAV,CAAtB;;AAEA,kBAAMG,YAAY,MAAM,MAAKC,KAAL,CAAW,QAAX,EAAqBC,GAArB,CAAyB;AAC7CC,4BAAWP,UADkC;AAE7CQ,+BAAeL,aAF8B;AAG7CM,0BAAUP;AAHmC,aAAzB,CAAxB;;AAMA,gBAAIE,SAAJ,EAAe;AACX,uBAAO,MAAKM,OAAL,CAAa,QAAb,CAAP;AACH;AAba;AAcjB;;AAEKC,gBAAN,GAAoB;AAAA;;AAAA;AAChB,kBAAMC,KAAK,OAAKC,GAAL,CAAS,UAAT,CAAX;AACA,kBAAMC,OAAO,MAAM,OAAKT,KAAL,CAAW,QAAX,EAAqBU,KAArB,CAA2B,EAACC,UAASJ,EAAV,EAA3B,EAA0CK,MAA1C,EAAnB;AACA,mBAAO,OAAKP,OAAL,CAAa,MAAb,CAAP;AAHgB;AAInB;AArB+B,CAApC",
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,aAAN,GAAkB;AAAA;;AAAA;AACd,kBAAMC,aAAa,MAAKC,IAAL,CAAU,YAAV,CAAnB;AACA,kBAAMC,WAAW,MAAKD,IAAL,CAAU,UAAV,CAAjB;AACA,kBAAME,gBAAgB,MAAKF,IAAL,CAAU,eAAV,CAAtB;;AAEA,kBAAMG,YAAY,MAAM,MAAKC,KAAL,CAAW,QAAX,EAAqBC,GAArB,CAAyB;AAC7CC,4BAAWP,UADkC;AAE7CQ,+BAAeL,aAF8B;AAG7CM,0BAAUP;AAHmC,aAAzB,CAAxB;;AAMA,gBAAIE,SAAJ,EAAe;AACX,uBAAO,MAAKM,OAAL,CAAa,QAAb,CAAP;AACH;AAba;AAcjB;;AAEKC,gBAAN,GAAoB;AAAA;;AAAA;AAChB,kBAAMC,KAAK,OAAKC,GAAL,CAAS,UAAT,CAAX;AACA,kBAAMC,OAAO,MAAM,OAAKT,KAAL,CAAW,QAAX,EAAqBU,KAArB,CAA2B,EAACC,UAASJ,EAAV,EAA3B,EAA0CK,MAA1C,EAAnB;AACA,mBAAO,OAAKP,OAAL,CAAa,MAAb,CAAP;AAHgB;AAInB;;AAEKQ,wCAAN,GAA4C;AAAA;;AAAA;AACxC,kBAAMT,WAAW,OAAKI,GAAL,CAAS,UAAT,CAAjB;AACA,kBAAMb,aAAa,OAAKa,GAAL,CAAS,YAAT,CAAnB;AACA,kBAAMM,YAAY,OAAKN,GAAL,CAAS,WAAT,KAAyB,CAA3C;AACA,kBAAMO,WAAW,OAAKP,GAAL,CAAS,UAAT,KAAwB,EAAzC;;AAEA,kBAAMR,QAAQ,OAAKA,KAAL,CAAW,QAAX,CAAd;AACAA,kBAAMgB,GAAN,GAAY,UAAZ;;AAEA,gBAAIC,OAAO,EAAX;AACA,gBAAI,CAACC,MAAMC,OAAN,CAAcf,QAAd,CAAD,IAA4B,CAACc,MAAMC,OAAN,CAAcxB,UAAd,CAAjC,EAA4D;AACxDsB,uBAAO,EAACb,UAASA,QAAV,EAAoBF,YAAWP,UAA/B,EAAP;AACH,aAFD,MAEO,IAAG,CAACuB,MAAMC,OAAN,CAAcf,QAAd,CAAJ,EAA6B;AAChCa,uBAAO,EAACb,UAASA,QAAV,EAAP;AACH,aAFM,MAEA;AACHa,uBAAO,EAACf,YAAWP,UAAZ,EAAP;AACH;AACD,kBAAMyB,OAAO,MAAMpB,MAAMU,KAAN,CAAYO,IAAZ,EAAkBI,IAAlB,CAAuBP,SAAvB,EAAkCC,QAAlC,EAA4CO,WAA5C,EAAnB;AACA,mBAAO,OAAKjB,OAAL,CAAae,IAAb,CAAP;AAlBwC;AAmB3C;AA1C+B,CAApC",
     "file": "../../../src/api/controller/source.js",
     "sourcesContent": [
-        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async addAction() {\n        const sourcetype = this.post('sourcetype');\n        const insertid = this.post('insertid');\n        const sourceaddress = this.post('sourceaddress');\n        \n        const insertid2 = await this.model('source').add({\n            sourceType:sourcetype,\n            sourceAddress: sourceaddress,\n            targetid: insertid\n        });\n\n        if (insertid2) {\n            return this.success('学校添加成功')\n        }\n    }\n\n    async deleteAction(){\n        const id = this.get('sourceid');\n        const date = await this.model('source').where({sourceID:id}).delete();\n        return this.success('删除成功')\n    }\n}"
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async addAction() {\n        const sourcetype = this.post('sourcetype');\n        const insertid = this.post('insertid');\n        const sourceaddress = this.post('sourceaddress');\n        \n        const insertid2 = await this.model('source').add({\n            sourceType:sourcetype,\n            sourceAddress: sourceaddress,\n            targetid: insertid\n        });\n\n        if (insertid2) {\n            return this.success('学校添加成功')\n        }\n    }\n\n    async deleteAction(){\n        const id = this.get('sourceid');\n        const date = await this.model('source').where({sourceID:id}).delete();\n        return this.success('删除成功')\n    }\n\n    async getListBytargetidAndSourceTypeAction(){\n        const targetid = this.get('targetid');\n        const sourcetype = this.get('sourcetype');\n        const pageindex = this.get('pageindex') || 1;\n        const pagesize = this.get('pagesize') || 10;\n\n        const model = this.model('source');\n        model._pk = 'sourceID';\n\n        let para = { };\n        if (!think.isEmpty(targetid) && !think.isEmpty(sourcetype)) {\n            para = {targetid:targetid, sourceType:sourcetype}\n        } else if(!think.isEmpty(targetid)) {\n            para = {targetid:targetid}\n        } else {\n            para = {sourceType:sourcetype}\n        }\n        const data = await model.where(para).page(pageindex, pagesize).countSelect();\n        return this.success(data)\n    }\n}"
     ]
 }
