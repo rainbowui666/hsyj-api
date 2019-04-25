@@ -4,22 +4,36 @@ const fileSession = require('think-session-file');
 const mysql = require('think-model-mysql');
 const {Console, File, DateFile} = require('think-logger3');
 const path = require('path');
+const redisCache = require('think-cache-redis');
+const redisSession = require('think-session-redis');
 const isDev = think.env === 'development';
 
 /**
  * cache adapter config
  * @type {Object}
  */
+// exports.cache = {
+//   type: 'file', 
+//   common: {
+//     timeout: 24 * 60 * 60 * 1000 // millisecond
+//   },
+//   file: {
+//     handle: fileCache,
+//     cachePath: path.join(think.ROOT_PATH, 'runtime/cache'), // absoulte path is necessarily required
+//     pathDepth: 1,
+//     gcInterval: 24 * 60 * 60 * 1000 // gc interval
+//   }
+// };
 exports.cache = {
-  type: 'file',
+  type: 'redis',
   common: {
-    timeout: 24 * 60 * 60 * 1000 // millisecond
+      timeout: 24 * 3600 * 1000 // millisecond
   },
-  file: {
-    handle: fileCache,
-    cachePath: path.join(think.ROOT_PATH, 'runtime/cache'), // absoulte path is necessarily required
-    pathDepth: 1,
-    gcInterval: 24 * 60 * 60 * 1000 // gc interval
+  redis: {
+      handle: redisCache,
+      port: 6379,
+      host: '127.0.0.1',
+      password: '000000'
   }
 };
 
@@ -51,18 +65,44 @@ exports.model = {
  * session adapter config
  * @type {Object}
  */
+// exports.session = {
+//   type: 'file',
+//   common: {
+//     cookie: {
+//       name: 'thinkjs'
+//       // keys: ['werwer', 'werwer'],
+//       // signed: true
+//     }
+//   },
+//   file: {
+//     handle: fileSession,
+//     sessionPath: path.join(think.ROOT_PATH, 'runtime/session')
+//   }
+// };
 exports.session = {
-  type: 'file',
+  type: 'redis',
   common: {
-    cookie: {
-      name: 'thinkjs'
-      // keys: ['werwer', 'werwer'],
-      // signed: true
-    }
+      cookie: {
+          name: 'thinkjs',
+          // maxAge: '',
+          // expires: '',
+          path: '/',  // a string indicating the path of the cookie
+          // domain: '',
+          // secure: false,
+          // keys: [],
+          httpOnly: true,
+          sameSite: false,
+          signed: false,
+          overwrite: false
+      }
   },
-  file: {
-    handle: fileSession,
-    sessionPath: path.join(think.ROOT_PATH, 'runtime/session')
+  redis: {
+      handle: redisSession,
+      port: 6379,
+      host: '127.0.0.1',
+      password: '000000',
+      maxAge: 3600 * 1000, // session timeout, if not set, session will be persistent.
+      autoUpdate: false, // update expired time when get session, default is false
   }
 };
 

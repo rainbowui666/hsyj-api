@@ -70,14 +70,5 @@ module.exports = class extends Base {
         return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
     }
 
-    async updateAction() {
-        const id = this.get('id');
-        const shstate = this.get('shstate');
-        const data = {
-            shstate
-        }
-
-        await this.model('discuss').where({discussID:id}).update(data);
-        return this.success('修改成功')
-    }
+    
 }

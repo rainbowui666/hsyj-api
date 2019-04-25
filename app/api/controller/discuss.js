@@ -80,19 +80,5 @@ module.exports = class extends Base {
         })();
     }
 
-    updateAction() {
-        var _this3 = this;
-
-        return _asyncToGenerator(function* () {
-            const id = _this3.get('id');
-            const shstate = _this3.get('shstate');
-            const data = {
-                shstate
-            };
-
-            yield _this3.model('discuss').where({ discussID: id }).update(data);
-            return _this3.success('修改成功');
-        })();
-    }
 };
 //# sourceMappingURL=discuss.js.map

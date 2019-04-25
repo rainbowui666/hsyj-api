@@ -25,5 +25,14 @@ module.exports = class extends think.Model {
             };
         })();
     }
+
+    getJoinNum(activityid) {
+        var _this3 = this;
+
+        return _asyncToGenerator(function* () {
+            const data = yield _this3.model('student_activity').where({ activityid: activityid, shstate: 1 }).select();
+            return data ? data.length : 0;
+        })();
+    }
 };
 //# sourceMappingURL=student_activity.js.map

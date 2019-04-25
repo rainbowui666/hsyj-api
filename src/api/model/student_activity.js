@@ -15,4 +15,9 @@ module.exports = class extends think.Model {
             data,questiondata
         }
     }
+
+    async getJoinNum(activityid) {
+        const data = await this.model('student_activity').where({activityid:activityid, shstate:1}).select();
+        return data ? data.length : 0;
+    }
 }

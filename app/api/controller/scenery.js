@@ -58,78 +58,22 @@ module.exports = class extends Base {
         })();
     }
 
-    deleteAction() {
+    detailAction() {
         var _this4 = this;
 
         return _asyncToGenerator(function* () {
             const id = _this4.get('id');
-            const data = {
-                shstate: 1
-            };
-            yield _this4.model('scenery').where({ sceneryID: id }).update(data);
-            return _this4.success('删除成功');
-        })();
-    }
-
-    detailAction() {
-        var _this5 = this;
-
-        return _asyncToGenerator(function* () {
-            const id = _this5.get('id');
-            const model = _this5.model('scenery');
+            const model = _this4.model('scenery');
             const data = yield model.where({ sceneryID: id }).find();
 
             const arrdata = [];
             // for (const item of data.data) {
-            data.scenery = yield _this5.model('school').getScenerybyid(data.sceneryID);
+            data.scenery = yield _this4.model('school').getScenerybyid(data.sceneryID);
             //     // item.shstate = await this.model('school').getstate(item.schoolID);
             //     arrdata.push(item);
             // }
             // data.data = arrdata;
-            return _this5.success(data);
-        })();
-    }
-
-    addEditAction() {
-        var _this6 = this;
-
-        return _asyncToGenerator(function* () {
-            const sceneryTitle = _this6.post('scenerytitle');
-            const schoolid = _this6.post('schoolid');
-            const address = _this6.post('address') || '';
-            const shdesc = _this6.post('shdesc');
-            const longitude = _this6.post('longitude');
-            const latitude = _this6.post('latitude');
-            const soundurl = _this6.post('soundurl');
-            const videourl = _this6.post('videourl');
-            const id = _this6.get('id');
-
-            let param = {
-                sceneryTitle: sceneryTitle,
-                schoolid: schoolid,
-                address: address,
-                shdesc: shdesc,
-                longitude: longitude,
-                latitude: latitude,
-                soundurl,
-                videourl
-            };
-            if (think.isEmpty(id)) {
-                let model = _this6.model('scenery');
-                const insertid = yield model.add(param);
-
-                // 上传景点图片
-                if (insertid) {
-                    return _this6.json({
-                        insertid: insertid
-                    });
-                }
-            } else {
-                // 1 删除source, 2修改
-                yield _this6.model('source').where({ targetid: id }).delete();
-                yield _this6.model('scenery').where({ sceneryID: id }).update(param);
-                return _this6.success('景点修改成功');
-            }
+            return _this4.success(data);
         })();
     }
 };
