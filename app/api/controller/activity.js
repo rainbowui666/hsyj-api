@@ -165,7 +165,7 @@ module.exports = class extends Base {
             const endDate = new Date();
             const date = endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate() + ' 00:00:00';
             let data = {};
-            if (userinfo[0].usertype == 0) {
+            if (userinfo && userinfo[0].usertype == 0) {
                 data = yield model.where({ shstate: 0, endDate: { '>': date }, createbyuserid: userinfo[0].sysUserID }).page(page, size).countSelect();
             } else {
                 data = yield model.where({ shstate: 0, endDate: { '>': date } }).page(page, size).countSelect();

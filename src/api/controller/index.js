@@ -15,11 +15,11 @@ module.exports = class extends Base {
 
     // await this.cache('home_activity_scenery', null)
     // await this.cache('home_activity_scenery', null, 'redis')
-    const homedata = await this.cache('home_activity_scenery');
-    if (!think.isEmpty(homedata)) {
-      console.log('redis found data ...')
-      return this.success(homedata)
-    }
+    // const homedata = await this.cache('home_activity_scenery');
+    // if (!think.isEmpty(homedata)) {
+    //   console.log('redis found data ...')
+    //   return this.success(homedata)
+    // }
     // 活动推荐
     const model = this.model('activity');
     model._pk = 'activityID';
@@ -46,7 +46,7 @@ module.exports = class extends Base {
 
     console.log('write...')
     let alldata = {activitydata: arrdata, scenerydata: arrdata2}
-    await this.cache('home_activity_scenery', alldata, 'redis')
+    // await this.cache('home_activity_scenery', alldata, 'redis')
     return this.success(alldata)
   }
 

@@ -114,10 +114,10 @@ module.exports = class extends Base {
                 arrdata.push(item);
             }
             data.data = arrdata;
-            console.log('set cache');
-            yield _this3.cache('home_discuss' + pageindex + '_' + pagesize, data, 'redis');
+            // console.log('set cache')
+            // await this.cache('home_discuss'+pageindex+'_'+pagesize, data, 'redis')
 
-            yield _this3.model('pagecache').add({ cachename: 'home_discuss' + pageindex + '_' + pagesize });
+            // await this.model('pagecache').add({cachename:'home_discuss'+pageindex+'_'+pagesize});
 
             return _this3.success(data);
         })();

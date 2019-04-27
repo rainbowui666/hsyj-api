@@ -9,7 +9,7 @@ module.exports = class extends Base {
             studentID,activityid,shstate
         }
         const insertid = await this.model('student_activity').add(data);
-        await this.cache('home_activity_scenery', null, 'redis');
+        // await this.cache('home_activity_scenery', null, 'redis');
         return this.success('活动签到成功');
     }
 }

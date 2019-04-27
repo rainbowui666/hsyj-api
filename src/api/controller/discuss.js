@@ -99,10 +99,10 @@ module.exports = class extends Base {
             arrdata.push(item)
         }
         data.data = arrdata;
-        console.log('set cache')
-        await this.cache('home_discuss'+pageindex+'_'+pagesize, data, 'redis')
+        // console.log('set cache')
+        // await this.cache('home_discuss'+pageindex+'_'+pagesize, data, 'redis')
 
-        await this.model('pagecache').add({cachename:'home_discuss'+pageindex+'_'+pagesize});
+        // await this.model('pagecache').add({cachename:'home_discuss'+pageindex+'_'+pagesize});
 
         return this.success(data)
     }

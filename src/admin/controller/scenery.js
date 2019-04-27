@@ -7,7 +7,7 @@ module.exports = class extends Base {
             shstate: 1
         }
         await this.model('scenery').where({sceneryID:id}).update(data);
-        await this.cache('home_activity_scenery', null, 'redis');
+        // await this.cache('home_activity_scenery', null, 'redis');
         return this.success('删除成功')
     }
 
@@ -38,7 +38,7 @@ module.exports = class extends Base {
         if (think.isEmpty(id)) {
             let model = this.model('scenery');
             const insertid = await model.add(param);
-            await this.cache('home_activity_scenery', null, 'redis');
+            // await this.cache('home_activity_scenery', null, 'redis');
             // 上传景点图片
             if (insertid) {
                 return this.json({
@@ -46,7 +46,7 @@ module.exports = class extends Base {
                     });
             }
         } else {
-            await this.cache('home_activity_scenery', null, 'redis');
+            // await this.cache('home_activity_scenery', null, 'redis');
             // 1 删除source, 2修改
             await this.model('source').where({targetid:id}).delete();
             await this.model('scenery').where({sceneryID:id}).update(param);

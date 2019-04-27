@@ -24,11 +24,11 @@ module.exports = class extends Base {
 
       // await this.cache('home_activity_scenery', null)
       // await this.cache('home_activity_scenery', null, 'redis')
-      const homedata = yield _this2.cache('home_activity_scenery');
-      if (!think.isEmpty(homedata)) {
-        console.log('redis found data ...');
-        return _this2.success(homedata);
-      }
+      // const homedata = await this.cache('home_activity_scenery');
+      // if (!think.isEmpty(homedata)) {
+      //   console.log('redis found data ...')
+      //   return this.success(homedata)
+      // }
       // 活动推荐
       const model = _this2.model('activity');
       model._pk = 'activityID';
@@ -54,9 +54,9 @@ module.exports = class extends Base {
       }
 
       console.log('write...');
-      let alldata = { activitydata: arrdata, scenerydata: arrdata2 };
-      yield _this2.cache('home_activity_scenery', alldata, 'redis');
-      return _this2.success(alldata);
+      let alldata = { activitydata: arrdata, scenerydata: arrdata2
+        // await this.cache('home_activity_scenery', alldata, 'redis')
+      };return _this2.success(alldata);
     })();
   }
 

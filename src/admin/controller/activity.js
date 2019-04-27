@@ -53,7 +53,7 @@ module.exports = class extends Base {
             isrecommend,
             groupNum,createbyuserid: userinfo[0].sysUserID
         }; 
-        await this.model('pagecache').getdatabyname('home_discuss');
+        // await this.model('pagecache').getdatabyname('home_discuss');
 
         if (think.isEmpty(id)) {
             let model = this.model('activity');
@@ -70,7 +70,7 @@ module.exports = class extends Base {
                 if (arr && arr.length > 0) {
                 await this.model('activity_scenery').addMany(arr);
                 }
-                await this.cache('home_activity_scenery', null, 'redis');
+                // await this.cache('home_activity_scenery', null, 'redis');
                 return this.json({
                         insertid:insertid
                     });
@@ -89,7 +89,7 @@ module.exports = class extends Base {
             if (arr && arr.length > 0) {
                 await this.model('activity_scenery').addMany(arr);
             }
-            await this.cache('home_activity_scenery', null, 'redis');
+            // await this.cache('home_activity_scenery', null, 'redis');
             return this.success('活动修改成功')
         }
         
