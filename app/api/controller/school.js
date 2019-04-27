@@ -31,6 +31,7 @@ module.exports = class extends Base {
                 arrdata.push(item);
             }
             data.data = arrdata;
+
             return _this.success(data);
         })();
     }

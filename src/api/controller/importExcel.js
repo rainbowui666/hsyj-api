@@ -25,7 +25,10 @@ module.exports = class extends Base {
             let arrPublic  = arrschool[0]; // 公办
             let arrppubschool = []
             for (let i = 0; i < arrPublic.length; i++) {
-                arrppubschool.push({schoolName: arrPublic[i]['学  校'], ispublic: 1});
+                const datasch = await this.model('school').where({schoolName:arrPublic[i]['学  校']}).count('schoolID');
+                if (datasch == 0) {
+                    arrppubschool.push({schoolName: arrPublic[i]['学  校'], ispublic: 1});
+                }
             }
             await this.model('school').addMany(arrppubschool);
 
