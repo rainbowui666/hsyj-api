@@ -70,5 +70,41 @@ module.exports = class extends Base {
         return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
     }
 
+    async homeDiscussAction() {
+        const model =  this.model('discuss');
+        model._pk = "discussID";
+        const pageindex = this.get('pageindex') || 1;
+        const pagesize = this.get('pagesize') || 5;
+
+        const homedata = await this.cache('home_discuss'+pageindex+'_'+pagesize);
+        if (!think.isEmpty(homedata)) {
+            console.log('read from cache')
+            return this.success(homedata)
+        }
+        const data = await model.where({shstate:1}).order('discussID desc').page(pageindex, pagesize).countSelect();
+
+        const arrdata = [];
+        for (const item of data.data) {
+            if (item.distype == 0) { // 景点
+                item.pics = await this.model('scenery').getPicsbyid(item.targetid);
+            } else if (item.distype == 1) { // 活动
+                item.pics = await this.model('activity').getPicsbyid(item.targetid);
+            } else if (item.distype == 2) {
+                item.pics = await this.model('school').getPicsbyid(item.targetid);
+            } else {
+                item.pics = []
+            }
+            
+            item.poto = await this.model('student').field(['photo','studentName']).where({studentID:item.studentid}).find();
+            arrdata.push(item)
+        }
+        data.data = arrdata;
+        console.log('set cache')
+        await this.cache('home_discuss'+pageindex+'_'+pagesize, data, 'redis')
+
+        await this.model('pagecache').add({cachename:'home_discuss'+pageindex+'_'+pagesize});
+
+        return this.success(data)
+    }
     
 }

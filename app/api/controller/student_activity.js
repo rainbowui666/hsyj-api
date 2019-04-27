@@ -14,7 +14,7 @@ module.exports = class extends Base {
                 studentID, activityid, shstate
             };
             const insertid = yield _this.model('student_activity').add(data);
-
+            yield _this.cache('home_activity_scenery', null, 'redis');
             return _this.success('活动签到成功');
         })();
     }

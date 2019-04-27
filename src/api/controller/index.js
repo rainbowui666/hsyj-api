@@ -23,7 +23,7 @@ module.exports = class extends Base {
     // 活动推荐
     const model = this.model('activity');
     model._pk = 'activityID';
-    const data = await model.field(['activityID', 'activityName']).order('activityID desc').limit(0,5).select();
+    const data = await model.field(['activityID', 'activityName']).where({isrecommend:1}).order('activityID desc').limit(0,5).select();
     
     const arrdata = [];
     for (const item of data) {
@@ -35,7 +35,7 @@ module.exports = class extends Base {
     // 景点推荐
     const model2 = this.model('scenery');
     model2._pk = 'sceneryID';
-    const data2 = await model2.field(['sceneryID', 'sceneryTitle']).order('sceneryID desc').limit(0,5).select();
+    const data2 = await model2.field(['sceneryID', 'sceneryTitle']).where({isrecommend:1}).order('sceneryID desc').limit(0,5).select();
     
     const arrdata2 = [];
     for (const item of data2) {

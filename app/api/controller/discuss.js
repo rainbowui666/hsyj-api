@@ -80,5 +80,48 @@ module.exports = class extends Base {
         })();
     }
 
+    homeDiscussAction() {
+        var _this3 = this;
+
+        return _asyncToGenerator(function* () {
+            const model = _this3.model('discuss');
+            model._pk = "discussID";
+            const pageindex = _this3.get('pageindex') || 1;
+            const pagesize = _this3.get('pagesize') || 5;
+
+            const homedata = yield _this3.cache('home_discuss' + pageindex + '_' + pagesize);
+            if (!think.isEmpty(homedata)) {
+                console.log('read from cache');
+                return _this3.success(homedata);
+            }
+            const data = yield model.where({ shstate: 1 }).order('discussID desc').page(pageindex, pagesize).countSelect();
+
+            const arrdata = [];
+            for (const item of data.data) {
+                if (item.distype == 0) {
+                    // 景点
+                    item.pics = yield _this3.model('scenery').getPicsbyid(item.targetid);
+                } else if (item.distype == 1) {
+                    // 活动
+                    item.pics = yield _this3.model('activity').getPicsbyid(item.targetid);
+                } else if (item.distype == 2) {
+                    item.pics = yield _this3.model('school').getPicsbyid(item.targetid);
+                } else {
+                    item.pics = [];
+                }
+
+                item.poto = yield _this3.model('student').field(['photo', 'studentName']).where({ studentID: item.studentid }).find();
+                arrdata.push(item);
+            }
+            data.data = arrdata;
+            console.log('set cache');
+            yield _this3.cache('home_discuss' + pageindex + '_' + pagesize, data, 'redis');
+
+            yield _this3.model('pagecache').add({ cachename: 'home_discuss' + pageindex + '_' + pagesize });
+
+            return _this3.success(data);
+        })();
+    }
+
 };
 //# sourceMappingURL=discuss.js.map

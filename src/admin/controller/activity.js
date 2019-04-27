@@ -26,6 +26,7 @@ module.exports = class extends Base {
         const endSceneryid = this.post('endsceneryid');
         const isGroup = this.post('isgroup');
         const groupNum = this.post('groupnum');
+        const isrecommend = this.post('isrecommend');
 
         const id = this.get('id');
         let userinfo = await this.cache('userinfo');
@@ -49,8 +50,11 @@ module.exports = class extends Base {
             settingEnd,
             endSceneryid,
             isGroup,
+            isrecommend,
             groupNum,createbyuserid: userinfo[0].sysUserID
         }; 
+        await this.model('pagecache').getdatabyname('home_discuss');
+
         if (think.isEmpty(id)) {
             let model = this.model('activity');
             const insertid = await model.add(param);
@@ -66,6 +70,7 @@ module.exports = class extends Base {
                 if (arr && arr.length > 0) {
                 await this.model('activity_scenery').addMany(arr);
                 }
+                await this.cache('home_activity_scenery', null, 'redis');
                 return this.json({
                         insertid:insertid
                     });
@@ -84,7 +89,7 @@ module.exports = class extends Base {
             if (arr && arr.length > 0) {
                 await this.model('activity_scenery').addMany(arr);
             }
-
+            await this.cache('home_activity_scenery', null, 'redis');
             return this.success('活动修改成功')
         }
         
@@ -112,7 +117,7 @@ module.exports = class extends Base {
             answerD: answerd,
             rightAnswer: rightanswer
         }
-
+await this.model('pagecache').getdatabyname('home_discuss');
         if (think.isEmpty(id)) {
             const questId = await this.model('question').add(questionData);
             if (questId) {
@@ -136,6 +141,7 @@ module.exports = class extends Base {
         const data = {
             shstate: 1
         }
+        await this.model('pagecache').getdatabyname('home_discuss');
         await this.model('activity').where({activityID:id}).update(data);
         return this.success('活动删除成功')
     }
@@ -145,6 +151,7 @@ module.exports = class extends Base {
         const data = {
             shstate: 1
         }
+        await this.model('pagecache').getdatabyname('home_discuss');
         await this.model('question').where({questionID:id}).update(data);
         return this.success('活动第二步问题删除成功')
     }

@@ -6,6 +6,7 @@ module.exports = class extends Base {
         const data = {
             shstate: 1
         }
+        await this.model('pagecache').getdatabyname('home_discuss');
         await this.model('school').where({schoolID:id}).update(data);
         return this.success('学校删除成功')
     }
@@ -37,6 +38,7 @@ module.exports = class extends Base {
             videourl,areaid,parentid,
             createbyuserid: userinfo[0].sysUserID
         }; 
+        await this.model('pagecache').getdatabyname('home_discuss');
         if (think.isEmpty(id)) {
             let model = this.model('school');
             const insertid = await model.add(param);
