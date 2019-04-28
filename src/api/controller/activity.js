@@ -11,7 +11,7 @@ module.exports = class extends Base {
         model._pk = 'activityID';
         const endDate = new Date();
         const date = endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate()+' 00:00:00'
-        const data = await model.where({shstate: 0, endDate:{'>': date}}).page(page,size).countSelect();
+        const data = await model.where({shstate: 0, endDate:{'>': date}}).order('activityID desc').page(page,size).countSelect();
 
         const arrdata = [];
 
@@ -142,9 +142,9 @@ module.exports = class extends Base {
         const date = endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate()+' 00:00:00'
         let data = {};
         if (userinfo && userinfo[0].usertype == 0) {
-            data = await model.where({shstate: 0, endDate:{'>': date}, createbyuserid: userinfo[0].sysUserID}).page(page,size).countSelect();
+            data = await model.where({shstate: 0, endDate:{'>': date}, createbyuserid: userinfo[0].sysUserID}).order('activityID desc').page(page,size).countSelect();
         } else {
-            data = await model.where({shstate: 0, endDate:{'>': date}}).page(page,size).countSelect();
+            data = await model.where({shstate: 0, endDate:{'>': date}}).page(page,size).order('activityID desc').countSelect();
         }
         
         const arrdata = [];
