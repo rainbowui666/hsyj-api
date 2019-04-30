@@ -59,7 +59,7 @@ module.exports = class extends Base {
   async adminLoginAction() {
     const captchacode = this.post('captchacode');
     const authcaptha = await this.cache('captcha');
-    console.log('adminLogin', captchacode, authcaptha)
+    // console.log('adminLogin', captchacode, authcaptha)
     if (think.isEmpty(captchacode)) {
       return this.fail('验证码为空')
     }

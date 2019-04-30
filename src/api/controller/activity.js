@@ -177,7 +177,7 @@ module.exports = class extends Base {
         if (userinfo && userinfo[0] && userinfo[0].usertype == 0) {
             console.log('aaa')
             let condition = {};
-            if (think.isEmpty(activityid)) {
+            if (think.isEmpty(activityid)|| activityid == 'undefined') {
                 condition = {createbyuserid: userinfo[0].sysUserID};
             } else {
                 condition = {'s.activityid':activityid,createbyuserid: userinfo[0].sysUserID};
@@ -206,7 +206,7 @@ module.exports = class extends Base {
         } else {
             console.log('bbb')
             let condition = {};
-            if (think.isEmpty(activityid)) {
+            if (think.isEmpty(activityid) || activityid == 'undefined') {
                 condition = {1: 1};
             } else {
                 condition['s.activityid'] = activityid;

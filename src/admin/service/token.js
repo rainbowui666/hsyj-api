@@ -6,11 +6,13 @@ module.exports = class extends think.Service {
    * 根据header中的X-Nideshop-Token值获取用户id
    */
   async getUserId(token) {
+    
     if (!token) {
       return 0;
     }
 
     const result = await this.parse(token);
+    console.log('aaa', result)
     if (think.isEmpty(result) || result.user_id <= 0) {
       return 0;
     }

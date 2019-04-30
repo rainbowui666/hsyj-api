@@ -26,10 +26,14 @@ module.exports = class extends Base {
         const endSceneryid = this.post('endsceneryid');
         const isGroup = this.post('isgroup');
         const groupNum = this.post('groupnum');
-        const isrecommend = this.post('isrecommend');
+        const isrecommend = this.post('isrecommend') || 0;
 
         const id = this.get('id');
         let userinfo = await this.cache('userinfo');
+
+        if (think.isEmpty(userinfo)) {
+            return this.fail('请先登录')
+        }
         // console.log('session',userinfo[0])
 
         let param = {
@@ -54,14 +58,14 @@ module.exports = class extends Base {
             groupNum,createbyuserid: userinfo[0].sysUserID
         }; 
         // await this.model('pagecache').getdatabyname('home_discuss');
-
+        let arr = [];
         if (think.isEmpty(id)) {
             let model = this.model('activity');
             const insertid = await model.add(param);
             
             // 上传活动图片
             if (insertid) {
-                let arr = [];
+                
                 let arrScenery =  needSceneryRang && needSceneryRang.indexOf(',') != -1 ? needSceneryRang.split(','):[];
                 for (let i = 0; i < arrScenery.length; i++) {
                     arr.push({activityid: insertid, sceneryid: needSceneryRang[i]});
@@ -83,7 +87,7 @@ module.exports = class extends Base {
 
             let arrScenery =  needSceneryRang && needSceneryRang.indexOf(',') != -1 ? needSceneryRang.split(','):[];
             for (let i = 0; i < arrScenery.length; i++) {
-                arr.push({activityid: insertid, sceneryid: needSceneryRang[i]});
+                arr.push({activityid: id, sceneryid: needSceneryRang[i]});
             }
             // console.log(arr)
             if (arr && arr.length > 0) {

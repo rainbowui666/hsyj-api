@@ -33,7 +33,7 @@ module.exports = class extends think.Controller {
    * @returns {*}
    */
   getLoginUserId() {
-    return this.ctx.state.userId;
+    return this.ctx.state;
   }
 };
 //# sourceMappingURL=base.js.map
