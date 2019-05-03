@@ -123,5 +123,18 @@ module.exports = class extends Base {
         })();
     }
 
+    likediscussAction() {
+        var _this4 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this4.get('discussid');
+            let data = yield _this4.model('discuss').where({ discussID: id }).find();
+            let clicknum = data.clicknum + 1;
+            const para = { clicknum: clicknum };
+            yield _this4.model('discuss').where({ discussID: id }).update(para);
+            return _this4.success('点赞成功');
+        })();
+    }
+
 };
 //# sourceMappingURL=discuss.js.map

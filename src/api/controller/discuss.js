@@ -106,5 +106,14 @@ module.exports = class extends Base {
 
         return this.success(data)
     }
+
+    async likediscussAction() {
+        const id = this.get('discussid');
+        let data = await this.model('discuss').where({discussID:id}).find();
+        let clicknum = data.clicknum + 1;
+        const para = {clicknum:clicknum};
+        await this.model('discuss').where({discussID:id}).update(para);
+        return this.success('点赞成功');
+    }
     
 }

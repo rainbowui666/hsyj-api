@@ -163,12 +163,14 @@ module.exports = class extends Base {
             const model = _this6.model('activity');
             model._pk = 'activityID';
             const endDate = new Date();
-            const date = endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate() + ' 00:00:00';
+            let date = endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate() + ' 00:00:00';
+            date = '2019-04-14 00:00:00';
+            console.log('list', date);
             let data = {};
             if (userinfo && userinfo[0].usertype == 0) {
-                data = yield model.where({ shstate: 0, endDate: { '>': date }, createbyuserid: userinfo[0].sysUserID }).order('activityID desc').page(page, size).countSelect();
+                data = yield model.where({ shstate: 0, endDate: { '>': think.datetime(date, 'YYYY-MM-DD') }, createbyuserid: userinfo[0].sysUserID }).order('activityID desc').page(page, size).countSelect();
             } else {
-                data = yield model.where({ shstate: 0, endDate: { '>': date } }).page(page, size).order('activityID desc').countSelect();
+                data = yield model.where({ shstate: 0, endDate: { '>': think.datetime(date, 'YYYY-MM-DD') } }).page(page, size).order('activityID desc').countSelect();
             }
 
             const arrdata = [];
@@ -180,6 +182,7 @@ module.exports = class extends Base {
                 // console.log(Number(new Date(item.startDate)), Number(new Date()), Number(new Date(item.endDate)))
 
                 item.needSchoolRangName = yield _this6.model('school').getSchoolNameByIds(item.needSchoolRang);
+                item.sceneryRange = yield _this6.model('activity_scenery').getsceneryrangebyid(item.activityID);
                 // item.shstate = await this.model('activity').getstate(item.activityID);
                 arrdata.push(item);
             }
