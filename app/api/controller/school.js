@@ -100,5 +100,15 @@ module.exports = class extends Base {
             return _this4.success(data);
         })();
     }
+
+    getChildSchoolAction() {
+        var _this5 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this5.get('schoolid');
+            const data = yield _this5.model('school').where({ parentid: id }).select();
+            return _this5.success(data);
+        })();
+    }
 };
 //# sourceMappingURL=school.js.map

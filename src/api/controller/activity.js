@@ -3,6 +3,20 @@ const _ = require('lodash');
 const fs = require('fs');
 
 module.exports = class extends Base {
+    async getSwipeActAction() {
+        const model = this.model('activity');
+        model._pk = 'activityID';
+        const data = await model.field(['activityID', 'activityName']).where({isrecommend:1, shstate:0}).order('activityID desc').limit(0,5).select();
+        
+        const arrdata = [];
+        for (const item of data) {
+            item.pics = await this.model('activity').getPicsbyid(item.activityID);
+            item.joinnum = await this.model('student_activity').getJoinNum(item.activityID);
+            arrdata.push(item);
+        }
+
+        return this.success(data)
+    }
     async frontListAction() {
         const page = this.get('pageindex') || 1;
         const size = this.get('pagesize') || 10;

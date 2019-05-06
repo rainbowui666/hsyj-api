@@ -94,7 +94,7 @@ module.exports = class extends Base {
                 console.log('read from cache');
                 return _this3.success(homedata);
             }
-            const data = yield model.where({ shstate: 1 }).order('discussID desc').page(pageindex, pagesize).countSelect();
+            const data = yield model.where({ shstate: 1, isrecommend: 1 }).order('discussID desc').page(pageindex, pagesize).countSelect();
 
             const arrdata = [];
             for (const item of data.data) {

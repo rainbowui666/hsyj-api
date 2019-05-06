@@ -23,7 +23,7 @@ module.exports = class extends Base {
     // 活动推荐
     const model = this.model('activity');
     model._pk = 'activityID';
-    const data = await model.field(['activityID', 'activityName']).where({isrecommend:1}).order('activityID desc').limit(0,5).select();
+    const data = await model.field(['activityID', 'activityName']).where({isrecommend:1, shstate:0}).order('activityID desc').limit(0,5).select();
     
     const arrdata = [];
     for (const item of data) {
@@ -35,7 +35,7 @@ module.exports = class extends Base {
     // 景点推荐
     const model2 = this.model('scenery');
     model2._pk = 'sceneryID';
-    const data2 = await model2.field(['sceneryID', 'sceneryTitle']).where({isrecommend:1}).order('sceneryID desc').limit(0,5).select();
+    const data2 = await model2.field(['sceneryID', 'sceneryTitle']).where({isrecommend:1, shstate:0}).order('sceneryID desc').limit(0,5).select();
     
     const arrdata2 = [];
     for (const item of data2) {
@@ -44,7 +44,7 @@ module.exports = class extends Base {
       arrdata2.push(item);
     }
 
-    console.log('write...')
+    // console.log('write...')
     let alldata = {activitydata: arrdata, scenerydata: arrdata2}
     // await this.cache('home_activity_scenery', alldata, 'redis')
     return this.success(alldata)

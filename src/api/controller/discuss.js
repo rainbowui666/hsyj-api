@@ -81,7 +81,7 @@ module.exports = class extends Base {
             console.log('read from cache')
             return this.success(homedata)
         }
-        const data = await model.where({shstate:1}).order('discussID desc').page(pageindex, pagesize).countSelect();
+        const data = await model.where({shstate:1, isrecommend:1}).order('discussID desc').page(pageindex, pagesize).countSelect();
 
         const arrdata = [];
         for (const item of data.data) {

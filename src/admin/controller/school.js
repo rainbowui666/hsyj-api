@@ -1,6 +1,54 @@
 const Base = require('./base.js');
 
 module.exports = class extends Base {
+    async indexAction() {
+        const page = this.get('pageindex') || 1;
+        const size = this.get('pagesize') || 10;
+        const schoolname = this.get('schoolname') || '';
+        const areaid = this.get('areaid') || '';
+        let userinfo = await this.cache('userinfo');
+        if (think.isEmpty(userinfo)) {
+            return this.field('请先登录')
+        }
+
+        const model = this.model('school');
+        model._pk = 'schoolID';
+        var data;
+        if (think.isEmpty(schoolname) && think.isEmpty(areaid)) {
+            if (userinfo[0].usertype == 1) { // 管理员
+                data = await model.where({shstate: 0}).page(page, size).order('schoolID desc').countSelect();
+            } else {
+                data = await model.where({shstate: 0, 
+                    _complex:{schoolID: userinfo[0].schoolid, parentid:userinfo[0].schoolid,_logic:'or'}}).page(page, size).order('schoolID desc').countSelect();
+            }
+        } else if (!think.isEmpty(schoolname)) {
+            if (userinfo[0].usertype == 1) { // 管理员
+                data = await model.where({schoolName: ['like', `%${schoolname}%`], shstate: 0}).order('schoolID desc').page(page, size).countSelect();
+            } else {
+                data = await model.where({schoolName: ['like', `%${schoolname}%`], shstate: 0,
+                _complex:{schoolID: userinfo[0].schoolid, parentid:userinfo[0].schoolid,_logic:'or'}}).order('schoolID desc').page(page, size).countSelect();
+            }
+        } else {
+            if (userinfo[0].usertype == 1) { // 管理员
+                data = await model.where({areaid: areaid, shstate: 0}).page(page, size).order('schoolID desc').countSelect();
+            } else {
+                data = await model.where({areaid: areaid, shstate: 0, 
+                    _complex:{schoolID: userinfo[0].schoolid,parentid:userinfo[0].schoolid, _logic:'or'}}).page(page, size).order('schoolID desc').countSelect();
+            }
+        }
+        
+        const arrdata = [];
+        for (const item of data.data) {
+            item.pics = await this.model('school').getPicsbyid(item.schoolID);
+            item.shstate = await this.model('school').getstate(item.schoolID);
+            arrdata.push(item);
+        }
+        data.data = arrdata;
+
+        
+        return this.success(data)
+    }
+
     async deleteAction() {
         const id = this.get('id');
         const data = {

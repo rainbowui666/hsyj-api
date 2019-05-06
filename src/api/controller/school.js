@@ -82,4 +82,10 @@ module.exports = class extends Base {
         }
         return this.success(data)
     }
+
+    async getChildSchoolAction(){
+        const id = this.get('schoolid');
+        const data = await this.model('school').where({parentid:id}).select();
+        return this.success(data);
+    }
 }
