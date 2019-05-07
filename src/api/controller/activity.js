@@ -154,8 +154,8 @@ module.exports = class extends Base {
         model._pk = 'activityID';
         const endDate = new Date();
         let date = endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate()+' 00:00:00';
-        date = '2019-04-14 00:00:00';
-        console.log('list', date)
+        // date = '2019-04-14 00:00:00';
+        // console.log('list', date)
         let data = {};
         if (userinfo && userinfo[0].usertype == 0) {
             data = await model.where({shstate: 0, endDate:{'>': think.datetime(date,'YYYY-MM-DD')}, createbyuserid: userinfo[0].sysUserID}).order('activityID desc').page(page,size).countSelect();

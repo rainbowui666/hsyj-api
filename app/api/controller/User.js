@@ -9,7 +9,7 @@ module.exports = class extends Base {
 
         return _asyncToGenerator(function* () {
             const schoolid = _this.get('schoolid');
-            const data = yield _this.model('User').where({ schoolid: schoolid }).select();
+            const data = yield _this.model('User').where({ schoolid: schoolid, shstate: 0 }).select();
             return _this.success(data);
         })();
     }

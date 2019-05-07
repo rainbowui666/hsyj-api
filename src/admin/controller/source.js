@@ -17,6 +17,24 @@ module.exports = class extends Base {
         }
     }
 
+    async editAction() {
+        const sourceid = this.post('sourceid');
+        const sourcetype = this.post('sourcetye');
+        const sourceaddress = this.post('sourceaddress');
+        const targetid = this.post('targetid');
+        const picdesc = this.post('picdesc') || '';
+
+        const para = {
+            sourceType:sourcetype,
+            sourceAddress: sourceaddress,
+            targetid:targetid,
+            picdesc: picdesc
+        }
+
+        await this.model('source').where({sourceID: sourceid}).update(para);
+        return this.success('修改成功')
+    }
+    
     async deleteAction(){
         const id = this.get('sourceid');
         const date = await this.model('source').where({sourceID:id}).delete();

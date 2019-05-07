@@ -4,6 +4,20 @@ module.exports = class extends think.Model {
         return data;
     }
 
+    async getSchoolNameByIds(ids) {
+        let str = '';
+        if (think.isEmpty(ids)) return '';
+        let arr = ids.split(',');
+        for (let i = 0; i < arr.length; i++) {
+            let name = await this.model('school').field(['schoolName']).where({schoolID:arr[i]}).find();
+            str += name.schoolName +','
+        }
+        if (str && str.length > 0) {
+            str = str.substr(0, str.length -1);
+        }
+        return str;
+    }
+    
     async getstate(id) {
         const model = this.model('student_school');
         model._pk = 'schoolid';

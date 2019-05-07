@@ -3,6 +3,41 @@ const _ = require('lodash');
 const fs = require('fs');
 
 module.exports = class extends Base {
+    async listAction() {
+        const page = this.get('pageindex') || 1;
+        const size = this.get('pagesize') || 10;
+        let userinfo = await this.cache('userinfo');
+        console.log('session',userinfo)
+
+        const studentid = this.get('studentid');
+        const model = this.model('activity');
+        model._pk = 'activityID';
+        
+        let data = {};
+        if (userinfo && userinfo[0].usertype == 0) {
+            data = await model.where({shstate: 0, createbyuserid: userinfo[0].sysUserID}).order('activityID desc').page(page,size).countSelect();
+        } else {
+            data = await model.where({shstate: 0 }).page(page,size).order('activityID desc').countSelect();
+        }
+        
+        const arrdata = [];
+
+        for (const item of data.data) {
+            item.pics = await this.model('activity').getPicsbyid(item.activityID);
+            item.sceneryCount = await this.model('activity_scenery').where({activityid:item.activityID}).count('activityid');
+            item.questionCount = 1; //await this.model('question').where({activityid:item.activityID}).count('activityid');
+            // console.log(Number(new Date(item.startDate)), Number(new Date()), Number(new Date(item.endDate)))
+        
+            item.needSchoolRangName = await this.model('school').getSchoolNameByIds(item.needSchoolRang);
+            item.sceneryRange = await this.model('activity_scenery').getsceneryrangebyid(item.activityID);
+            // item.shstate = await this.model('activity').getstate(item.activityID);
+            arrdata.push(item);
+        }
+        data.data = arrdata;
+
+        return this.success(data)
+    }
+
     async addEdit1Action() {
         const activityName = this.post('activityname');
         const sponsor = this.post('sponsor') || '';
@@ -83,11 +118,11 @@ module.exports = class extends Base {
             }
         } else {
             // 1 删除source, 2修改
-            await this.model('source').where({targetid:id}).delete();
-            await this.model('activity_scenery').where({activityid:id}).delete();
+            // await this.model('source').where({targetid:id}).delete();        
             await this.model('activity').where({activityID:id}).update(param);
 
             if (needSceneryRang.indexOf(',') != -1) {
+                await this.model('activity_scenery').where({activityid:id}).delete();
                 let arrScenery =  needSceneryRang.split(',');
                 for (let i = 0; i < arrScenery.length; i++) {
                     arr.push({activityid: id, sceneryid: arrScenery[i]});
