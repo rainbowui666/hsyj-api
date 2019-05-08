@@ -25,4 +25,11 @@ module.exports = class extends Base {
         let insertid = await this.model('student_group').add(para);
         return this.success('加入成功')
     }
+
+    async showQrAction() {
+        const url = this.get('url');
+        const qrService = this.service('qr', 'api');
+        this.type = 'image/svg+xml';
+        this.body = qrService.getQrByUrl(url);
+    }
 }

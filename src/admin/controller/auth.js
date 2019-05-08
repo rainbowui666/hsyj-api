@@ -64,7 +64,7 @@ module.exports = class extends Base {
       return this.fail('验证码为空')
     }
 
-    if (captchacode != authcaptha) {
+    if (captchacode.toLowerCase() != authcaptha.toLowerCase()) {
       console.log('fail', captchacode, authcaptha)
       return this.fail('验证码错误')
     }

@@ -23,11 +23,18 @@
         "groupid",
         "get",
         "studentid",
-        "para"
+        "para",
+        "showQrAction",
+        "url",
+        "qrService",
+        "service",
+        "type",
+        "body",
+        "getQrByUrl"
     ],
-    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,iBAAN,GAAsB;AAAA;;AAAA;AAClB,kBAAMC,KAAK,MAAKC,IAAL,CAAU,IAAV,CAAX;AACA,kBAAMC,YAAY,MAAKD,IAAL,CAAU,WAAV,CAAlB;;AAEA,gBAAIE,QAAQ;AACRC,4BAAWJ,EADH;AAERK,2BAAUH;AAFF,aAAZ;;AAKA,kBAAMI,WAAW,MAAM,MAAKC,KAAL,CAAW,OAAX,EAAoBC,GAApB,CAAwBL,KAAxB,CAAvB;AACA,mBAAO,MAAKM,OAAL,CAAa,MAAb,CAAP;AAVkB;AAWrB;;AAEKC,mBAAN,GAAwB;AAAA;;AAAA;AACpB,kBAAMC,UAAU,OAAKC,GAAL,CAAS,SAAT,CAAhB;AACA,kBAAMC,YAAY,OAAKD,GAAL,CAAS,WAAT,CAAlB;AACA,kBAAMR,aAAa,OAAKQ,GAAL,CAAS,YAAT,CAAnB;AACA,gBAAIE,OAAO;AACPH,uBADO,EACCE,SADD,EACWT;AADX,aAAX;;AAIA,gBAAIE,WAAW,MAAM,OAAKC,KAAL,CAAW,eAAX,EAA4BC,GAA5B,CAAgCM,IAAhC,CAArB;AACA,mBAAO,OAAKL,OAAL,CAAa,MAAb,CAAP;AAToB;AAUvB;AAxB+B,CAApC",
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,iBAAN,GAAsB;AAAA;;AAAA;AAClB,kBAAMC,KAAK,MAAKC,IAAL,CAAU,IAAV,CAAX;AACA,kBAAMC,YAAY,MAAKD,IAAL,CAAU,WAAV,CAAlB;;AAEA,gBAAIE,QAAQ;AACRC,4BAAWJ,EADH;AAERK,2BAAUH;AAFF,aAAZ;;AAKA,kBAAMI,WAAW,MAAM,MAAKC,KAAL,CAAW,OAAX,EAAoBC,GAApB,CAAwBL,KAAxB,CAAvB;AACA,mBAAO,MAAKM,OAAL,CAAa,MAAb,CAAP;AAVkB;AAWrB;;AAEKC,mBAAN,GAAwB;AAAA;;AAAA;AACpB,kBAAMC,UAAU,OAAKC,GAAL,CAAS,SAAT,CAAhB;AACA,kBAAMC,YAAY,OAAKD,GAAL,CAAS,WAAT,CAAlB;AACA,kBAAMR,aAAa,OAAKQ,GAAL,CAAS,YAAT,CAAnB;AACA,gBAAIE,OAAO;AACPH,uBADO,EACCE,SADD,EACWT;AADX,aAAX;;AAIA,gBAAIE,WAAW,MAAM,OAAKC,KAAL,CAAW,eAAX,EAA4BC,GAA5B,CAAgCM,IAAhC,CAArB;AACA,mBAAO,OAAKL,OAAL,CAAa,MAAb,CAAP;AAToB;AAUvB;;AAEKM,gBAAN,GAAqB;AAAA;;AAAA;AACjB,kBAAMC,MAAM,OAAKJ,GAAL,CAAS,KAAT,CAAZ;AACA,kBAAMK,YAAY,OAAKC,OAAL,CAAa,IAAb,EAAmB,KAAnB,CAAlB;AACA,mBAAKC,IAAL,GAAY,eAAZ;AACA,mBAAKC,IAAL,GAAYH,UAAUI,UAAV,CAAqBL,GAArB,CAAZ;AAJiB;AAKpB;AA/B+B,CAApC",
     "file": "../../../src/api/controller/group.js",
     "sourcesContent": [
-        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async addEditAction() {\n        const id = this.post('id');\n        const groupname = this.post('groupname');\n\n        let param = {\n            activityid:id,\n            groupName:groupname\n        }\n\n        const insertid = await this.model('group').add(param);\n        return this.success('添加成功')\n    }\n\n    async joinGroupAction() {\n        const groupid = this.get('groupid');\n        const studentid = this.get('studentid');\n        const activityid = this.get('activityid');\n        let para = {\n            groupid,studentid,activityid\n        }\n\n        let insertid = await this.model('student_group').add(para);\n        return this.success('加入成功')\n    }\n}"
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async addEditAction() {\n        const id = this.post('id');\n        const groupname = this.post('groupname');\n\n        let param = {\n            activityid:id,\n            groupName:groupname\n        }\n\n        const insertid = await this.model('group').add(param);\n        return this.success('添加成功')\n    }\n\n    async joinGroupAction() {\n        const groupid = this.get('groupid');\n        const studentid = this.get('studentid');\n        const activityid = this.get('activityid');\n        let para = {\n            groupid,studentid,activityid\n        }\n\n        let insertid = await this.model('student_group').add(para);\n        return this.success('加入成功')\n    }\n\n    async showQrAction() {\n        const url = this.get('url');\n        const qrService = this.service('qr', 'api');\n        this.type = 'image/svg+xml';\n        this.body = qrService.getQrByUrl(url);\n    }\n}"
     ]
 }

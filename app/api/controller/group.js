@@ -35,5 +35,16 @@ module.exports = class extends Base {
             return _this2.success('加入成功');
         })();
     }
+
+    showQrAction() {
+        var _this3 = this;
+
+        return _asyncToGenerator(function* () {
+            const url = _this3.get('url');
+            const qrService = _this3.service('qr', 'api');
+            _this3.type = 'image/svg+xml';
+            _this3.body = qrService.getQrByUrl(url);
+        })();
+    }
 };
 //# sourceMappingURL=group.js.map
