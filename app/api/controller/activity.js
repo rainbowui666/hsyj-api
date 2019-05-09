@@ -41,18 +41,18 @@ module.exports = class extends Base {
             for (const item of data.data) {
                 item.pics = yield _this2.model('activity').getPicsbyid(item.activityID);
                 // console.log(Number(new Date(item.startDate)), Number(new Date()), Number(new Date(item.endDate)))
-                if (Number(new Date(item.startDate)) <= Number(new Date()) <= Number(new Date(item.endDate))) {
-                    item.status = '进行中';
-                } else {
-                    item.status = '';
-                }
+                // if (Number(new Date(item.startDate)) <= Number(new Date()) <= Number(new Date(item.endDate))) {
+                //     item.status='进行中';
+                // } else {
+                //     item.status = '';
+                // }
                 let joindate = yield _this2.model('student_activity').getStudentIsJoinActivity(studentid, item.activityID);
                 if (Number(new Date()) > Number(new Date(item.endDate)) && joindate && joindate.length > 0) {
                     item.hasjoin = '已完成';
-                } else if (item.hasjoin = joindate && joindate.length > 0) {
+                } else if (joindate && joindate.length > 0) {
                     item.hasjoin = '已报名';
-                } else {
-                    item.hasjoin = '';
+                } else if (Number(new Date(item.startDate)) < Number(new Date()) < Number(new Date(item.endDate))) {
+                    item.hasjoin = '进行中';
                 }
                 item.needSchoolRangName = yield _this2.model('school').getSchoolNameByIds(item.needSchoolRang);
                 item.shstate = yield _this2.model('activity').getstate(item.activityID);
@@ -80,10 +80,10 @@ module.exports = class extends Base {
                 let joindate = yield _this3.model('student_activity').getStudentIsJoinActivity(studentid, data.activityID);
                 if (Number(new Date()) > Number(new Date(data.endDate)) && joindate && joindate.length > 0) {
                     data.hasjoin = '已完成';
-                } else if (data.hasjoin = joindate && joindate.length > 0) {
+                } else if (joindate && joindate.length > 0) {
                     data.hasjoin = '已报名';
                 } else {
-                    data.hasjoin = '';
+                    data.hasjoin = '进行中';
                 }
             }
             return _this3.success(data);
@@ -106,10 +106,10 @@ module.exports = class extends Base {
                 let joindate = yield _this4.model('student_activity').getStudentIsJoinActivity(studentid, data.activityID);
                 if (Number(new Date()) > Number(new Date(data.endDate)) && joindate && joindate.length > 0) {
                     data.hasjoin = '已完成';
-                } else if (data.hasjoin = joindate && joindate.length > 0) {
+                } else if (joindate && joindate.length > 0) {
                     data.hasjoin = '已报名';
-                } else {
-                    data.hasjoin = '';
+                } else if (Number(new Date(item.startDate)) < Number(new Date()) < Number(new Date(item.endDate))) {
+                    data.hasjoin = '进行中';
                 }
                 data.group = yield _this4.model('group').where({ activityid: data.activityID }).select();
             }
