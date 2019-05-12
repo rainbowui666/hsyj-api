@@ -23,7 +23,7 @@ module.exports = class extends think.Model {
             const arrdata = [];
             for (const item of data) {
                 // item.pics = item
-                item.pics = yield _this2.getPicsbyid(item.sceneryID);
+                item.pics = yield _this2.getPicsbyid(item.schoolid);
                 item.shstate = yield _this2.getstate(item.schoolid);
                 arrdata.push(item);
             }

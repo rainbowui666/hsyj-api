@@ -14,7 +14,7 @@ module.exports = class extends think.Model {
         const arrdata = [];
         for (const item of data) {
             // item.pics = item
-            item.pics = await this.getPicsbyid(item.sceneryID);
+            item.pics = await this.getPicsbyid(item.schoolid);
             item.shstate = await this.getstate(item.schoolid);
             arrdata.push(item);
         }

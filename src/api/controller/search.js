@@ -12,7 +12,7 @@ module.exports = class extends Base {
         // const data = await scenerymodel.field(['sceneryid as id', 'scenerytitle as title', "'scenery' as msgtype", 'longitude','latitude']).where({scenerytitle: ['like', `%${keyword}%`]})
         // .union("select schoolid as id,schoolname as title, 'school' as msgtype,longitude,latitude from culture_school where schoolname like '%"+keyword+"%'")
         // .page(pageindex, pagesize).countSelect()
-        var data = await scenerymodel.query("Select * from (select sceneryid as id,scenerytitle as title, 'scenery' as msgtype,longitude,latitude from culture_scenery where scenerytitle like '%"+keyword+"%' UNION all select schoolid as id,schoolname as title, 'school' as msgtype,longitude,latitude from culture_school where schoolname like '%"+keyword+"%') as aa where id order by id desc limit "+start+","+pagesize+"");
+        var data = await scenerymodel.query("Select * from (select sceneryid as id,scenerytitle as title, 'scenery' as msgtype,longitude,latitude,address from culture_scenery where scenerytitle like '%"+keyword+"%' UNION all select schoolid as id,schoolname as title, 'school' as msgtype,longitude,latitude,address from culture_school where schoolname like '%"+keyword+"%') as aa where id order by id desc limit "+start+","+pagesize+"");
         var counta = await scenerymodel.query("select count(*) t from (Select * from (select sceneryid as id,scenerytitle as title, 'scenery' as msgtype,longitude,latitude from culture_scenery where scenerytitle like '%"+keyword+"%' UNION all select schoolid as id,schoolname as title, 'school' as msgtype,longitude,latitude from culture_school where schoolname like '%"+keyword+"%') as aa ) t ");
         const pagecount = Math.ceil(counta[0].t / pagesize);
         
