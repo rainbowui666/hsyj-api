@@ -46,11 +46,15 @@ module.exports = class extends Base {
                 // } else {
                 //     item.status = '';
                 // }
-                let joindate = yield _this2.model('student_activity').getStudentIsJoinActivity(studentid, item.activityID);
-                if (Number(new Date()) > Number(new Date(item.endDate)) && joindate && joindate.length > 0) {
-                    item.hasjoin = '已完成';
-                } else if (joindate && joindate.length > 0) {
-                    item.hasjoin = '已报名';
+                if (!think.isEmpty(studentid)) {
+                    let joindate = yield _this2.model('student_activity').getStudentIsJoinActivity(studentid, item.activityID);
+                    if (Number(new Date()) > Number(new Date(item.endDate)) && joindate && joindate.length > 0) {
+                        item.hasjoin = '已完成';
+                    } else if (joindate && joindate.length > 0) {
+                        item.hasjoin = '已报名';
+                    } else if (Number(new Date(item.startDate)) < Number(new Date()) < Number(new Date(item.endDate))) {
+                        item.hasjoin = '进行中';
+                    }
                 } else if (Number(new Date(item.startDate)) < Number(new Date()) < Number(new Date(item.endDate))) {
                     item.hasjoin = '进行中';
                 }
