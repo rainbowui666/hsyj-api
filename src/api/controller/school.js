@@ -74,6 +74,7 @@ module.exports = class extends Base {
         if (!think.isEmpty(data)) {
         // for (const item of data.data) {
             data.scenery = await this.model('school').getScenerybyid(data.schoolID);
+            data.schoolpics = await this.model('school').getPicsbyid(data.schoolID);
             data.discussList = await this.model('discuss').getDiscussById(id,2);
         //     // item.shstate = await this.model('school').getstate(item.schoolID);
         //     arrdata.push(item);

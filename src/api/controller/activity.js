@@ -25,7 +25,8 @@ module.exports = class extends Base {
         model._pk = 'activityID';
         const endDate = new Date();
         const date = endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate()+' 00:00:00'
-        const data = await model.where({shstate: 0, endDate:{'>': date}}).order('activityID desc').page(page,size).countSelect();
+        // endDate:{'>': think.datetime(date,'YYYY-MM-DD')
+        const data = await model.where({shstate: 0, endDate:{'>': think.datetime(date,'YYYY-MM-DD')}}).order('activityID desc').page(page,size).countSelect();
 
         const arrdata = [];
 
@@ -39,16 +40,30 @@ module.exports = class extends Base {
             // }
             if (!think.isEmpty(studentid)) {
                 let joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,item.activityID);
-                if (Number(new Date()) > Number(new Date(item.endDate)) && joindate && joindate.length > 0) {
+                let start = Number(new Date(item.startDate));
+                let nowd = Number(new Date());
+                let end = Number(new Date(item.endDate));
+
+                if (nowd > end && joindate && joindate.length > 0) {
                     item.hasjoin = '已完成'
                 } else if(joindate && joindate.length > 0) {
                     item.hasjoin = '已报名' 
-                } else if (Number(new Date(item.startDate)) < Number(new Date()) < Number(new Date(item.endDate))) {
+                } else if (start < nowd && nowd < end) {
                     item.hasjoin = '进行中';
                 }
-            } else if (Number(new Date(item.startDate)) < Number(new Date()) < Number(new Date(item.endDate))) {
-                item.hasjoin = '进行中';
-            }
+            } else {
+                let start = Number(new Date(item.startDate));
+                let nowd = Number(new Date());
+                let end = Number(new Date(item.endDate));
+
+                if (start < nowd && nowd < end) {
+                    item.hasjoin = '进行中';
+                } else if (end < nowd) {
+                    item.hasjoin = '已完成'
+                } else {
+                    item.hasjoin = '未开始';
+                }
+            } 
             item.needSchoolRangName = await this.model('school').getSchoolNameByIds(item.needSchoolRang);
             item.shstate = await this.model('activity').getstate(item.activityID);
             arrdata.push(item);
@@ -69,11 +84,15 @@ module.exports = class extends Base {
             // data.discussList = await this.model('discuss').getDiscussById(id,1);
             data.shstate = await this.model('activity').getstate(data.activityID);
             let joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,data.activityID);
-            if (Number(new Date()) > Number(new Date(data.endDate)) && joindate && joindate.length > 0) {
+            let start = Number(new Date(data.startDate));
+            let nowd = Number(new Date());
+            let end = Number(new Date(data.endDate));
+                
+            if (nowd > end && joindate && joindate.length > 0) {
                 data.hasjoin = '已完成'
             } else if(joindate && joindate.length > 0) {
                 data.hasjoin = '已报名' 
-            } else {
+            } else if (start < nowd && nowd < end) {
                 data.hasjoin = '进行中';
             }
         }
@@ -91,11 +110,15 @@ module.exports = class extends Base {
             // data.discussList = await this.model('discuss').getDiscussById(id,1);
             data.shstate = await this.model('activity').getstate(data.activityID);
             let joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,data.activityID);
-            if (Number(new Date()) > Number(new Date(data.endDate)) && joindate && joindate.length > 0) {
+            let start = Number(new Date(data.startDate));
+            let nowd = Number(new Date());
+            let end = Number(new Date(data.endDate));
+
+            if (nowd > end && joindate && joindate.length > 0) {
                 data.hasjoin = '已完成'
             } else if(joindate && joindate.length > 0) {
                 data.hasjoin = '已报名' 
-            } else if (Number(new Date(item.startDate)) < Number(new Date()) < Number(new Date(item.endDate))) {
+            } else if (start < nowd && nowd < end) {
                 data.hasjoin = '进行中';
             }
             data.group=await this.model('group').where({activityid:data.activityID}).select();
@@ -138,8 +161,15 @@ module.exports = class extends Base {
             // item.question = await this.model('student_activity').studentJoinActivityAndAnswer(studentid,item.activityID,item.questionid)
             arrdata.push(item)
         }
-        let complateSceneryNum = await this.model('attention_activity').where({studentid:studentid,activityid:activityid}).count();
-        let complateSchoolNum = await this.model('student_school').where({studentid:studentid,shstate:1}).count();
+        let complateSceneryNum = 0;
+        let complateSchoolNum = 0;
+        if (!think.isEmpty(studentid)) {
+            complateSceneryNum = await this.model('attention_activity').where({studentid:studentid,activityid:activityid}).count();
+            complateSchoolNum = await this.model('student_school').where({studentid:studentid,shstate:1}).count();
+        } else {
+             complateSceneryNum = await this.model('attention_activity').where({activityid:activityid}).count();
+             complateSchoolNum = await this.model('student_school').where({shstate:1}).count();
+        }
         arrScen = _.uniq(arrScen);
         arrSchool = _.uniq(arrSchool);
         

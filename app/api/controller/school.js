@@ -91,6 +91,7 @@ module.exports = class extends Base {
             if (!think.isEmpty(data)) {
                 // for (const item of data.data) {
                 data.scenery = yield _this4.model('school').getScenerybyid(data.schoolID);
+                data.schoolpics = yield _this4.model('school').getPicsbyid(data.schoolID);
                 data.discussList = yield _this4.model('discuss').getDiscussById(id, 2);
                 //     // item.shstate = await this.model('school').getstate(item.schoolID);
                 //     arrdata.push(item);
