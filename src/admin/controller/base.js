@@ -1,7 +1,7 @@
 module.exports = class extends think.Controller {
     async __before() {
       // 根据token值获取用户id
-      this.ctx.state.token = this.ctx.header['x-hsyj-token'] || '';
+      this.ctx.state.token = this.ctx.header['sms-token'] || '';
       const tokenSerivce = think.service('token', 'admin');
       // const data = await this.cache('userinfo');
       // if (think.isEmpty(data)) {

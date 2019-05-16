@@ -5,7 +5,7 @@ module.exports = class extends think.Controller {
     return _asyncToGenerator(function* () {})();
   }
   // 根据token值获取用户id
-  // this.ctx.state.token = this.ctx.header['x-hsyj-token'] || '';
+  // this.ctx.state.token = this.ctx.header['sms-token'] || '';
   // const tokenSerivce = think.service('token', 'api');
   // this.ctx.state.userId = await tokenSerivce.getUserId(this.ctx.state.token);
 

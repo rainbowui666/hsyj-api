@@ -3,53 +3,101 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 const Base = require('./base.js');
 var svgCaptcha = require('svg-captcha');
 var http = require('http');
+const rp = require('request-promise');
 
 module.exports = class extends Base {
   loginAction() {
     var _this = this;
 
     return _asyncToGenerator(function* () {
-      const code = _this.post('code');
-      const fullUserInfo = _this.post('userInfo');
-      const tel = _this.post('tel');
-      const schoolid = _this.post('schoolid');
-      const studentname = _this.post('studentname');
-      const stuNo = _this.post('stuno');
+      const options = {
+        method: 'GET',
+        url: 'https://api.weixin.qq.com/sns/jscode2session',
+        qs: {
+          grant_type: 'authorization_code',
+          js_code: _this.post('code'),
+          secret: 'b92e07c57496470c7c961e4f4dbccfcc',
+          appid: 'wx57b35c6b53e20d2d'
+        }
+      };
 
-      // 解释用户数据
-      // const userInfo = await this.service('weixin', 'api').login(code, fullUserInfo);
-      // if (think.isEmpty(userInfo)) {
+      let sessionData = yield rp(options);
+      const userObj = JSON.parse(sessionData);
+
+      console.log('userObj', userObj);
+
+      //根据openid 去数据库查询
+      let user = yield _this.model('student').where({ wxopenid: userObj.openid }).find();
+      if (think.isEmpty(user)) {
+        let avatarUrl = _this.post('avatarUrl');
+        let gender = _this.post('gender') == 1 ? 0 : 1;
+        let nickName = _this.post('nickName');
+
+        let userId = yield _this.model('student').add({
+          studentName: '微信用户' + nickName,
+          photo: avatarUrl,
+          sex: gender,
+          nickname: nickName,
+          wxopenid: userObj.openid
+        });
+      }
+
+      const TokenSerivce = _this.service('token', 'api');
+      const sessionKey = yield TokenSerivce.create({ user_id: user.studentID });
+
+      // console.log(sessionKey, user)
+      //获得token
+      // return this.json({token,user})
+      // if (think.isEmpty(user) || think.isEmpty(sessionKey)) {
       //   return this.fail('登录失败');
       // }
 
-      // 根据openid查找用户是否已经注册
-      // let userId = await this.model('student').where({ wxopenid: userInfo.openId }).getField('studentId', true);
-      // if (think.isEmpty(userId)) {
-      // 注册
-      //   userId = await this.model('user').add({
-      //     username: '微信用户' + think.uuid(6),
-      //     pwd: '',
-      //     tel: '',
-      //     wxopenid: userInfo.openId,
-      //     photo: userInfo.avatarUrl || '',
-      //     sex: userInfo.gender || 1, // 性别 0：未知、1：男、2：女
-      //     nickname: userInfo.nickName
-      //   });
-      // }
-
-      // 查询用户信息
-      const newUserInfo = yield _this.model('student').where({ tel: tel, schoolid: schoolid, studentName: studentname, stuNo: stuNo }).find();
-
-      const TokenSerivce = _this.service('token', 'api');
-      const sessionKey = yield TokenSerivce.create({ user_id: newUserInfo.studentID });
-
-      if (think.isEmpty(newUserInfo) || think.isEmpty(sessionKey)) {
-        return _this.fail('登录失败');
-      }
-
-      return _this.success({ token: sessionKey, userInfo: newUserInfo });
+      return _this.success({ token: sessionKey, userInfo: user });
     })();
   }
+
+  // async loginAction() {
+  //   const code = this.post('code');
+  //   const fullUserInfo = this.post('userInfo');
+  //   const tel = this.post('tel');
+  //   const schoolid = this.post('schoolid');
+  //   const studentname = this.post('studentname');
+  //   const stuNo = this.post('stuno');
+
+  //   // 解释用户数据 code 061i3zz12Z3K4V0CbVz126boz12i3zzK
+  //   // const userInfo = await this.service('weixin', 'api').login(code, fullUserInfo);
+  //   // if (think.isEmpty(userInfo)) {
+  //   //   return this.fail('登录失败');
+  //   // } 
+
+  //   // 根据openid查找用户是否已经注册
+  //   // let userId = await this.model('student').where({ wxopenid: userInfo.openId }).getField('studentId', true);
+  //   // if (think.isEmpty(userId)) {
+  //     // 注册
+  //   //   userId = await this.model('user').add({
+  //   //     username: '微信用户' + think.uuid(6),
+  //   //     pwd: '',
+  //   //     tel: '',
+  //   //     wxopenid: userInfo.openId,
+  //   //     photo: userInfo.avatarUrl || '',
+  //   //     sex: userInfo.gender || 1, // 性别 0：未知、1：男、2：女
+  //   //     nickname: userInfo.nickName
+  //   //   });
+  //   // }
+
+  //   // 查询用户信息
+  //   const newUserInfo = await this.model('student').where({ tel:tel, schoolid:schoolid,studentName:studentname, stuNo:stuNo }).find();
+
+  //   const TokenSerivce = this.service('token', 'api');
+  //   const sessionKey = await TokenSerivce.create({ user_id: newUserInfo.studentID });
+
+  //   if (think.isEmpty(newUserInfo) || think.isEmpty(sessionKey)) {
+  //     return this.fail('登录失败');
+  //   }
+
+  //   return this.success({ token: sessionKey, userInfo: newUserInfo });
+  // }
+
 
   logoutAction() {
     var _this2 = this;

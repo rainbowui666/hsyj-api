@@ -96,17 +96,19 @@ module.exports = class extends Base {
                 data.pics = yield _this3.model('activity').getPicsbyid(data.activityID);
                 // data.discussList = await this.model('discuss').getDiscussById(id,1);
                 data.shstate = yield _this3.model('activity').getstate(data.activityID);
-                let joindate = yield _this3.model('student_activity').getStudentIsJoinActivity(studentid, data.activityID);
-                let start = Number(new Date(data.startDate));
-                let nowd = Number(new Date());
-                let end = Number(new Date(data.endDate));
+                if (!think.isEmpty(studentid)) {
+                    let joindate = yield _this3.model('student_activity').getStudentIsJoinActivity(studentid, data.activityID);
+                    let start = Number(new Date(data.startDate));
+                    let nowd = Number(new Date());
+                    let end = Number(new Date(data.endDate));
 
-                if (nowd > end && joindate && joindate.length > 0) {
-                    data.hasjoin = '已完成';
-                } else if (joindate && joindate.length > 0) {
-                    data.hasjoin = '已报名';
-                } else if (start < nowd && nowd < end) {
-                    data.hasjoin = '进行中';
+                    if (nowd > end && joindate && joindate.length > 0) {
+                        data.hasjoin = '已完成';
+                    } else if (joindate && joindate.length > 0) {
+                        data.hasjoin = '已报名';
+                    } else if (start < nowd && nowd < end) {
+                        data.hasjoin = '进行中';
+                    }
                 }
             }
             return _this3.success(data);
