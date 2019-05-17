@@ -88,6 +88,7 @@ module.exports = class extends Base {
             model._pk = "discussID";
             const pageindex = _this3.get('pageindex') || 1;
             const pagesize = _this3.get('pagesize') || 5;
+            const studentid = _this3.get('studentid');
 
             const homedata = yield _this3.cache('home_discuss' + pageindex + '_' + pagesize);
             if (!think.isEmpty(homedata)) {
@@ -109,7 +110,7 @@ module.exports = class extends Base {
                 } else {
                     item.pics = [];
                 }
-                item.likednum = yield _this3.model('like_discuss').where({ discussid: item.discussID, studentid: item.studentid }).count();
+                item.likednum = yield _this3.model('like_discuss').where({ discussid: item.discussID, studentid: studentid }).count();
                 item.poto = yield _this3.model('student').field(['photo', 'studentName']).where({ studentID: item.studentid }).find();
                 arrdata.push(item);
             }

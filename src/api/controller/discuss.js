@@ -75,6 +75,7 @@ module.exports = class extends Base {
         model._pk = "discussID";
         const pageindex = this.get('pageindex') || 1;
         const pagesize = this.get('pagesize') || 5;
+        const studentid = this.get('studentid');
 
         const homedata = await this.cache('home_discuss'+pageindex+'_'+pagesize);
         if (!think.isEmpty(homedata)) {
@@ -94,7 +95,7 @@ module.exports = class extends Base {
             } else {
                 item.pics = []
             }
-            item.likednum = await this.model('like_discuss').where({discussid:item.discussID, studentid:item.studentid}).count();
+            item.likednum = await this.model('like_discuss').where({discussid:item.discussID, studentid:studentid}).count();
             item.poto = await this.model('student').field(['photo','studentName']).where({studentID:item.studentid}).find();
             arrdata.push(item)
         }
