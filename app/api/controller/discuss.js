@@ -109,7 +109,7 @@ module.exports = class extends Base {
                 } else {
                     item.pics = [];
                 }
-
+                item.likednum = yield _this3.model('like_discuss').where({ discussid: item.discussID, studentid: item.studentid }).count();
                 item.poto = yield _this3.model('student').field(['photo', 'studentName']).where({ studentID: item.studentid }).find();
                 arrdata.push(item);
             }
@@ -128,10 +128,12 @@ module.exports = class extends Base {
 
         return _asyncToGenerator(function* () {
             const id = _this4.get('discussid');
+            const studentid = _this4.get('studentid');
             let data = yield _this4.model('discuss').where({ discussID: id }).find();
             let clicknum = data.clicknum + 1;
             const para = { clicknum: clicknum };
             yield _this4.model('discuss').where({ discussID: id }).update(para);
+            yield _this4.model('like_discuss').add({ studentid: studentid, discussid: id });
             return _this4.success('点赞成功');
         })();
     }
