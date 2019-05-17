@@ -36,10 +36,12 @@ module.exports = class extends Base {
         if (think.isEmpty(id)) {
             let model = this.model('student');
             const insertid = await model.add(param);
-            return this.success('添加成功')
+            const data = await this.model('student').where({studentID:insertid}).find();
+            return this.success({msg: '添加成功', data:data})
         } else {
             await this.model('student').where({studentID:id}).update(param);
-            return this.success('修改成功');
+            let data = await this.model('student').where({studentID:id}).find();
+            return this.success({msg:'修改成功', data:data});
         }
     }
 

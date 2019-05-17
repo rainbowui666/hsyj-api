@@ -37,8 +37,10 @@ module.exports = class extends Base {
               });
     }
 
+    const newUserInfo = await this.model('student').where({ wxopenid:userObj.openid }).find();
+
     const TokenSerivce = this.service('token', 'api');
-    const sessionKey = await TokenSerivce.create({ user_id: user.studentID });
+    const sessionKey = await TokenSerivce.create({ user_id: newUserInfo.studentID });
 
     // console.log(sessionKey, user)
     //获得token
@@ -47,7 +49,7 @@ module.exports = class extends Base {
     //   return this.fail('登录失败');
     // }
 
-    return this.success({ token: sessionKey, userInfo: user });
+    return this.success({ token: sessionKey, userInfo: newUserInfo });
 }
 
   // async loginAction() {

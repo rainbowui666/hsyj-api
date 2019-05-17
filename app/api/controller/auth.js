@@ -42,8 +42,10 @@ module.exports = class extends Base {
         });
       }
 
+      const newUserInfo = yield _this.model('student').where({ wxopenid: userObj.openid }).find();
+
       const TokenSerivce = _this.service('token', 'api');
-      const sessionKey = yield TokenSerivce.create({ user_id: user.studentID });
+      const sessionKey = yield TokenSerivce.create({ user_id: newUserInfo.studentID });
 
       // console.log(sessionKey, user)
       //获得token
@@ -52,7 +54,7 @@ module.exports = class extends Base {
       //   return this.fail('登录失败');
       // }
 
-      return _this.success({ token: sessionKey, userInfo: user });
+      return _this.success({ token: sessionKey, userInfo: newUserInfo });
     })();
   }
 

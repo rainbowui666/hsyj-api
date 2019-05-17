@@ -115,5 +115,12 @@ module.exports = class extends Base {
         await this.model('discuss').where({discussID:id}).update(para);
         return this.success('点赞成功');
     }
+
+    async hasLikeDiscussAction() {
+        const id = this.get('discussid');
+        const studentid = this.get('studentid');
+        const data = await this.model('like_discuss').where({discussid:id, studentid:studentid}).count();
+        return this.success(data)
+    }
     
 }

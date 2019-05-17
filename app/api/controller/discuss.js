@@ -136,5 +136,16 @@ module.exports = class extends Base {
         })();
     }
 
+    hasLikeDiscussAction() {
+        var _this5 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this5.get('discussid');
+            const studentid = _this5.get('studentid');
+            const data = yield _this5.model('like_discuss').where({ discussid: id, studentid: studentid }).count();
+            return _this5.success(data);
+        })();
+    }
+
 };
 //# sourceMappingURL=discuss.js.map
