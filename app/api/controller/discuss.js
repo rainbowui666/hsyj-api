@@ -35,12 +35,14 @@ module.exports = class extends Base {
             const sceneryid = _this2.get('sceneryid');
             const activityID = _this2.get('activityid');
             const schoolid = _this2.get('schoolid');
+            const studentid = _this2.get('studentid');
 
             let typeconition = '';
             let scenerycondition = '';
             let activitycondition = '';
             let schoolcondition = '';
             let statusconditionn = '';
+            let studentcondition = '';
 
             if (think.isEmpty(shstate)) {
                 statusconditionn = '1=1 ';
@@ -51,7 +53,15 @@ module.exports = class extends Base {
             if (think.isEmpty(distype)) {
                 typeconition = '1=1 ';
             } else {
-                typeconition = 'a.distype=' + distype;
+                let id = 0;
+                if (distype == 0) {
+                    id = sceneryid;
+                } else if (distype == 1) {
+                    id = activityID;
+                } else if (distype == 2) {
+                    id = schoolid;
+                }
+                typeconition = 'a.distype=' + distype + ' and a.targetid=' + id;
             }
 
             if (think.isEmpty(sceneryid)) {
@@ -72,9 +82,14 @@ module.exports = class extends Base {
                 schoolcondition = 'schoolID=' + schoolid;
             }
 
+            if (think.isEmpty(studentid)) {
+                studentcondition = '1=1 ';
+            } else {
+                studentcondition = 'a.studentid=' + studentid;
+            }
             const start = (pageindex - 1) * pagesize;
-            const data = yield model.query("select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,a.isrecommend, case  when distype=0 then (select scenerytitle from culture_scenery where " + scenerycondition + " limit 1) when distype=1 then (select activityname from culture_activity where " + activitycondition + " limit 1) when distype=2 then (select schoolname from culture_school where " + schoolcondition + " limit 1) when distype=3 then \"APP首页\" end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where " + typeconition + " and " + statusconditionn + " and a.discussid order by discussID desc limit " + start + "," + pagesize + " ");
-            const counta = yield model.query("select count(*) t from (select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,  case  when distype=0 then (select scenerytitle from culture_scenery where " + scenerycondition + " limit 1) when distype=1 then (select activityname from culture_activity where " + activitycondition + " limit 1) when distype=2 then (select schoolname from culture_school where " + schoolcondition + " limit 1) when distype=3 then \"APP首页\" end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where " + typeconition + " and " + statusconditionn + " ) t ");
+            const data = yield model.query("select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,a.isrecommend, case  when distype=0 then (select scenerytitle from culture_scenery where " + scenerycondition + " limit 1) when distype=1 then (select activityname from culture_activity where " + activitycondition + " limit 1) when distype=2 then (select schoolname from culture_school where " + schoolcondition + " limit 1) when distype=3 then \"APP首页\" end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where " + typeconition + " and " + studentcondition + " and " + statusconditionn + " and a.discussid order by discussID desc limit " + start + "," + pagesize + " ");
+            const counta = yield model.query("select count(*) t from (select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,  case  when distype=0 then (select scenerytitle from culture_scenery where " + scenerycondition + " limit 1) when distype=1 then (select activityname from culture_activity where " + activitycondition + " limit 1) when distype=2 then (select schoolname from culture_school where " + schoolcondition + " limit 1) when distype=3 then \"APP首页\" end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where " + typeconition + " and " + studentcondition + " and " + statusconditionn + " ) t ");
             const pagecount = Math.ceil(counta[0].t / pagesize); //(counta[0].t + parseInt(pagesize - 1)) / pagesize;
             return _this2.success({ counta: counta[0].t, pagecount: pagecount, pageindex: pageindex, pagesize: pagesize, data });
         })();
