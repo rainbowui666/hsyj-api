@@ -93,6 +93,7 @@ module.exports = class extends Base {
             groupNum,createbyuserid: userinfo[0].sysUserID
         }; 
         // await this.model('pagecache').getdatabyname('home_discuss');
+        
         let arr = [];
         if (think.isEmpty(id)) {
             let model = this.model('activity');
@@ -163,18 +164,18 @@ module.exports = class extends Base {
 await this.model('pagecache').getdatabyname('home_discuss');
         if (think.isEmpty(id)) {
             const questId = await this.model('question').add(questionData);
-            if (questId) {
-                await this.model('activity_scenery').add({
-                    sceneryid,questionid:questId,activityid:activityid
-                });
-            }
+            // if (questId) {
+            //     await this.model('activity_scenery').add({
+            //         sceneryid,questionid:questId,activityid:activityid
+            //     });
+            // }
             return this.success('第二步成功');
         } else {
             await this.model('activity_scenery').where({questionid:id}).delete()
             await this.model('question').where({questionID:id}).update(questionData);
-            await this.model('activity_scenery').add({
-                sceneryid,questionid:id,activityid:activityid
-            });
+            // await this.model('activity_scenery').add({
+            //     sceneryid,questionid:id,activityid:activityid
+            // });
             return this.success('修改成功')
         }
     }
