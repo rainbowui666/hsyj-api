@@ -69,4 +69,23 @@ module.exports = class extends Base {
         const data = await model.where({studentid: studentid, shstate:1}).order('discussID desc').page(pageindex, pagesize).countSelect();
         return this.success(data)
     }
+
+    async getMySceneryAction() {
+        const studentid = this.get('studentid');
+        const model = this.model('student_scenery');
+        let data = null;
+        if (!think.isEmpty(studentid)) {
+            data = await model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.studentid="+studentid+" and ss.shstate=1");
+        } else {
+            data = await model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.shstate=1");
+        }
+            const arrdata = [];
+        for (const item of data) {
+            item.pics = await this.model('scenery').getPicsbyid(item.sceneryid);
+            item.shstate = await this.model('scenery').getstate(item.sceneryid);
+            arrdata.push(item);
+        }
+        data.data = arrdata;
+        return this.success(data);
+    }
 }

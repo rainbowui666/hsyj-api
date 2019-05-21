@@ -87,5 +87,28 @@ module.exports = class extends Base {
             return _this4.success(data);
         })();
     }
+
+    getMySceneryAction() {
+        var _this5 = this;
+
+        return _asyncToGenerator(function* () {
+            const studentid = _this5.get('studentid');
+            const model = _this5.model('student_scenery');
+            let data = null;
+            if (!think.isEmpty(studentid)) {
+                data = yield model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.studentid=" + studentid + " and ss.shstate=1");
+            } else {
+                data = yield model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.shstate=1");
+            }
+            const arrdata = [];
+            for (const item of data) {
+                item.pics = yield _this5.model('scenery').getPicsbyid(item.sceneryid);
+                item.shstate = yield _this5.model('scenery').getstate(item.sceneryid);
+                arrdata.push(item);
+            }
+            data.data = arrdata;
+            return _this5.success(data);
+        })();
+    }
 };
 //# sourceMappingURL=myself.js.map
