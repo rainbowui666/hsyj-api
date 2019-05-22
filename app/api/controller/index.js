@@ -72,12 +72,13 @@ module.exports = class extends Base {
       // 景点推荐
       const model2 = _this2.model('scenery');
       model2._pk = 'sceneryID';
-      const data2 = yield model2.field(['sceneryID', 'sceneryTitle']).where({ isrecommend: 1, shstate: 0 }).order('sceneryID desc').limit(0, 5).select();
+      const data2 = yield model2.field(['sceneryID', 'sceneryTitle', 'schoolid']).where({ isrecommend: 1, shstate: 0 }).order('sceneryID desc').limit(0, 5).select();
 
       const arrdata2 = [];
       for (const item of data2) {
         item.pics = yield _this2.model('scenery').getPicsbyid(item.sceneryID);
         item.joinnum = yield _this2.model('student_scenery').getJoinNum(item.sceneryID);
+        item.schoolName = yield _this2.model('school').field(['schoolName']).where({ schoolID: item.schoolid }).getField('schoolName', true);
         arrdata2.push(item);
       }
 

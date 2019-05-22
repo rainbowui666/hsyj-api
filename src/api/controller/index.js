@@ -63,12 +63,13 @@ module.exports = class extends Base {
     // 景点推荐
     const model2 = this.model('scenery');
     model2._pk = 'sceneryID';
-    const data2 = await model2.field(['sceneryID', 'sceneryTitle']).where({isrecommend:1, shstate:0}).order('sceneryID desc').limit(0,5).select();
+    const data2 = await model2.field(['sceneryID', 'sceneryTitle','schoolid']).where({isrecommend:1, shstate:0}).order('sceneryID desc').limit(0,5).select();
     
     const arrdata2 = [];
     for (const item of data2) {
       item.pics = await this.model('scenery').getPicsbyid(item.sceneryID);
       item.joinnum = await this.model('student_scenery').getJoinNum(item.sceneryID);
+      item.schoolName = await this.model('school').field(['schoolName']).where({schoolID: item.schoolid}).getField('schoolName',true);
       arrdata2.push(item);
     }
 
