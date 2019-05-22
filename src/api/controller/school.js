@@ -12,11 +12,11 @@ module.exports = class extends Base {
         model._pk = 'schoolID';
         var data;
         if (think.isEmpty(schoolname) && think.isEmpty(areaid)) {
-            data = await model.where({shstate: 0}).page(page, size).order('schoolID desc').countSelect();
+            data = await model.where({shstate: 0}).page(page, size).order('schoolID asc').countSelect();
         } else if (!think.isEmpty(schoolname)) {
-            data = await model.where({schoolName: ['like', `%${schoolname}%`], shstate: 0}).order('schoolID desc').page(page, size).countSelect();
+            data = await model.where({schoolName: ['like', `%${schoolname}%`], shstate: 0}).order('schoolID asc').page(page, size).countSelect();
         } else {
-            data = await model.where({areaid: areaid, shstate: 0}).page(page, size).order('schoolID desc').countSelect();
+            data = await model.where({areaid: areaid, shstate: 0}).page(page, size).order('schoolID asc').countSelect();
         }
         
         const arrdata = [];

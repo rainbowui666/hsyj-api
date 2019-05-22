@@ -48,11 +48,30 @@ module.exports = class extends Base {
             const id = _this3.get('studentid');
             const pageindex = _this3.get('pageindex') || 1;
             const pagesize = _this3.get('pagesize') || 5;
+            const hasjoin = _this3.get('hasjoin');
+
             const start = (pageindex - 1) * pagesize;
             const model = _this3.model('student');
             model._pk = "studentID";
-            const data = yield model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已经报名' end as mystatus from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " limit " + start + "," + pagesize + "");
-            const counta = yield model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " ) t");
+            let data = null;
+            let counta = null;
+
+            if (think.isEmpty(hasjoin)) {
+                data = yield model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已经报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " limit " + start + "," + pagesize + "");
+                counta = yield model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " ) t");
+            } else if (hasjoin == '进行中') {
+                data = yield model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已经报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " and (a.endDate > now() and now() > a.startDate) limit " + start + "," + pagesize + "");
+                counta = yield model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " and (a.endDate > now() and now() > a.startDate)) t");
+            } else if (hasjoin == '已完成') {
+                data = yield model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已经报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " and a.endDate < now() limit " + start + "," + pagesize + "");
+                counta = yield model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " and a.endDate < now()) t");
+            } else if (hasjoin == '已报名') {
+                data = yield model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已经报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " and a.startDate > now() limit " + start + "," + pagesize + "");
+                counta = yield model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " and a.startDate > now()) t");
+            } else {
+                data = yield model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已经报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " limit " + start + "," + pagesize + "");
+                counta = yield model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " ) t");
+            }
             const pagecount = Math.ceil(counta[0].t / pagesize);
 
             const arrdata = [];
