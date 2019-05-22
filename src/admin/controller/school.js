@@ -71,7 +71,7 @@ module.exports = class extends Base {
         const videourl = this.post('videourl');
         const areaid = this.post('areaid');
         const parentid = this.post('parentid') || 0;
-        const shortname = this.port('shortname');
+        const shortname = this.post('shortname');
         const id = this.get('id');
         let userinfo = await this.cache('userinfo');
 
