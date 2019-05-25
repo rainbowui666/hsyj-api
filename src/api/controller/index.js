@@ -69,6 +69,7 @@ module.exports = class extends Base {
     for (const item of data2) {
       item.pics = await this.model('scenery').getPicsbyid(item.sceneryID);
       item.joinnum = await this.model('student_scenery').getJoinNum(item.sceneryID);
+      item.shortName = await this.model('school').field(['shortName']).where({schoolID: item.schoolid}).getField('shortName',true);
       item.schoolName = await this.model('school').field(['schoolName']).where({schoolID: item.schoolid}).getField('schoolName',true);
       arrdata2.push(item);
     }

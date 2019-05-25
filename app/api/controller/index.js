@@ -78,6 +78,7 @@ module.exports = class extends Base {
       for (const item of data2) {
         item.pics = yield _this2.model('scenery').getPicsbyid(item.sceneryID);
         item.joinnum = yield _this2.model('student_scenery').getJoinNum(item.sceneryID);
+        item.shortName = yield _this2.model('school').field(['shortName']).where({ schoolID: item.schoolid }).getField('shortName', true);
         item.schoolName = yield _this2.model('school').field(['schoolName']).where({ schoolID: item.schoolid }).getField('schoolName', true);
         arrdata2.push(item);
       }

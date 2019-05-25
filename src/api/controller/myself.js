@@ -44,19 +44,19 @@ module.exports = class extends Base {
         let counta = null;
 
         if (think.isEmpty(hasjoin)) {
-            data = await model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已经报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" limit "+start+","+pagesize+"");
+            data = await model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" limit "+start+","+pagesize+"");
             counta = await model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" ) t");
         } else if (hasjoin == '进行中'){
-            data = await model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已经报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" and (a.endDate > now() and now() > a.startDate) limit "+start+","+pagesize+"");
+            data = await model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" and (a.endDate > now() and now() > a.startDate) limit "+start+","+pagesize+"");
             counta = await model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" and (a.endDate > now() and now() > a.startDate)) t");
         } else if (hasjoin == '已完成') {
-            data = await model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已经报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" and a.endDate < now() limit "+start+","+pagesize+"");
+            data = await model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" and a.endDate < now() limit "+start+","+pagesize+"");
             counta = await model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" and a.endDate < now()) t");      
         } else if (hasjoin == '已报名') {
-            data = await model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已经报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" and a.startDate > now() limit "+start+","+pagesize+"");
+            data = await model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" and a.startDate > now() limit "+start+","+pagesize+"");
             counta = await model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" and a.startDate > now()) t");      
         } else {
-            data = await model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已经报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" limit "+start+","+pagesize+"");
+            data = await model.query("select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" limit "+start+","+pagesize+"");
             counta = await model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid="+id+" ) t");
         }
         const pagecount = Math.ceil(counta[0].t / pagesize);
@@ -94,9 +94,9 @@ module.exports = class extends Base {
         const model = this.model('student_scenery');
         let data = null;
         if (!think.isEmpty(studentid)) {
-            data = await model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.studentid="+studentid+" and ss.shstate=1");
+            data = await model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.studentid="+studentid+" and ss.shstate=1 and ss.sceneryid not in (select targetid from culture_discuss where distype=0)");
         } else {
-            data = await model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.shstate=1");
+            data = await model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.shstate=1 and ss.sceneryid not in (select targetid from culture_discuss where distype=0)");
         }
             const arrdata = [];
         for (const item of data) {
