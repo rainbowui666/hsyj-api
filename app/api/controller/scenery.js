@@ -46,12 +46,13 @@ module.exports = class extends Base {
 
         return _asyncToGenerator(function* () {
             const id = _this3.get('id');
+            const studentid = _this3.get('studentid');
             const model = _this3.model('scenery');
             model._pk = 'sceneryID';
             const data = yield model.where({ sceneryID: id }).find();
             if (!think.isEmpty(data)) {
                 data.pics = yield _this3.model('scenery').getPicsbyid(data.sceneryID);
-                data.shstate = yield _this3.model('scenery').getstate(data.sceneryID);
+                data.shstate = yield _this3.model('scenery').getstudentstate(data.sceneryID, studentid);
                 data.discussList = yield _this3.model('discuss').getDiscussById(id, 0);
             }
             return _this3.success(data);

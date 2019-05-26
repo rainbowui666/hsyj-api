@@ -40,6 +40,25 @@ module.exports = class extends Base {
         }
     }
 
+    async wxUploadAction() {
+      const sourcetype = this.post('sourcetype');
+      const insertid = this.post('insertid');
+
+      const img = this.file('file');
+      const _name = img.name;
+
+      const tempName = _name.split('.');
+      const timestamp = _.uniqueId('shculture');
+      const name = timestamp + '-' + insertid + '.' + tempName[tempName.length - 1];
+      const thumbUrl = this.config('image.user') + '/' + name;
+      const thumbSmallUrl = this.config('image.user') + '/small/' + name;
+
+      fs.renameSync(img.path, thumbUrl);
+      images(thumbUrl + '').resize(96).save(thumbSmallUrl);
+      console.log('wxupdload', thumbUrl, thumbSmallUrl, name)
+      const imgObj = await this.model('source').add({ sourceType: sourcetype, sourceAddress: 'small/' + name,targetid: insertid });
+      return this.json(imgObj);
+    }
     // async upload2Action() {
     //     const circleId = this.post('circleId');
     //     const img = this.file('file');

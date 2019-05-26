@@ -33,12 +33,13 @@ module.exports = class extends Base {
 
     async getscenerydetailAction() {
         const id = this.get('id');
+        const studentid = this.get('studentid');
         const model = this.model('scenery');
         model._pk = 'sceneryID';
         const data = await model.where({sceneryID: id}).find();
         if (!think.isEmpty(data)) {
             data.pics = await this.model('scenery').getPicsbyid(data.sceneryID);
-            data.shstate = await this.model('scenery').getstate(data.sceneryID);
+            data.shstate = await this.model('scenery').getstudentstate(data.sceneryID, studentid);
             data.discussList = await this.model('discuss').getDiscussById(id,0);
         }
         return this.success(data);

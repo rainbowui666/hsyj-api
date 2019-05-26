@@ -1,3 +1,5 @@
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 const Base = require('./base.js');
 const fs = require('fs');
 
@@ -40,6 +42,29 @@ module.exports = class extends Base {
         }
     }
 
+    wxUploadAction() {
+        var _this = this;
+
+        return _asyncToGenerator(function* () {
+            const sourcetype = _this.post('sourcetype');
+            const insertid = _this.post('insertid');
+
+            const img = _this.file('file');
+            const _name = img.name;
+
+            const tempName = _name.split('.');
+            const timestamp = _.uniqueId('shculture');
+            const name = timestamp + '-' + insertid + '.' + tempName[tempName.length - 1];
+            const thumbUrl = _this.config('image.user') + '/' + name;
+            const thumbSmallUrl = _this.config('image.user') + '/small/' + name;
+
+            fs.renameSync(img.path, thumbUrl);
+            images(thumbUrl + '').resize(96).save(thumbSmallUrl);
+            console.log('wxupdload', thumbUrl, thumbSmallUrl, name);
+            const imgObj = yield _this.model('source').add({ sourceType: sourcetype, sourceAddress: 'small/' + name, targetid: insertid });
+            return _this.json(imgObj);
+        })();
+    }
     // async upload2Action() {
     //     const circleId = this.post('circleId');
     //     const img = this.file('file');
