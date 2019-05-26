@@ -2,6 +2,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 const Base = require('./base.js');
 const fs = require('fs');
+const _ = require('lodash');
 
 module.exports = class extends Base {
     indexAction() {

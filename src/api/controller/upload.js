@@ -1,5 +1,7 @@
 const Base = require('./base.js');
 const fs = require('fs');
+const _ = require('lodash');
+const images = require('node-images');
 
 module.exports = class extends Base {
     indexAction(){
