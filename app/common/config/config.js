@@ -12,4 +12,3 @@ module.exports = {
     user: '/usr/local/nginx/html/static/images/'
   }
 };
-//# sourceMappingURL=config.js.map

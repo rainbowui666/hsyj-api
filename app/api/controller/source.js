@@ -29,4 +29,3 @@ module.exports = class extends Base {
         })();
     }
 };
-//# sourceMappingURL=source.js.map

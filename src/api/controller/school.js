@@ -70,6 +70,7 @@ module.exports = class extends Base {
 
         const data = await model.where({schoolID: id}).find();
 
+        console.log('userid ctx', this.ctx.state.userId)
         const arrdata = [];
         if (!think.isEmpty(data)) {
         // for (const item of data.data) {

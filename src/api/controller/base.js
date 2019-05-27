@@ -1,10 +1,11 @@
 module.exports = class extends think.Controller {
   async __before() {
     // 根据token值获取用户id
-    // this.ctx.state.token = this.ctx.header['sms-token'] || '';
-    // const tokenSerivce = think.service('token', 'api');
-    // this.ctx.state.userId = await tokenSerivce.getUserId(this.ctx.state.token);
+    this.ctx.state.token = this.ctx.header['sms-token'] || '';
+    const tokenSerivce = think.service('token', 'api');
+    this.ctx.state.userId = await tokenSerivce.getUserId(this.ctx.state.token);
 
+    console.log('userid------', this.ctx.state.userId)
     // const publicController = this.config('publicController');
     // const publicAction = this.config('publicAction');
     // 如果为非公开，则验证用户是否登录

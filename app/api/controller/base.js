@@ -2,23 +2,26 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 module.exports = class extends think.Controller {
   __before() {
-    return _asyncToGenerator(function* () {})();
+    var _this = this;
+
+    return _asyncToGenerator(function* () {
+      // 根据token值获取用户id
+      _this.ctx.state.token = _this.ctx.header['sms-token'] || '';
+      const tokenSerivce = think.service('token', 'api');
+      _this.ctx.state.userId = yield tokenSerivce.getUserId(_this.ctx.state.token);
+
+      console.log('userid------', _this.ctx.state.userId);
+      // const publicController = this.config('publicController');
+      // const publicAction = this.config('publicAction');
+      // 如果为非公开，则验证用户是否登录
+      // const controllerAction = this.ctx.controller + '/' + this.ctx.action;
+      // if (!publicController.includes(this.ctx.controller) && !publicAction.includes(controllerAction)) {
+      // if (this.ctx.state.userId <= 0) {
+      //   return this.fail(401, '请先登录');
+      // }
+      // }
+    })();
   }
-  // 根据token值获取用户id
-  // this.ctx.state.token = this.ctx.header['sms-token'] || '';
-  // const tokenSerivce = think.service('token', 'api');
-  // this.ctx.state.userId = await tokenSerivce.getUserId(this.ctx.state.token);
-
-  // const publicController = this.config('publicController');
-  // const publicAction = this.config('publicAction');
-  // 如果为非公开，则验证用户是否登录
-  // const controllerAction = this.ctx.controller + '/' + this.ctx.action;
-  // if (!publicController.includes(this.ctx.controller) && !publicAction.includes(controllerAction)) {
-  // if (this.ctx.state.userId <= 0) {
-  //   return this.fail(401, '请先登录');
-  // }
-  // }
-
 
   /**
    * 获取时间戳

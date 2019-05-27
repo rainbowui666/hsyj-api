@@ -33,4 +33,3 @@ module.exports = class extends Base {
         })();
     }
 };
-//# sourceMappingURL=role.js.map

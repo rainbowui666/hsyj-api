@@ -19,4 +19,3 @@ module.exports = class extends Base {
         })();
     }
 };
-//# sourceMappingURL=student_scenery.js.map

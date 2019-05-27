@@ -342,4 +342,3 @@ module.exports = class extends Base {
     }
 
 };
-//# sourceMappingURL=activity.js.map

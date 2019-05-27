@@ -87,6 +87,7 @@ module.exports = class extends Base {
 
             const data = yield model.where({ schoolID: id }).find();
 
+            console.log('userid ctx', _this4.ctx.state.userId);
             const arrdata = [];
             if (!think.isEmpty(data)) {
                 // for (const item of data.data) {

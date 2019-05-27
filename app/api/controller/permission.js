@@ -53,4 +53,3 @@ module.exports = class extends Base {
         })();
     }
 };
-//# sourceMappingURL=permission.js.map

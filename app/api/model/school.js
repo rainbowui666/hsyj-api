@@ -72,4 +72,3 @@ module.exports = class extends think.Model {
         })();
     }
 };
-//# sourceMappingURL=school.js.map

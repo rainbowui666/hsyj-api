@@ -34,4 +34,3 @@ module.exports = class extends Base {
     //     return this.success('删除成功')
     // }
 };
-//# sourceMappingURL=user_role.js.map

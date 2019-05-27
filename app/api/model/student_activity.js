@@ -35,4 +35,3 @@ module.exports = class extends think.Model {
         })();
     }
 };
-//# sourceMappingURL=student_activity.js.map

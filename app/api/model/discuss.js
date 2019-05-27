@@ -14,4 +14,3 @@ module.exports = class extends think.Model {
         })();
     }
 };
-//# sourceMappingURL=discuss.js.map

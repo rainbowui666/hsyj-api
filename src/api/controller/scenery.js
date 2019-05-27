@@ -1,4 +1,5 @@
 const Base = require('./base.js');
+const _ = require('lodash');
 
 module.exports = class extends Base {
     async indexAction() {
@@ -44,8 +45,6 @@ module.exports = class extends Base {
         }
         return this.success(data);
     }
-
-    
 
     async detailAction() {
         const id = this.get('id');

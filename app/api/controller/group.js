@@ -47,4 +47,3 @@ module.exports = class extends Base {
         })();
     }
 };
-//# sourceMappingURL=group.js.map

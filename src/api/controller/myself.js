@@ -94,7 +94,7 @@ module.exports = class extends Base {
         const model = this.model('student_scenery');
         let data = null;
         if (!think.isEmpty(studentid)) {
-            data = await model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.studentid="+studentid+" and ss.shstate=1 and ss.sceneryid not in (select targetid from culture_discuss where distype=0)");
+            data = await model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.studentid="+studentid+" and ss.shstate=1 and ss.sceneryid not in (select targetid from culture_discuss where distype=0 and studentid="+studentid+")");
         } else {
             data = await model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.shstate=1 and ss.sceneryid not in (select targetid from culture_discuss where distype=0)");
         }

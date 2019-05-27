@@ -107,4 +107,3 @@ module.exports = class extends Base {
     return _asyncToGenerator(function* () {})();
   }
 };
-//# sourceMappingURL=index.js.map

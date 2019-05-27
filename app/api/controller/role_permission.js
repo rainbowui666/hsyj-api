@@ -29,4 +29,3 @@ module.exports = class extends Base {
     //     return this.success('删除成功')
     // }
 };
-//# sourceMappingURL=role_permission.js.map

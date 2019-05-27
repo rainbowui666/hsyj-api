@@ -34,7 +34,7 @@ module.exports = class extends Base {
         let nickName = _this.post('nickName');
 
         let userId = yield _this.model('student').add({
-          studentName: '微信用户' + nickName,
+          studentName: nickName,
           photo: avatarUrl,
           sex: gender,
           nickname: nickName,
@@ -77,7 +77,7 @@ module.exports = class extends Base {
   //   // if (think.isEmpty(userId)) {
   //     // 注册
   //   //   userId = await this.model('user').add({
-  //   //     username: '微信用户' + think.uuid(6),
+  //   //     username: think.uuid(6),
   //   //     pwd: '',
   //   //     tel: '',
   //   //     wxopenid: userInfo.openId,

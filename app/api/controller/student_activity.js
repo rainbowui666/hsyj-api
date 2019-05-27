@@ -32,4 +32,3 @@ module.exports = class extends Base {
         })();
     }
 };
-//# sourceMappingURL=student_activity.js.map

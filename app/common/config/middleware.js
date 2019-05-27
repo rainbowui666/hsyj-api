@@ -34,4 +34,3 @@ module.exports = [{
   handle: 'router',
   options: {}
 }, 'logic', 'controller'];
-//# sourceMappingURL=middleware.js.map

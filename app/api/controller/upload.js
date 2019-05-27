@@ -3,6 +3,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 const Base = require('./base.js');
 const fs = require('fs');
 const _ = require('lodash');
+// const images = require('images');
 
 module.exports = class extends Base {
     indexAction() {
@@ -54,16 +55,21 @@ module.exports = class extends Base {
             const _name = img.name;
 
             const tempName = _name.split('.');
-            const timestamp = _.uniqueId('shculture');
-            const name = timestamp + '-' + insertid + '.' + tempName[tempName.length - 1];
+            // const timestamp = _.uniqueId('shculture');
+            const name = think.uuid(2) + '-' + insertid + '.' + tempName[tempName.length - 1];
             const thumbUrl = _this.config('image.user') + '/' + name;
             const thumbSmallUrl = _this.config('image.user') + '/small/' + name;
+            const userid = _this.ctx.state.userId;
 
             fs.renameSync(img.path, thumbUrl);
-            images(thumbUrl + '').resize(96).save(thumbSmallUrl);
-            console.log('wxupdload', thumbUrl, thumbSmallUrl, name);
-            const imgObj = yield _this.model('source').add({ sourceType: sourcetype, sourceAddress: 'small/' + name, targetid: insertid });
-            return _this.json(imgObj);
+            // images(thumbUrl + '').resize(96).save(thumbSmallUrl);
+            console.log('wxupdload', thumbUrl, thumbSmallUrl, name, userid);
+            if (userid != 0) {
+                const imgObj = yield _this.model('source').add({ sourceType: sourcetype, sourceAddress: 'https://hsyj.100eduonline.com/static/images/' + name, targetid: insertid, userid: userid });
+                return _this.json(imgObj);
+            } else {
+                return _this.fail('登录信息过期,请重新登录');
+            }
         })();
     }
     // async upload2Action() {

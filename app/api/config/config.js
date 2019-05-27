@@ -3,4 +3,3 @@ module.exports = {
 
     publicAction: ['index', 'User/save']
 };
-//# sourceMappingURL=config.js.map
