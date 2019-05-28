@@ -1,5 +1,6 @@
 module.exports = {
-    publicController: ['index', 'User'],
+    publicController: ['index', 'user'],
 
-    publicAction: ['index', 'User/save']
+    publicAction: ['index', 'user/save']
 };
+//# sourceMappingURL=config.js.map

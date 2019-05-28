@@ -2,7 +2,7 @@ const Base = require('./base.js');
 
 module.exports = class extends Base {
   async indexAction() {
-    const User = await this.model('User').select();
+    const User = await this.model('user').select();
 
   // const data = await this.cache('rds_user');
   // console.log(data)

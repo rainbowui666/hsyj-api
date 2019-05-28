@@ -7,7 +7,7 @@ module.exports = class extends Base {
     var _this = this;
 
     return _asyncToGenerator(function* () {
-      const User = yield _this.model('User').select();
+      const User = yield _this.model('user').select();
 
       // const data = await this.cache('rds_user');
       // console.log(data)
@@ -107,3 +107,4 @@ module.exports = class extends Base {
     return _asyncToGenerator(function* () {})();
   }
 };
+//# sourceMappingURL=index.js.map

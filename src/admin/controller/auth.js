@@ -26,7 +26,7 @@ module.exports = class extends Base {
 
   async getUserInfoAction() {
     const sysuserid = this.get('sysuserid');
-    const data = await this.model('User').where({sysUserID:sysuserid}).find()
+    const data = await this.model('user').where({sysUserID:sysuserid}).find()
     return this.success(data);
   }
   async logoutAction() {
@@ -71,15 +71,15 @@ module.exports = class extends Base {
 
     const username = this.post('username');
     const pwd = this.post('pwd');
-    const data = await this.model('User').where({userName:username, pwd:pwd}).find();
+    const data = await this.model('user').where({userName:username, pwd:pwd}).find();
     if (think.isEmpty(data)) {
       return this.fail(403, '账号或密码错误');
     } 
       const id = data.sysUserID;
 
-      const model = this.model('User');
+      const model = this.model('user');
       // let userData = await model.query("select u.*,ur.roleid,r.roleName,rp.permissionid,p.permissionName,ps.schoolid from culture_user u inner join culture_user_role ur on u.sysUserID=ur.sysuserid inner join culture_role r on r.roleID=ur.roleid inner join culture_role_permission rp on rp.roleid=r.roleID inner join culture_permission p on p.permissionID=rp.permissionid inner join culture_permission_school ps on ps.permissionid=p.permissionID where u.sysuserid="+id);
-      let userData = await model.query("select u.*,s.schoolName from culture_User u left join culture_school s on u.schoolid=s.schoolID where u.sysuserid="+id);
+      let userData = await model.query("select u.*,s.schoolName from culture_user u left join culture_school s on u.schoolid=s.schoolID where u.sysuserid="+id);
 
       const TokenSerivce = this.service('token', 'admin');
       const sessionKey = await TokenSerivce.create({ user_id: userData.sysUserID });
@@ -102,7 +102,7 @@ console.log('sessionKey', sessionKey)
 
   async getUserInfoAction() {
     const sysuserid = this.get('sysuserid');
-    const data = await this.model('User').where({sysUserID:sysuserid}).find()
+    const data = await this.model('user').where({sysUserID:sysuserid}).find()
     return this.success(data);
   }
 };

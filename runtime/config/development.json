@@ -119,11 +119,11 @@
     },
     "publicController": [
       "index",
-      "User"
+      "user"
     ],
     "publicAction": [
       "index",
-      "User/save"
+      "user/save"
     ],
     "cache": {
       "type": "file",

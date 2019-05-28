@@ -21,6 +21,6 @@
     "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;;AAE1BI,+BAAN,GAAoC;AAAA;;AAAA;AAChC,kBAAMC,WAAW,MAAKC,GAAL,CAAS,UAAT,CAAjB;AACA,kBAAMC,OAAO,MAAM,MAAKC,KAAL,CAAW,MAAX,EAAmBC,KAAnB,CAAyB,EAACJ,UAASA,QAAV,EAAoBK,SAAS,CAA7B,EAAzB,EAA0DC,MAA1D,EAAnB;AACA,mBAAO,MAAKC,OAAL,CAAaL,IAAb,CAAP;AAHgC;AAInC;AAN+B,CAApC",
     "file": "../../../src/api/controller/user.js",
     "sourcesContent": [
-        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    \n    async getUserListBySchoolidAction() {\n        const schoolid = this.get('schoolid');\n        const data = await this.model('User').where({schoolid:schoolid, shstate: 0}).select();\n        return this.success(data)\n    }\n}"
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    \n    async getUserListBySchoolidAction() {\n        const schoolid = this.get('schoolid');\n        const data = await this.model('user').where({schoolid:schoolid, shstate: 0}).select();\n        return this.success(data)\n    }\n}"
     ]
 }

@@ -1,11 +1,11 @@
 module.exports = {
     publicController: [
         'index',
-        'User'
+        'user'
     ],
 
     publicAction: [
         'index',
-        'User/save'
+        'user/save'
     ]
 }
