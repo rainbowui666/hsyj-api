@@ -26,7 +26,7 @@ module.exports = class extends Base {
         const endDate = new Date();
         const date = endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate()+' 00:00:00'
         // endDate:{'>': think.datetime(date,'YYYY-MM-DD')
-        const data = await model.where({shstate: 0, endDate:{'>': think.datetime(date,'YYYY-MM-DD')}}).order('activityID desc').page(page,size).countSelect();
+        const data = await model.where({shstate: 0, iscomplate: 1, endDate:{'>': think.datetime(date,'YYYY-MM-DD')}}).order('activityID desc').page(page,size).countSelect();
 
         const arrdata = [];
 
@@ -228,12 +228,11 @@ module.exports = class extends Base {
         model._pk = 'questionID';
         let list = [];
         if (userinfo && userinfo[0] && userinfo[0].usertype == 0) {
-            console.log('aaa')
             let condition = {};
             if (think.isEmpty(activityid)|| activityid == 'undefined') {
-                condition = {createbyuserid: userinfo[0].sysUserID};
+                condition = {'act.createbyuserid': userinfo[0].sysUserID, 'q.shstate':0, 'cs.shstate':0, 'act.shstate':0, 's.questionid': ['!=', null]};
             } else {
-                condition = {'s.activityid':activityid,createbyuserid: userinfo[0].sysUserID};
+                condition = {'act.activityid':activityid,'act.createbyuserid': userinfo[0].sysUserID, 'q.shstate':0, 'cs.shstate':0, 'act.shstate':0, 's.questionid': ['!=', null]};
             }
             list = await model.field(['q.questionID','q.questiontitle','q.answera','q.answerb','q.answerc','q.answerd','q.rightanswer',
                 's.sceneryid','s.activityid','cs.sceneryTitle','act.startAddress'])
@@ -242,7 +241,7 @@ module.exports = class extends Base {
                 table:'activity_scenery',
                 join:'left',
                 as: 's',
-                on: ['q.questionID', 's.questionID']
+                on: ['q.sceneryid', 's.sceneryid']
             })
             .join({
                 table:'scenery',
@@ -257,12 +256,11 @@ module.exports = class extends Base {
                 on: ['act.activityID','s.activityid']
             }).order('activityid desc').where(condition).page(page, size).countSelect();
         } else {
-            console.log('bbb')
             let condition = {};
             if (think.isEmpty(activityid) || activityid == 'undefined') {
-                condition = {1: 1};
+                condition = {1: 1, 'q.shstate':0, 'cs.shstate':0, 'act.shstate':0,'s.questionid': ['!=', null]};
             } else {
-                condition['s.activityid'] = activityid;
+                condition = {'s.activityid': activityid, 'q.shstate':0, 'cs.shstate':0, 'act.shstate':0,'s.questionid': ['!=', null]};
             }
             list = await model.field(['q.questionID','q.questiontitle','q.answera','q.answerb','q.answerc','q.answerd','q.rightanswer',
                 's.sceneryid','s.activityid','cs.sceneryTitle','act.startAddress'])
@@ -271,7 +269,7 @@ module.exports = class extends Base {
                 table:'activity_scenery',
                 join:'left',
                 as: 's',
-                on: ['q.questionID', 's.questionID']
+                on: ['q.sceneryid', 's.sceneryid']
             })
             .join({
                 table:'scenery',

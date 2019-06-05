@@ -9,8 +9,8 @@ module.exports = class extends Base {
     return _asyncToGenerator(function* () {
       const User = yield _this.model('user').select();
 
-      // const data = await this.cache('rds_user');
-      // console.log(data)
+      const data = yield _this.cache('rds_user');
+      console.log(data);
       return _this.success({
         User: User
       });
@@ -24,16 +24,16 @@ module.exports = class extends Base {
 
       // await this.cache('home_activity_scenery', null)
       // await this.cache('home_activity_scenery', null, 'redis')
-      // const homedata = await this.cache('home_activity_scenery');
-      // if (!think.isEmpty(homedata)) {
-      //   console.log('redis found data ...')
-      //   return this.success(homedata)
-      // }
+      const homedata = yield _this2.cache('home_activity_scenery');
+      if (!think.isEmpty(homedata)) {
+        console.log('redis found data ...');
+        return _this2.success(homedata);
+      }
       // 活动推荐
       const model = _this2.model('activity');
       model._pk = 'activityID';
       const studentid = _this2.get('studentid');
-      const data = yield model.field(['activityID', 'activityName', 'startDate', 'endDate', 'isGroup']).where({ isrecommend: 1, shstate: 0 }).order('activityID desc').limit(0, 5).select();
+      const data = yield model.field(['activityID', 'activityName', 'startDate', 'endDate', 'isGroup']).where({ isrecommend: 1, shstate: 0, iscomplate: 1 }).order('activityID desc').limit(0, 5).select();
 
       const arrdata = [];
       for (const item of data) {
@@ -84,9 +84,9 @@ module.exports = class extends Base {
       }
 
       // console.log('write...')
-      let alldata = { activitydata: arrdata, scenerydata: arrdata2
-        // await this.cache('home_activity_scenery', alldata, 'redis')
-      };return _this2.success(alldata);
+      let alldata = { activitydata: arrdata, scenerydata: arrdata2 };
+      yield _this2.cache('home_activity_scenery', alldata, 'redis');
+      return _this2.success(alldata);
     })();
   }
 

@@ -103,7 +103,7 @@ module.exports = class extends Base {
             console.log('read from cache')
             return this.success(homedata)
         }
-        const data = await model.where({shstate:1, isrecommend:1}).order('discussID desc').page(pageindex, pagesize).countSelect();
+        const data = await model.where({shstate:1}).order('discussID desc').page(pageindex, pagesize).countSelect();
 
         const arrdata = [];
         for (const item of data.data) {
@@ -123,9 +123,9 @@ module.exports = class extends Base {
         }
         data.data = arrdata;
         // console.log('set cache')
-        // await this.cache('home_discuss'+pageindex+'_'+pagesize, data, 'redis')
+        await this.cache('home_discuss'+pageindex+'_'+pagesize, data, 'redis')
 
-        // await this.model('pagecache').add({cachename:'home_discuss'+pageindex+'_'+pagesize});
+        await this.model('pagecache').add({cachename:'home_discuss'+pageindex+'_'+pagesize});
 
         return this.success(data)
     }

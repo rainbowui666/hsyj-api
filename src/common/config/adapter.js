@@ -24,7 +24,7 @@ exports.cache = {
     gcInterval: 24 * 60 * 60 * 1000 // gc interval
   }
 };
-/*exports.cache = {
+exports.cache = {
   type: 'redis',
   common: {
       timeout: 24 * 3600 * 1000 // millisecond
@@ -35,7 +35,7 @@ exports.cache = {
       host: '127.0.0.1',
       password: '000000'
   }
-};*/
+};
 
 /**
  * model adapter config

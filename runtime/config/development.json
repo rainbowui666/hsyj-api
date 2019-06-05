@@ -25,12 +25,12 @@
       "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
-      "type": "file",
-      "file": {
+      "type": "redis",
+      "redis": {
         "timeout": 86400000,
-        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
-        "pathDepth": 1,
-        "gcInterval": 86400000
+        "port": 6379,
+        "host": "127.0.0.1",
+        "password": "000000"
       }
     },
     "model": {
@@ -126,12 +126,12 @@
       "user/save"
     ],
     "cache": {
-      "type": "file",
-      "file": {
+      "type": "redis",
+      "redis": {
         "timeout": 86400000,
-        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
-        "pathDepth": 1,
-        "gcInterval": 86400000
+        "port": 6379,
+        "host": "127.0.0.1",
+        "password": "000000"
       }
     },
     "model": {
@@ -219,12 +219,12 @@
       "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
-      "type": "file",
-      "file": {
+      "type": "redis",
+      "redis": {
         "timeout": 86400000,
-        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
-        "pathDepth": 1,
-        "gcInterval": 86400000
+        "port": 6379,
+        "host": "127.0.0.1",
+        "password": "000000"
       }
     },
     "model": {
@@ -312,12 +312,12 @@
       "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
-      "type": "file",
-      "file": {
+      "type": "redis",
+      "redis": {
         "timeout": 86400000,
-        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
-        "pathDepth": 1,
-        "gcInterval": 86400000
+        "port": 6379,
+        "host": "127.0.0.1",
+        "password": "000000"
       }
     },
     "model": {
@@ -405,12 +405,12 @@
       "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
-      "type": "file",
-      "file": {
+      "type": "redis",
+      "redis": {
         "timeout": 86400000,
-        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
-        "pathDepth": 1,
-        "gcInterval": 86400000
+        "port": 6379,
+        "host": "127.0.0.1",
+        "password": "000000"
       }
     },
     "model": {
@@ -498,12 +498,12 @@
       "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
-      "type": "file",
-      "file": {
+      "type": "redis",
+      "redis": {
         "timeout": 86400000,
-        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
-        "pathDepth": 1,
-        "gcInterval": 86400000
+        "port": 6379,
+        "host": "127.0.0.1",
+        "password": "000000"
       }
     },
     "model": {
@@ -591,12 +591,12 @@
       "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
-      "type": "file",
-      "file": {
+      "type": "redis",
+      "redis": {
         "timeout": 86400000,
-        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
-        "pathDepth": 1,
-        "gcInterval": 86400000
+        "port": 6379,
+        "host": "127.0.0.1",
+        "password": "000000"
       }
     },
     "model": {
@@ -684,12 +684,12 @@
       "user": "/usr/local/nginx/html/static/images/"
     },
     "cache": {
-      "type": "file",
-      "file": {
+      "type": "redis",
+      "redis": {
         "timeout": 86400000,
-        "cachePath": "/Users/kevinke/GitDemo/schoolCulture/runtime/cache",
-        "pathDepth": 1,
-        "gcInterval": 86400000
+        "port": 6379,
+        "host": "127.0.0.1",
+        "password": "000000"
       }
     },
     "model": {

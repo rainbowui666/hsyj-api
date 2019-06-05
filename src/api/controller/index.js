@@ -4,8 +4,8 @@ module.exports = class extends Base {
   async indexAction() {
     const User = await this.model('user').select();
 
-  // const data = await this.cache('rds_user');
-  // console.log(data)
+  const data = await this.cache('rds_user');
+  console.log(data)
     return this.success({
       User: User
     });
@@ -15,16 +15,16 @@ module.exports = class extends Base {
 
     // await this.cache('home_activity_scenery', null)
     // await this.cache('home_activity_scenery', null, 'redis')
-    // const homedata = await this.cache('home_activity_scenery');
-    // if (!think.isEmpty(homedata)) {
-    //   console.log('redis found data ...')
-    //   return this.success(homedata)
-    // }
+    const homedata = await this.cache('home_activity_scenery');
+    if (!think.isEmpty(homedata)) {
+      console.log('redis found data ...')
+      return this.success(homedata)
+    }
     // 活动推荐
     const model = this.model('activity');
     model._pk = 'activityID';
     const studentid = this.get('studentid');
-    const data = await model.field(['activityID', 'activityName', 'startDate','endDate','isGroup']).where({isrecommend:1, shstate:0}).order('activityID desc').limit(0,5).select();
+    const data = await model.field(['activityID', 'activityName', 'startDate','endDate','isGroup']).where({isrecommend:1, shstate:0, iscomplate: 1}).order('activityID desc').limit(0,5).select();
     
     const arrdata = [];
     for (const item of data) {
@@ -76,7 +76,7 @@ module.exports = class extends Base {
 
     // console.log('write...')
     let alldata = {activitydata: arrdata, scenerydata: arrdata2}
-    // await this.cache('home_activity_scenery', alldata, 'redis')
+    await this.cache('home_activity_scenery', alldata, 'redis')
     return this.success(alldata)
   }
 

@@ -21,6 +21,10 @@ module.exports = class extends Base {
             extension = '.jpg'
           } else if (extension.indexOf('.png') != -1) {
             extension = '.png'
+          } else if (extension.indexOf('.mp3') != -1) {
+            extension = '.mp3'
+          } else if (extension.indexOf('.mp4') != -1) {
+            extension = '.mp4'
           }
         //   const filename = '/static/upload/' + think.uuid(16) + extension;
         let exname = think.uuid(16) + extension;

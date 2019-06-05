@@ -92,7 +92,7 @@ module.exports = class extends Base {
             isrecommend,
             groupNum,createbyuserid: userinfo[0].sysUserID
         }; 
-        // await this.model('pagecache').getdatabyname('home_discuss');
+        await this.model('pagecache').getdatabyname('home_discuss');
         
         let arr = [];
         if (think.isEmpty(id)) {
@@ -112,7 +112,7 @@ module.exports = class extends Base {
                     await this.model('activity_scenery').addMany(arr);
                     }
                 }
-                // await this.cache('home_activity_scenery', null, 'redis');
+                await this.cache('home_activity_scenery', null, 'redis');
                 return this.json({
                         insertid:insertid
                     });
@@ -133,7 +133,7 @@ module.exports = class extends Base {
                     await this.model('activity_scenery').addMany(arr);
                 }
             }
-            // await this.cache('home_activity_scenery', null, 'redis');
+            await this.cache('home_activity_scenery', null, 'redis');
             return this.success('活动修改成功')
         }
         
@@ -164,18 +164,20 @@ module.exports = class extends Base {
 await this.model('pagecache').getdatabyname('home_discuss');
         if (think.isEmpty(id)) {
             const questId = await this.model('question').add(questionData);
-            // if (questId) {
-            //     await this.model('activity_scenery').add({
-            //         sceneryid,questionid:questId,activityid:activityid
-            //     });
-            // }
+            if (questId) {
+                let para = {
+                    sceneryid,questionid:questId,activityid:activityid
+                };
+                await this.model('activity_scenery').add(para);
+            }
             return this.success('第二步成功');
         } else {
             await this.model('activity_scenery').where({questionid:id}).delete()
             await this.model('question').where({questionID:id}).update(questionData);
-            // await this.model('activity_scenery').add({
-            //     sceneryid,questionid:id,activityid:activityid
-            // });
+            let pa = {
+                sceneryid,questionid:id,activityid:activityid
+            };
+            await this.model('activity_scenery').add(pa);
             return this.success('修改成功')
         }
     }
@@ -192,11 +194,24 @@ await this.model('pagecache').getdatabyname('home_discuss');
 
     async delete2Action() {
         const id = this.get('id');
+        const activityid = this.get('activityid');
+        const sceneryid = this.get('sceneryid');
         const data = {
             shstate: 1
         }
         await this.model('pagecache').getdatabyname('home_discuss');
-        await this.model('question').where({questionID:id}).update(data);
+        await this.model('question').where({questionID:id}).delete();
+        await this.model('activity_scenery').where({activityid:activityid, questionid: id,sceneryid:sceneryid}).delete();
         return this.success('活动第二步问题删除成功')
+    }
+
+    async changeComplateAction() {
+        const activityid = this.get('activityid');
+        const iscomplate = this.get('iscomplate');
+        const para = {
+            iscomplate: iscomplate
+        }
+        const data = this.model('activity').where({activityID:activityid}).update(para);
+        return this.success('活动已完成')
     }
 }

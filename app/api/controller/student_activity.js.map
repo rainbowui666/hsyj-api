@@ -17,15 +17,16 @@
         "insertid",
         "model",
         "add",
+        "cache",
         "success",
         "studnetHasStatusAction",
         "studentid",
         "where",
         "count"
     ],
-    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,iBAAN,GAAsB;AAAA;;AAAA;AAClB,kBAAMC,YAAY,MAAKC,GAAL,CAAS,WAAT,CAAlB;AACA,kBAAMC,aAAa,MAAKD,GAAL,CAAS,YAAT,CAAnB;AACA,kBAAME,UAAU,MAAKF,GAAL,CAAS,SAAT,CAAhB;AACA,gBAAIG,OAAO;AACPJ,yBADO,EACGE,UADH,EACcC;AADd,aAAX;AAGA,kBAAME,WAAW,MAAM,MAAKC,KAAL,CAAW,kBAAX,EAA+BC,GAA/B,CAAmCH,IAAnC,CAAvB;AACA;AACA,mBAAO,MAAKI,OAAL,CAAa,QAAb,CAAP;AATkB;AAUrB;;AAEKC,0BAAN,GAA+B;AAAA;;AAAA;AAC3B,kBAAMC,YAAY,OAAKT,GAAL,CAAS,WAAT,CAAlB;AACA,kBAAMC,aAAa,OAAKD,GAAL,CAAS,YAAT,CAAnB;AACA,kBAAME,UAAU,OAAKF,GAAL,CAAS,SAAT,CAAhB;;AAEA,kBAAMG,OAAO,MAAM,OAAKE,KAAL,CAAW,kBAAX,EAA+BK,KAA/B,CAAqC,EAACX,WAAUU,SAAX,EAAsBR,YAAWA,UAAjC,EAA4CC,SAAQA,OAApD,EAArC,EAAmGS,KAAnG,EAAnB;AACA,mBAAO,OAAKJ,OAAL,CAAaJ,IAAb,CAAP;AAN2B;AAO9B;AApB+B,CAApC",
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;AAC1BI,iBAAN,GAAsB;AAAA;;AAAA;AAClB,kBAAMC,YAAY,MAAKC,GAAL,CAAS,WAAT,CAAlB;AACA,kBAAMC,aAAa,MAAKD,GAAL,CAAS,YAAT,CAAnB;AACA,kBAAME,UAAU,MAAKF,GAAL,CAAS,SAAT,CAAhB;AACA,gBAAIG,OAAO;AACPJ,yBADO,EACGE,UADH,EACcC;AADd,aAAX;AAGA,kBAAME,WAAW,MAAM,MAAKC,KAAL,CAAW,kBAAX,EAA+BC,GAA/B,CAAmCH,IAAnC,CAAvB;AACA,kBAAM,MAAKI,KAAL,CAAW,uBAAX,EAAoC,IAApC,EAA0C,OAA1C,CAAN;AACA,mBAAO,MAAKC,OAAL,CAAa,QAAb,CAAP;AATkB;AAUrB;;AAEKC,0BAAN,GAA+B;AAAA;;AAAA;AAC3B,kBAAMC,YAAY,OAAKV,GAAL,CAAS,WAAT,CAAlB;AACA,kBAAMC,aAAa,OAAKD,GAAL,CAAS,YAAT,CAAnB;AACA,kBAAME,UAAU,OAAKF,GAAL,CAAS,SAAT,CAAhB;;AAEA,kBAAMG,OAAO,MAAM,OAAKE,KAAL,CAAW,kBAAX,EAA+BM,KAA/B,CAAqC,EAACZ,WAAUW,SAAX,EAAsBT,YAAWA,UAAjC,EAA4CC,SAAQA,OAApD,EAArC,EAAmGU,KAAnG,EAAnB;AACA,mBAAO,OAAKJ,OAAL,CAAaL,IAAb,CAAP;AAN2B;AAO9B;AApB+B,CAApC",
     "file": "../../../src/api/controller/student_activity.js",
     "sourcesContent": [
-        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async addEditAction() {\n        const studentID = this.get('studentid');\n        const activityid = this.get('activityid');\n        const shstate = this.get('shstate');\n        let data = {\n            studentID,activityid,shstate\n        }\n        const insertid = await this.model('student_activity').add(data);\n        // await this.cache('home_activity_scenery', null, 'redis');\n        return this.success('活动签到成功');\n    }\n\n    async studnetHasStatusAction() {\n        const studentid = this.get('studentid');\n        const activityid = this.get('activityid');\n        const shstate = this.get('shstate');\n\n        const data = await this.model('student_activity').where({studentID:studentid, activityid:activityid,shstate:shstate}).count();\n        return this.success(data)\n    }\n}"
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    async addEditAction() {\n        const studentID = this.get('studentid');\n        const activityid = this.get('activityid');\n        const shstate = this.get('shstate');\n        let data = {\n            studentID,activityid,shstate\n        }\n        const insertid = await this.model('student_activity').add(data);\n        await this.cache('home_activity_scenery', null, 'redis');\n        return this.success('活动签到成功');\n    }\n\n    async studnetHasStatusAction() {\n        const studentid = this.get('studentid');\n        const activityid = this.get('activityid');\n        const shstate = this.get('shstate');\n\n        const data = await this.model('student_activity').where({studentID:studentid, activityid:activityid,shstate:shstate}).count();\n        return this.success(data)\n    }\n}"
     ]
 }

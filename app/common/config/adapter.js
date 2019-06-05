@@ -24,18 +24,18 @@ exports.cache = {
     gcInterval: 24 * 60 * 60 * 1000 // gc interval
   }
 };
-/*exports.cache = {
+exports.cache = {
   type: 'redis',
   common: {
-      timeout: 24 * 3600 * 1000 // millisecond
+    timeout: 24 * 3600 * 1000 // millisecond
   },
   redis: {
-      handle: redisCache,
-      port: 6379,
-      host: '127.0.0.1',
-      password: '000000'
+    handle: redisCache,
+    port: 6379,
+    host: '127.0.0.1',
+    password: '000000'
   }
-};*/
+};
 
 /**
  * model adapter config
@@ -147,3 +147,4 @@ exports.logger = {
     filename: path.join(think.ROOT_PATH, 'logs/app.log')
   }
 };
+//# sourceMappingURL=adapter.js.map

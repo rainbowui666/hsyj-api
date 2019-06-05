@@ -25,12 +25,15 @@ module.exports = class extends think.Model {
             const modeldis = _this2.model('discuss');
             modeldis._pk = 'discussID';
             const disnum = yield modeldis.where({ distype: 1, targetid: id, shstate: 1 }).count('discussID');
+            const applyNum = yield model.where({ activityid: id, shstate: 1 }).count('activityid');
             return {
                 // checkin: checkin,
                 wantto: wantto,
+                applyNum: applyNum,
                 // sharenum: sharenum,
                 disnum: disnum
             };
         })();
     }
 };
+//# sourceMappingURL=activity.js.map

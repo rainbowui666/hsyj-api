@@ -116,7 +116,7 @@ module.exports = class extends Base {
                 console.log('read from cache');
                 return _this3.success(homedata);
             }
-            const data = yield model.where({ shstate: 1, isrecommend: 1 }).order('discussID desc').page(pageindex, pagesize).countSelect();
+            const data = yield model.where({ shstate: 1 }).order('discussID desc').page(pageindex, pagesize).countSelect();
 
             const arrdata = [];
             for (const item of data.data) {
@@ -138,9 +138,9 @@ module.exports = class extends Base {
             }
             data.data = arrdata;
             // console.log('set cache')
-            // await this.cache('home_discuss'+pageindex+'_'+pagesize, data, 'redis')
+            yield _this3.cache('home_discuss' + pageindex + '_' + pagesize, data, 'redis');
 
-            // await this.model('pagecache').add({cachename:'home_discuss'+pageindex+'_'+pagesize});
+            yield _this3.model('pagecache').add({ cachename: 'home_discuss' + pageindex + '_' + pagesize });
 
             return _this3.success(data);
         })();
@@ -173,3 +173,4 @@ module.exports = class extends Base {
     }
 
 };
+//# sourceMappingURL=discuss.js.map
