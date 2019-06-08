@@ -40,12 +40,27 @@ module.exports = class extends Base {
 
     async deleteAction() {
         const id = this.get('id');
-        const data = {
-            shstate: 1
-        }
-        await this.model('scenery').where({sceneryID:id}).update(data);
+        // const data = {
+        //     shstate: 1
+        // }
+        await this.model('scenery').where({sceneryID:id}).delete();
         await this.cache('home_activity_scenery', null, 'redis');
         return this.success('删除成功')
+    }
+
+    async getdatabyname(name) {
+        const model = this.model('pagecache');
+        model._pk = 'cacheid';
+        const dataname = await model.where({cachename:['like','%'+name+'%']}).select();
+        
+        if (!think.isEmpty(dataname)) {
+            for (let i = 0; i < dataname.length; i++) {
+                let name = dataname[i].cachename;
+                await this.cache(name, null);
+            }
+        }
+        const data = await model.where({cachename:['like','%'+name+'%']}).delete();
+        return data;
     }
 
     async addEditAction() {
@@ -71,7 +86,7 @@ module.exports = class extends Base {
             videourl,
             isrecommend
         }; 
-        await this.model('pagecache').getdatabyname('home_discuss');
+        await this.getdatabyname('home_discuss');
         if (think.isEmpty(id)) {
             let model = this.model('scenery');
             const insertid = await model.add(param);

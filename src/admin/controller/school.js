@@ -49,14 +49,33 @@ module.exports = class extends Base {
         return this.success(data)
     }
 
+    async getdatabyname(name) {
+        const model = this.model('pagecache');
+        model._pk = 'cacheid';
+        const dataname = await model.where({cachename:['like','%'+name+'%']}).select();
+        
+        if (!think.isEmpty(dataname)) {
+            for (let i = 0; i < dataname.length; i++) {
+                let name = dataname[i].cachename;
+                await this.cache(name, null);
+            }
+        }
+        const data = await model.where({cachename:['like','%'+name+'%']}).delete();
+        return data;
+    }
+
     async deleteAction() {
         const id = this.get('id');
-        const data = {
-            shstate: 1
-        }
-        await this.model('pagecache').getdatabyname('home_discuss');
-        await this.model('school').where({schoolID:id}).update(data);
-        return this.success('学校删除成功')
+        // const data = {
+        //     shstate: 1
+        // }
+        await this.getdatabyname('home_discuss');
+        await this.model('school').where({schoolID:id}).delete();
+        await this.model('scenery').where({schoolid: id}).delete();
+        await this.model('student').where({schoolid: id}).delete();
+        await this.model('source').where({sourceType: 0, targetid: id}).delete();
+        await this.model('discuss').where({distype: 2, targetid: id}).delete();
+        return this.success('学校及关联的景点、学生、图片、评论删除成功')
     }
     
     async addEditAction() {
@@ -88,22 +107,27 @@ module.exports = class extends Base {
             videourl,areaid,parentid,
             createbyuserid: userinfo[0].sysUserID
         }; 
-        await this.model('pagecache').getdatabyname('home_discuss');
+        await this.getdatabyname('home_discuss');
         if (think.isEmpty(id)) {
-            let model = this.model('school');
-            const insertid = await model.add(param);
-            
-            // 上传学校图片
-            if (insertid) {
-                // const sourceaddress = this.post('sourceaddress');
-                // const insertid2 = await this.model('source').add({
-                //     sourceType:0,
-                //     sourceAddress: sourceaddress,
-                //     targetid: insertid
-                // });
-                return this.json({
-                        insertid:insertid
-                    });
+            const userDataCount = await this.model('school').where({schoolName: schoolname}).count('schoolID');
+            if (userDataCount == 0) {
+                let model = this.model('school');
+                const insertid = await model.add(param);
+                
+                // 上传学校图片
+                if (insertid) {
+                    // const sourceaddress = this.post('sourceaddress');
+                    // const insertid2 = await this.model('source').add({
+                    //     sourceType:0,
+                    //     sourceAddress: sourceaddress,
+                    //     targetid: insertid
+                    // });
+                    return this.json({
+                            insertid:insertid
+                        });
+                }
+            } else {
+                return this.fail('学校名称不能重复,添加失败')
             }
         } else {
             // 1 删除source, 2修改

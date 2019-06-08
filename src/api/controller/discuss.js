@@ -91,6 +91,21 @@ module.exports = class extends Base {
         return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
     }
 
+    async getdatabyname(name) {
+        const model = this.model('pagecache');
+        model._pk = 'cacheid';
+        const dataname = await model.where({cachename:['like','%'+name+'%']}).select();
+        
+        if (!think.isEmpty(dataname)) {
+            for (let i = 0; i < dataname.length; i++) {
+                let name = dataname[i].cachename;
+                await this.cache(name, null);
+            }
+        }
+        const data = await model.where({cachename:['like','%'+name+'%']}).delete();
+        return data;
+    }
+    
     async homeDiscussAction() {
         const model =  this.model('discuss');
         model._pk = "discussID";
@@ -98,9 +113,10 @@ module.exports = class extends Base {
         const pagesize = this.get('pagesize') || 5;
         const studentid = this.get('studentid');
 
+        // await this.cache('home_discuss'+pageindex+'_'+pagesize, null);
         const homedata = await this.cache('home_discuss'+pageindex+'_'+pagesize);
         if (!think.isEmpty(homedata)) {
-            console.log('read from cache')
+            console.log('read from cache', 'home_discuss'+pageindex+'_'+pagesize)
             return this.success(homedata)
         }
         const data = await model.where({shstate:1}).order('discussID desc').page(pageindex, pagesize).countSelect();
@@ -117,7 +133,7 @@ module.exports = class extends Base {
             } else {
                 item.pics = []
             }
-            item.likednum = await this.model('like_discuss').where({discussid:item.discussID, studentid:studentid}).count();
+            item.likednum = await this.model('discuss').where({discussID:item.discussID, studentid:studentid}).getField('clicknum', true);
             item.poto = await this.model('student').field(['photo','studentName']).where({studentID:item.studentid}).find();
             arrdata.push(item)
         }
@@ -138,7 +154,10 @@ module.exports = class extends Base {
         const para = {clicknum:clicknum};
         await this.model('discuss').where({discussID:id}).update(para);
         await this.model('like_discuss').add({studentid: studentid, discussid:id});
-        return this.success('点赞成功');
+        await this.getdatabyname('home_discuss');
+
+        const clickdata = await this.model('discuss').where({discussID:id}).getField('clicknum', true)
+        return this.json({msg:'点赞成功', newnum:clickdata});
     }
 
     async hasLikeDiscussAction() {

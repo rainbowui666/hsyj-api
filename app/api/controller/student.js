@@ -47,9 +47,11 @@ module.exports = class extends Base {
 
             const start = (pageindex - 1) * pagesize;
             const model = _this.model('student');
+            // shstate: 1 删除，2未验证，3验证中，4 验证通过
             const data = yield model.query("select * from culture_student where " + stunocondition + " and " + studentnamecondition + " and " + telcondition + " and " + wxcondition + " and studentID limit " + start + "," + pagesize + " ");
             return _this.success({ pageindex: pageindex, pagesize: pagesize, data });
         })();
     }
 
 };
+//# sourceMappingURL=student.js.map

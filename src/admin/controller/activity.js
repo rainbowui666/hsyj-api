@@ -38,6 +38,21 @@ module.exports = class extends Base {
         return this.success(data)
     }
 
+    async getdatabyname(name) {
+        const model = this.model('pagecache');
+        model._pk = 'cacheid';
+        const dataname = await model.where({cachename:['like','%'+name+'%']}).select();
+        
+        if (!think.isEmpty(dataname)) {
+            for (let i = 0; i < dataname.length; i++) {
+                let name = dataname[i].cachename;
+                await this.cache(name, null);
+            }
+        }
+        const data = await model.where({cachename:['like','%'+name+'%']}).delete();
+        return data;
+    }
+
     async addEdit1Action() {
         const activityName = this.post('activityname');
         const sponsor = this.post('sponsor') || '';
@@ -92,7 +107,7 @@ module.exports = class extends Base {
             isrecommend,
             groupNum,createbyuserid: userinfo[0].sysUserID
         }; 
-        await this.model('pagecache').getdatabyname('home_discuss');
+        await this.getdatabyname('home_discuss');
         
         let arr = [];
         if (think.isEmpty(id)) {
@@ -161,7 +176,7 @@ module.exports = class extends Base {
             answerD: answerd,
             rightAnswer: rightanswer
         }
-await this.model('pagecache').getdatabyname('home_discuss');
+await this.getdatabyname('home_discuss');
         if (think.isEmpty(id)) {
             const questId = await this.model('question').add(questionData);
             if (questId) {
@@ -184,11 +199,11 @@ await this.model('pagecache').getdatabyname('home_discuss');
 
     async deleteAction() {
         const id = this.get('id');
-        const data = {
-            shstate: 1
-        }
-        await this.model('pagecache').getdatabyname('home_discuss');
-        await this.model('activity').where({activityID:id}).update(data);
+        // const data = {
+        //     shstate: 1
+        // }
+        await this.getdatabyname('home_discuss');
+        await this.model('activity').where({activityID:id}).delete();
         return this.success('活动删除成功')
     }
 
@@ -199,7 +214,7 @@ await this.model('pagecache').getdatabyname('home_discuss');
         const data = {
             shstate: 1
         }
-        await this.model('pagecache').getdatabyname('home_discuss');
+        await this.getdatabyname('home_discuss');
         await this.model('question').where({questionID:id}).delete();
         await this.model('activity_scenery').where({activityid:activityid, questionid: id,sceneryid:sceneryid}).delete();
         return this.success('活动第二步问题删除成功')

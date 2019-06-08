@@ -58,3 +58,4 @@ module.exports = class extends think.Model {
         })();
     }
 };
+//# sourceMappingURL=scenery.js.map

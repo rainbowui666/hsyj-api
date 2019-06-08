@@ -14,9 +14,37 @@ module.exports = class extends Base {
         if (think.isEmpty(schoolname) && think.isEmpty(areaid)) {
             data = await model.where({shstate: 0}).page(page, size).order('schoolID asc').countSelect();
         } else if (!think.isEmpty(schoolname)) {
-            data = await model.where({schoolName: ['like', `%${schoolname}%`], shstate: 0}).order('schoolID asc').page(page, size).countSelect();
+            data = await model.where('schoolName like '+`%${schoolname}%`+' and shstate = 0 and parentid=0 and parentid=-1').order('schoolID asc').page(page, size).countSelect();
         } else {
-            data = await model.where({areaid: areaid, shstate: 0}).page(page, size).order('schoolID asc').countSelect();
+            data = await model.where('areaid='+areaid+' and shstate=0 and parentid=0 and parentid=-1').page(page, size).order('schoolID asc').countSelect();
+        }
+        
+        const arrdata = [];
+        for (const item of data.data) {
+            item.pics = await this.model('school').getPicsbyid(item.schoolID);
+            item.shstate = await this.model('school').getstate(item.schoolID);
+            arrdata.push(item);
+        }
+        data.data = arrdata;
+
+        return this.success(data)
+    }
+
+    async indexOrgListAction() {
+        const page = this.get('pageindex') || 1;
+        const size = this.get('pagesize') || 10;
+        const schoolname = this.get('schoolname') || '';
+        const areaid = this.get('areaid') || '';
+        
+        const model = this.model('school');
+        model._pk = 'schoolID';
+        var data;
+        if (think.isEmpty(schoolname) && think.isEmpty(areaid)) {
+            data = await model.where('shstate=0 and (parentid=0 or parentid=-1)').page(page, size).order('schoolID asc').countSelect();
+        } else if (!think.isEmpty(schoolname)) {
+            data = await model.where('schoolName like '+`%${schoolname}%`+' and shstate=0 and (parentid=0 or parentid=-1)').order('schoolID asc').page(page, size).countSelect();
+        } else {
+            data = await model.where('areaid='+areaid+' and shstate=0 and (parentid=0 or parentid=-1)').page(page, size).order('schoolID asc').countSelect();
         }
         
         const arrdata = [];

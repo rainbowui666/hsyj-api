@@ -86,6 +86,21 @@ module.exports = class extends Base {
         return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
     }
 
+    async getdatabyname(name) {
+        const model = this.model('pagecache');
+        model._pk = 'cacheid';
+        const dataname = await model.where({cachename:['like','%'+name+'%']}).select();
+        
+        if (!think.isEmpty(dataname)) {
+            for (let i = 0; i < dataname.length; i++) {
+                let name = dataname[i].cachename;
+                await this.cache(name, null);
+            }
+        }
+        const data = await model.where({cachename:['like','%'+name+'%']}).delete();
+        return data;
+    }
+
     async updateAction() {
         const id = this.get('id');
         const shstate = this.get('shstate');
@@ -95,7 +110,7 @@ module.exports = class extends Base {
         }
 
         // 查找缓存
-        await this.model('pagecache').getdatabyname('home_discuss');
+        await this.getdatabyname('home_discuss');
 
         await this.model('discuss').where({discussID:id}).update(data);
         return this.success('修改成功')

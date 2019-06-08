@@ -47,6 +47,7 @@ module.exports = class extends Base {
         const start = (pageindex -1) * pagesize;
         const model = this.model('student');
         let data ;
+         // shstate: 1 删除，2未验证，3验证中，4 验证通过
         if (userinfo[0].usertype == 1) { // 管理员
             data = await model.query("select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" and studentID limit "+start+","+pagesize+" ");
         } else {
@@ -64,6 +65,7 @@ module.exports = class extends Base {
         const birthday= this.post('birthday');
         const schoolid = this.post('schoolid');
         const photo = this.post('photo');
+        // 1 删除，2未验证，3验证中，4 验证通过
         const shstate = this.post('shstate');
         const pwd = this.post('pwd');
         const wxopenid = this.post('wxopenid');
@@ -102,10 +104,10 @@ module.exports = class extends Base {
     async deleteAction() {
         const id = this.get('id');
         const shstate = this.get('shstate');
-        const data = {
-            shstate: shstate
-        }
-        await this.model('student').where({studentID:id}).update(data);
+        // const data = {
+        //     shstate: shstate
+        // }
+        await this.model('student').where({studentID:id}).delete();
         return this.success('成功')
     }
 }

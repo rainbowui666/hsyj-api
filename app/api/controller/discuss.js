@@ -101,20 +101,40 @@ module.exports = class extends Base {
         })();
     }
 
-    homeDiscussAction() {
+    getdatabyname(name) {
         var _this3 = this;
 
         return _asyncToGenerator(function* () {
-            const model = _this3.model('discuss');
-            model._pk = "discussID";
-            const pageindex = _this3.get('pageindex') || 1;
-            const pagesize = _this3.get('pagesize') || 5;
-            const studentid = _this3.get('studentid');
+            const model = _this3.model('pagecache');
+            model._pk = 'cacheid';
+            const dataname = yield model.where({ cachename: ['like', '%' + name + '%'] }).select();
 
-            const homedata = yield _this3.cache('home_discuss' + pageindex + '_' + pagesize);
+            if (!think.isEmpty(dataname)) {
+                for (let i = 0; i < dataname.length; i++) {
+                    let name = dataname[i].cachename;
+                    yield _this3.cache(name, null);
+                }
+            }
+            const data = yield model.where({ cachename: ['like', '%' + name + '%'] }).delete();
+            return data;
+        })();
+    }
+
+    homeDiscussAction() {
+        var _this4 = this;
+
+        return _asyncToGenerator(function* () {
+            const model = _this4.model('discuss');
+            model._pk = "discussID";
+            const pageindex = _this4.get('pageindex') || 1;
+            const pagesize = _this4.get('pagesize') || 5;
+            const studentid = _this4.get('studentid');
+
+            // await this.cache('home_discuss'+pageindex+'_'+pagesize, null);
+            const homedata = yield _this4.cache('home_discuss' + pageindex + '_' + pagesize);
             if (!think.isEmpty(homedata)) {
-                console.log('read from cache');
-                return _this3.success(homedata);
+                console.log('read from cache', 'home_discuss' + pageindex + '_' + pagesize);
+                return _this4.success(homedata);
             }
             const data = yield model.where({ shstate: 1 }).order('discussID desc').page(pageindex, pagesize).countSelect();
 
@@ -122,53 +142,56 @@ module.exports = class extends Base {
             for (const item of data.data) {
                 if (item.distype == 0) {
                     // 景点
-                    item.pics = yield _this3.model('scenery').getPicsbyid(item.targetid);
+                    item.pics = yield _this4.model('scenery').getPicsbyid(item.targetid);
                 } else if (item.distype == 1) {
                     // 活动
-                    item.pics = yield _this3.model('activity').getPicsbyid(item.targetid);
-                    item.isgroup = yield _this3.model('activity').where({ activityID: item.targetid }).getField('isGroup', true);
+                    item.pics = yield _this4.model('activity').getPicsbyid(item.targetid);
+                    item.isgroup = yield _this4.model('activity').where({ activityID: item.targetid }).getField('isGroup', true);
                 } else if (item.distype == 2) {
-                    item.pics = yield _this3.model('school').getPicsbyid(item.targetid);
+                    item.pics = yield _this4.model('school').getPicsbyid(item.targetid);
                 } else {
                     item.pics = [];
                 }
-                item.likednum = yield _this3.model('like_discuss').where({ discussid: item.discussID, studentid: studentid }).count();
-                item.poto = yield _this3.model('student').field(['photo', 'studentName']).where({ studentID: item.studentid }).find();
+                item.likednum = yield _this4.model('discuss').where({ discussID: item.discussID, studentid: studentid }).getField('clicknum', true);
+                item.poto = yield _this4.model('student').field(['photo', 'studentName']).where({ studentID: item.studentid }).find();
                 arrdata.push(item);
             }
             data.data = arrdata;
             // console.log('set cache')
-            yield _this3.cache('home_discuss' + pageindex + '_' + pagesize, data, 'redis');
+            yield _this4.cache('home_discuss' + pageindex + '_' + pagesize, data, 'redis');
 
-            yield _this3.model('pagecache').add({ cachename: 'home_discuss' + pageindex + '_' + pagesize });
+            yield _this4.model('pagecache').add({ cachename: 'home_discuss' + pageindex + '_' + pagesize });
 
-            return _this3.success(data);
+            return _this4.success(data);
         })();
     }
 
     likediscussAction() {
-        var _this4 = this;
-
-        return _asyncToGenerator(function* () {
-            const id = _this4.get('discussid');
-            const studentid = _this4.get('studentid');
-            let data = yield _this4.model('discuss').where({ discussID: id }).find();
-            let clicknum = data.clicknum + 1;
-            const para = { clicknum: clicknum };
-            yield _this4.model('discuss').where({ discussID: id }).update(para);
-            yield _this4.model('like_discuss').add({ studentid: studentid, discussid: id });
-            return _this4.success('点赞成功');
-        })();
-    }
-
-    hasLikeDiscussAction() {
         var _this5 = this;
 
         return _asyncToGenerator(function* () {
             const id = _this5.get('discussid');
             const studentid = _this5.get('studentid');
-            const data = yield _this5.model('like_discuss').where({ discussid: id, studentid: studentid }).count();
-            return _this5.success(data);
+            let data = yield _this5.model('discuss').where({ discussID: id }).find();
+            let clicknum = data.clicknum + 1;
+            const para = { clicknum: clicknum };
+            yield _this5.model('discuss').where({ discussID: id }).update(para);
+            yield _this5.model('like_discuss').add({ studentid: studentid, discussid: id });
+            yield _this5.getdatabyname('home_discuss');
+
+            const clickdata = yield _this5.model('discuss').where({ discussID: id }).getField('clicknum', true);
+            return _this5.json({ msg: '点赞成功', newnum: clickdata });
+        })();
+    }
+
+    hasLikeDiscussAction() {
+        var _this6 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this6.get('discussid');
+            const studentid = _this6.get('studentid');
+            const data = yield _this6.model('like_discuss').where({ discussid: id, studentid: studentid }).count();
+            return _this6.success(data);
         })();
     }
 
