@@ -46,5 +46,15 @@ module.exports = class extends Base {
         const data = await model.query("select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" and studentID limit "+start+","+pagesize+" ");
         return this.success({pageindex:pageindex,pagesize:pagesize,data})
     }
+
+    async getStudentDetailAction() {
+        const studentid = this.get('studentid');
+        const data = await this.model('student').where({studentID: studentid}).find();
+        if (!think.isEmpty(data)) {
+            data.schoolName = await this.model('school').where({schoolID: data.schoolid}).getField('schoolName', true)
+        }
+
+        return this.success(data);
+    }
     
 }

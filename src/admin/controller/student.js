@@ -108,6 +108,22 @@ module.exports = class extends Base {
         //     shstate: shstate
         // }
         await this.model('student').where({studentID:id}).delete();
+        await this.model('student_scenery').where({studentid: id}).delete();
+        await this.model('student_school').where({studentid: id}).delete();
+        await this.model('student_activity').where({studentid: id}).delete();
+        await this.model('discuss').where({studentid: id}).delete();
+        await this.model('student_discuss').where({studentid: id}).delete();
+        await this.model('answer_question').where({studentid: id}).delete();
         return this.success('成功')
+    }
+
+    async updateStatusAction() {
+        const id = this.get('studentid');
+        const shstate = this.get('shstate');
+        const data = {
+            shstate: shstate
+        }
+        await this.model('student').where({studentID:id}).update(data);
+        return this.success('状态修改成功')
     }
 }

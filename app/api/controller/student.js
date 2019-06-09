@@ -53,5 +53,19 @@ module.exports = class extends Base {
         })();
     }
 
+    getStudentDetailAction() {
+        var _this2 = this;
+
+        return _asyncToGenerator(function* () {
+            const studentid = _this2.get('studentid');
+            const data = yield _this2.model('student').where({ studentID: studentid }).find();
+            if (!think.isEmpty(data)) {
+                data.schoolName = yield _this2.model('school').where({ schoolID: data.schoolid }).getField('schoolName', true);
+            }
+
+            return _this2.success(data);
+        })();
+    }
+
 };
 //# sourceMappingURL=student.js.map
