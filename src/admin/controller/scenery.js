@@ -73,6 +73,7 @@ module.exports = class extends Base {
         const soundurl = this.post('soundurl');
         const videourl = this.post('videourl');
         const isrecommend = this.post('isrecommend');
+        const distance = this.post('distance') || 100
         const id = this.get('id');
 
         let param = {
@@ -84,7 +85,7 @@ module.exports = class extends Base {
             latitude: latitude,
             soundurl,
             videourl,
-            isrecommend
+            isrecommend,distance
         }; 
         await this.getdatabyname('home_discuss');
         if (think.isEmpty(id)) {
