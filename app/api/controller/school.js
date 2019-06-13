@@ -76,17 +76,17 @@ module.exports = class extends Base {
             const size = _this3.get('pagesize') || 10;
             const schoolname = _this3.get('schoolname') || '';
             const areaid = _this3.get('areaid') || '';
-            let userinfo = yield _this3.cache('userinfo');
+            let userinfo = yield _this3.model('pagecache').getUserInfo(_this3.ctx.state.token, _this3.ctx.state.userId); // await this.cache('userinfo'+ this.ctx.state.token);
 
             const model = _this3.model('school');
             model._pk = 'schoolID';
             var data;
             if (think.isEmpty(schoolname) && think.isEmpty(areaid)) {
-                data = yield model.where({ schoolID: userinfo[0].schoolid }).page(page, size).countSelect();
+                data = yield model.where({ schoolID: userinfo.schoolid }).page(page, size).countSelect();
             } else if (!think.isEmpty(schoolname)) {
-                data = yield model.where({ schoolName: ['like', `%${schoolname}%`], schoolID: userinfo[0].schoolid }).page(page, size).countSelect();
+                data = yield model.where({ schoolName: ['like', `%${schoolname}%`], schoolID: userinfo.schoolid }).page(page, size).countSelect();
             } else {
-                data = yield model.where({ areaid: areaid, schoolID: userinfo[0].schoolid }).page(page, size).countSelect();
+                data = yield model.where({ areaid: areaid, schoolID: userinfo.schoolid }).page(page, size).countSelect();
             }
 
             const arrdata = [];

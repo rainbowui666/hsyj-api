@@ -29,6 +29,7 @@ module.exports = class extends Base {
     const data = await this.model('user').where({sysUserID:sysuserid}).find()
     return this.success(data);
   }
+  
   async logoutAction() {
     return this.success();
   }
@@ -48,7 +49,7 @@ module.exports = class extends Base {
     });  
     // 保存到session,忽略大小写  
     this.ctx.req.session = captcha.text.toLowerCase(); 
-    console.log(this.ctx.req.session); //0xtg 生成的验证码
+    console.log('cappppppppp',this.ctx.req.session); //0xtg 生成的验证码
     //保存到cookie 方便前端调用验证
     this.cache('captcha', this.ctx.req.session); 
     this.ctx.type = ('image/svg+xml');
@@ -57,6 +58,11 @@ module.exports = class extends Base {
   }
 
   async adminLoginAction() {
+    console.log('clear.token----------', this.ctx.state.token)
+    this.cache('userinfo'+ this.ctx.state.token, null);
+    this.cache('childSchool'+ this.ctx.state.token, null)
+    
+
     const captchacode = this.post('captchacode');
     const authcaptha = await this.cache('captcha');
     // console.log('adminLogin', captchacode, authcaptha)
@@ -82,13 +88,22 @@ module.exports = class extends Base {
       let userData = await model.query("select u.*,s.schoolName from culture_user u left join culture_school s on u.schoolid=s.schoolID where u.sysuserid="+id);
 
       const TokenSerivce = this.service('token', 'admin');
-      const sessionKey = await TokenSerivce.create({ user_id: userData.sysUserID });
-console.log('sessionKey', sessionKey)
+ 
+      const sessionKey = await TokenSerivce.create({ user_id: userData[0].sysUserID });
+
       if (think.isEmpty(userData) || think.isEmpty(sessionKey)) {
         return this.fail('登录失败');
       }
+
+      let childSchool = await this.model('school').field(['schoolID']).where({parentid: userData[0].schoolid}).getField('schoolID')
       userData[0].token = sessionKey;
-      this.cache('userinfo', userData)
+      this.cache('userinfo'+ sessionKey, userData);
+
+      console.log(userData)
+      if (!think.isEmpty(childSchool)) {
+        this.cache('childSchool' + sessionKey, childSchool.join(','))
+      }
+
      // console.log(userData)
     // return this.success({ token: sessionKey, userInfo: newUserInfo });
 
@@ -96,7 +111,7 @@ console.log('sessionKey', sessionKey)
   }
 
   async adminLogoutAction() {
-    this.cache('userinfo', null);
+    this.cache('userinfo' + this.ctx.state.token, null);
     return this.success('成功退出登录');
   }
 

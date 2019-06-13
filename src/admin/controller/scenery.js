@@ -6,26 +6,36 @@ module.exports = class extends Base {
         const size = this.get('pagesize') || 10;
         const scenerytitle = this.get('scenerytitle') || '';
 
-        let userinfo = await this.cache('userinfo');
+        let userinfo = await this.model('pagecache').getUserInfo(this.ctx.state.token, this.ctx.state.userId); // await this.cache('userinfo'+ this.ctx.state.token);
         if (think.isEmpty(userinfo)) {
             return this.fail('请先登录')
         }
 
+        let childschoolid = await this.cache('childSchool');
         const model = this.model('scenery');
         model._pk = 'sceneryID';
 
         var data;
         if (scenerytitle == '') {
-            if (userinfo[0].usertype == 1) { // 管理员
+            if (userinfo.usertype == 1) { // 管理员
                 data = await model.where({shstate:0}).page(page, size).order('sceneryID desc').countSelect();
             } else {
-                data = await model.where({shstate:0, schoolid: userinfo[0].schoolid}).page(page, size).order('sceneryID desc').countSelect();
+                if (!think.isEmpty(childschoolid)) {
+                    data = await model.where('shstate=0 and (schoolid='+userinfo.schoolid+' or schoolid in ('+childschoolid+'))').page(page, size).order('sceneryID desc').countSelect();
+                } else {
+                    data = await model.where('shstate=0 and schoolid='+userinfo.schoolid+'').page(page, size).order('sceneryID desc').countSelect();
+                }
             }
         } else {
-            if (userinfo[0].usertype == 1) { // 管理员
+            if (userinfo.usertype == 1) { // 管理员
                 data = await model.where({sceneryTitle: ['like', `%${scenerytitle}%`], shstate:0}).order('sceneryID desc').page(page, size).countSelect();
             } else {
-                data = await model.where({sceneryTitle: ['like', `%${scenerytitle}%`], shstate:0, schoolid: userinfo[0].schoolid}).order('sceneryID desc').page(page, size).countSelect();
+                if (!think.isEmpty(childschoolid)) {
+                    data = await model.where('sceneryTitle like %$'+scenerytitle+'% and shstate=0 and (schoolid='+userinfo.schoolid+' or schoolid in ('+childschoolid+'))').order('sceneryID desc').page(page, size).countSelect();
+                } else {
+                    data = await model.where('sceneryTitle like %$'+scenerytitle+'% and shstate=0)').order('sceneryID desc').page(page, size).countSelect();
+            
+                }
             }
         }
         const arrdata = [];
@@ -73,7 +83,7 @@ module.exports = class extends Base {
         const soundurl = this.post('soundurl');
         const videourl = this.post('videourl');
         const isrecommend = this.post('isrecommend');
-        const distance = this.post('distance') || 100
+        const distance = this.post('distance') || 500
         const id = this.get('id');
 
         let param = {
@@ -101,7 +111,7 @@ module.exports = class extends Base {
         } else {
             await this.cache('home_activity_scenery', null, 'redis');
             // 1 删除source, 2修改
-            await this.model('source').where({targetid:id}).delete();
+            // await this.model('source').where({targetid:id}).delete();
             await this.model('scenery').where({sceneryID:id}).update(param);
             return this.success('景点修改成功')
         }

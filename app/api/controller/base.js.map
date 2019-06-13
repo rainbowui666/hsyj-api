@@ -13,21 +13,21 @@
         "state",
         "token",
         "header",
+        "console",
+        "log",
         "tokenSerivce",
         "service",
         "userId",
         "getUserId",
-        "console",
-        "log",
         "getTime",
         "parseInt",
         "Date",
         "now",
         "getLoginUserId"
     ],
-    "mappings": ";;AAAAA,OAAOC,OAAP,GAAiB,cAAcC,MAAMC,UAApB,CAA+B;AACxCC,UAAN,GAAiB;AAAA;;AAAA;AACf;AACA,YAAKC,GAAL,CAASC,KAAT,CAAeC,KAAf,GAAuB,MAAKF,GAAL,CAASG,MAAT,CAAgB,WAAhB,KAAgC,EAAvD;AACA,YAAMC,eAAeP,MAAMQ,OAAN,CAAc,OAAd,EAAuB,KAAvB,CAArB;AACA,YAAKL,GAAL,CAASC,KAAT,CAAeK,MAAf,GAAwB,MAAMF,aAAaG,SAAb,CAAuB,MAAKP,GAAL,CAASC,KAAT,CAAeC,KAAtC,CAA9B;;AAEAM,cAAQC,GAAR,CAAY,cAAZ,EAA4B,MAAKT,GAAL,CAASC,KAAT,CAAeK,MAA3C;AACA;AACA;AACA;AACA;AACA;AACE;AACA;AACA;AACF;AAfe;AAgBhB;;AAED;;;;AAIAI,YAAU;AACR,WAAOC,SAASC,KAAKC,GAAL,KAAa,IAAtB,CAAP;AACD;;AAED;;;;AAIAC,mBAAiB;AACf,WAAO,KAAKd,GAAL,CAASC,KAAhB;AACD;AAjC6C,CAAhD",
+    "mappings": ";;AAAAA,OAAOC,OAAP,GAAiB,cAAcC,MAAMC,UAApB,CAA+B;AACxCC,UAAN,GAAiB;AAAA;;AAAA;AACf;AACA,YAAKC,GAAL,CAASC,KAAT,CAAeC,KAAf,GAAuB,MAAKF,GAAL,CAASG,MAAT,CAAgB,WAAhB,KAAgC,EAAvD;AACAC,cAAQC,GAAR,CAAY,WAAZ,EAAyB,MAAKL,GAAL,CAASC,KAAT,CAAeC,KAAxC;AACA,YAAMI,eAAeT,MAAMU,OAAN,CAAc,OAAd,EAAuB,KAAvB,CAArB;AACA,YAAKP,GAAL,CAASC,KAAT,CAAeO,MAAf,GAAwB,MAAMF,aAAaG,SAAb,CAAuB,MAAKT,GAAL,CAASC,KAAT,CAAeC,KAAtC,CAA9B;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACE;AACA;AACA;AACF;AAhBe;AAiBhB;;AAED;;;;AAIAQ,YAAU;AACR,WAAOC,SAASC,KAAKC,GAAL,KAAa,IAAtB,CAAP;AACD;;AAED;;;;AAIAC,mBAAiB;AACf,WAAO,KAAKd,GAAL,CAASC,KAAhB;AACD;AAlC6C,CAAhD",
     "file": "../../../src/api/controller/base.js",
     "sourcesContent": [
-        "module.exports = class extends think.Controller {\n  async __before() {\n    // 根据token值获取用户id\n    this.ctx.state.token = this.ctx.header['sms-token'] || '';\n    const tokenSerivce = think.service('token', 'api');\n    this.ctx.state.userId = await tokenSerivce.getUserId(this.ctx.state.token);\n\n    console.log('userid------', this.ctx.state.userId)\n    // const publicController = this.config('publicController');\n    // const publicAction = this.config('publicAction');\n    // 如果为非公开，则验证用户是否登录\n    // const controllerAction = this.ctx.controller + '/' + this.ctx.action;\n    // if (!publicController.includes(this.ctx.controller) && !publicAction.includes(controllerAction)) {\n      // if (this.ctx.state.userId <= 0) {\n      //   return this.fail(401, '请先登录');\n      // }\n    // }\n  }\n\n  /**\n   * 获取时间戳\n   * @returns {Number}\n   */\n  getTime() {\n    return parseInt(Date.now() / 1000);\n  }\n\n  /**\n   * 获取当前登录用户的id\n   * @returns {*}\n   */\n  getLoginUserId() {\n    return this.ctx.state;\n  }\n};\n"
+        "module.exports = class extends think.Controller {\n  async __before() {\n    // 根据token值获取用户id\n    this.ctx.state.token = this.ctx.header['sms-token'] || '';\n    console.log('api.token', this.ctx.state.token)\n    const tokenSerivce = think.service('token', 'api');\n    this.ctx.state.userId = await tokenSerivce.getUserId(this.ctx.state.token);\n    // this.ctx.state.userinfo = await tokenSerivce.getUser(this.ctx.state.token);\n    // console.log('userid------', this.ctx.state.userId, this.ctx.state.userinfo)\n    // const publicController = this.config('publicController');\n    // const publicAction = this.config('publicAction');\n    // 如果为非公开，则验证用户是否登录\n    // const controllerAction = this.ctx.controller + '/' + this.ctx.action;\n    // if (!publicController.includes(this.ctx.controller) && !publicAction.includes(controllerAction)) {\n      // if (this.ctx.state.userId <= 0) {\n      //   return this.fail(401, '请先登录');\n      // }\n    // }\n  }\n\n  /**\n   * 获取时间戳\n   * @returns {Number}\n   */\n  getTime() {\n    return parseInt(Date.now() / 1000);\n  }\n\n  /**\n   * 获取当前登录用户的id\n   * @returns {*}\n   */\n  getLoginUserId() {\n    return this.ctx.state;\n  }\n};\n"
     ]
 }

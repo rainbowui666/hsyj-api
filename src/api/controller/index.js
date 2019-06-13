@@ -31,17 +31,26 @@ module.exports = class extends Base {
       item.pics = await this.model('activity').getPicsbyid(item.activityID);
       item.joinnum = await this.model('student_activity').getJoinNum(item.activityID);
       if (!think.isEmpty(studentid)) {
-        let joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,item.activityID);
+        let joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,item.activityID, 1);
         let start = Number(new Date(item.startDate));
         let nowd = Number(new Date());
         let end = Number(new Date(item.endDate));
 
+        // if (nowd > end && joindate && joindate.length > 0) {
+        //     item.hasjoin = '已完成'
+        // } else if (start < nowd && nowd < end) {
+        //   item.hasjoin = '进行中';
+        // } else if(joindate && joindate.length > 0) {
+        //     item.hasjoin = '已报名' 
+        // }
         if (nowd > end && joindate && joindate.length > 0) {
-            item.hasjoin = '已完成'
-        } else if(joindate && joindate.length > 0) {
-            item.hasjoin = '已报名' 
+          item.hasjoin = '已完成'
+        } else if (start < nowd && nowd < end && (joindate && joindate.length > 0)) {
+          item.hasjoin = '已报名,进行中';
         } else if (start < nowd && nowd < end) {
-            item.hasjoin = '进行中';
+          item.hasjoin = '进行中';
+        } else if(joindate && joindate.length > 0) {
+          item.hasjoin = '已报名' 
         }
     } else {
         let start = Number(new Date(item.startDate));

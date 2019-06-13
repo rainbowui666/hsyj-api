@@ -7,10 +7,11 @@ module.exports = class extends think.Controller {
     return _asyncToGenerator(function* () {
       // 根据token值获取用户id
       _this.ctx.state.token = _this.ctx.header['sms-token'] || '';
+      console.log('api.token', _this.ctx.state.token);
       const tokenSerivce = think.service('token', 'api');
       _this.ctx.state.userId = yield tokenSerivce.getUserId(_this.ctx.state.token);
-
-      console.log('userid------', _this.ctx.state.userId);
+      // this.ctx.state.userinfo = await tokenSerivce.getUser(this.ctx.state.token);
+      // console.log('userid------', this.ctx.state.userId, this.ctx.state.userinfo)
       // const publicController = this.config('publicController');
       // const publicAction = this.config('publicAction');
       // 如果为非公开，则验证用户是否登录

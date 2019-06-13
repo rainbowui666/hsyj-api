@@ -48,17 +48,27 @@ module.exports = class extends Base {
                 //     item.status = '';
                 // }
                 if (!think.isEmpty(studentid)) {
-                    let joindate = yield _this2.model('student_activity').getStudentIsJoinActivity(studentid, item.activityID);
+                    let joindate = yield _this2.model('student_activity').getStudentIsJoinActivity(studentid, item.activityID, 1);
                     let start = Number(new Date(item.startDate));
                     let nowd = Number(new Date());
                     let end = Number(new Date(item.endDate));
 
+                    // if (nowd > end && joindate && joindate.length > 0) {
+                    //     item.hasjoin = '已完成'
+                    // } else if (start < nowd && nowd < end) {
+                    //     item.hasjoin = '进行中';
+                    // } else if(joindate && joindate.length > 0) {
+                    //     item.hasjoin = '已报名' 
+                    // }
+
                     if (nowd > end && joindate && joindate.length > 0) {
                         item.hasjoin = '已完成';
-                    } else if (joindate && joindate.length > 0) {
-                        item.hasjoin = '已报名';
+                    } else if (start < nowd && nowd < end && joindate && joindate.length > 0) {
+                        item.hasjoin = '已报名,进行中';
                     } else if (start < nowd && nowd < end) {
                         item.hasjoin = '进行中';
+                    } else if (joindate && joindate.length > 0) {
+                        item.hasjoin = '已报名';
                     }
                 } else {
                     let start = Number(new Date(item.startDate));
@@ -92,22 +102,28 @@ module.exports = class extends Base {
             const model = _this3.model('activity');
             model._pk = 'activityID';
             const data = yield model.where({ activityID: id }).find();
+
             if (!think.isEmpty(data)) {
                 data.pics = yield _this3.model('activity').getPicsbyid(data.activityID);
                 // data.discussList = await this.model('discuss').getDiscussById(id,1);
                 data.shstate = yield _this3.model('activity').getstate(data.activityID);
                 if (!think.isEmpty(studentid)) {
-                    let joindate = yield _this3.model('student_activity').getStudentIsJoinActivity(studentid, data.activityID);
+                    let joindate = yield _this3.model('student_activity').getStudentIsJoinActivity(studentid, data.activityID, 1);
+
                     let start = Number(new Date(data.startDate));
                     let nowd = Number(new Date());
                     let end = Number(new Date(data.endDate));
+                    console.log('getactivitydetail', start, nowd, end, joindate);
 
+                    // 1561046400000 1560347475342 1561737600000
                     if (nowd > end && joindate && joindate.length > 0) {
                         data.hasjoin = '已完成';
-                    } else if (joindate && joindate.length > 0) {
-                        data.hasjoin = '已报名';
+                    } else if (start < nowd && nowd < end && joindate && joindate.length > 0) {
+                        data.hasjoin = '已报名,进行中';
                     } else if (start < nowd && nowd < end) {
                         data.hasjoin = '进行中';
+                    } else if (joindate && joindate.length > 0) {
+                        data.hasjoin = '已报名';
                     }
                 }
             }
@@ -124,22 +140,33 @@ module.exports = class extends Base {
             const model = _this4.model('activity');
             model._pk = 'activityID';
             const data = yield model.where({ activityID: id }).find();
+
             if (!think.isEmpty(data)) {
                 data.pics = yield _this4.model('activity').getPicsbyid(data.activityID);
                 // data.discussList = await this.model('discuss').getDiscussById(id,1);
                 data.shstate = yield _this4.model('activity').getstate(data.activityID);
-                let joindate = yield _this4.model('student_activity').getStudentIsJoinActivity(studentid, data.activityID);
+                let joindate = yield _this4.model('student_activity').getStudentIsJoinActivity(studentid, data.activityID, 1);
                 let start = Number(new Date(data.startDate));
                 let nowd = Number(new Date());
                 let end = Number(new Date(data.endDate));
 
+                // if (nowd > end && joindate && joindate.length > 0) {
+                //     data.hasjoin = '已完成'
+                // } else if(joindate && joindate.length > 0) {
+                //     data.hasjoin = '已报名' 
+                // } else if (start < nowd && nowd < end) {
+                //     data.hasjoin = '进行中';
+                // }
                 if (nowd > end && joindate && joindate.length > 0) {
                     data.hasjoin = '已完成';
-                } else if (joindate && joindate.length > 0) {
-                    data.hasjoin = '已报名';
+                } else if (start < nowd && nowd < end && joindate && joindate.length > 0) {
+                    data.hasjoin = '已报名,进行中';
                 } else if (start < nowd && nowd < end) {
                     data.hasjoin = '进行中';
+                } else if (joindate && joindate.length > 0) {
+                    data.hasjoin = '已报名';
                 }
+
                 data.group = yield _this4.model('group').where({ activityid: data.activityID }).select();
             }
             return _this4.success(data);
@@ -210,7 +237,7 @@ module.exports = class extends Base {
         return _asyncToGenerator(function* () {
             const page = _this7.get('pageindex') || 1;
             const size = _this7.get('pagesize') || 10;
-            let userinfo = yield _this7.cache('userinfo');
+            let userinfo = yield _this7.model('pagecache').getUserInfo(_this7.ctx.state.token, _this7.ctx.state.userId); // '+ this.ctx.state.token);
             console.log('session', userinfo);
 
             const studentid = _this7.get('studentid');
@@ -221,8 +248,8 @@ module.exports = class extends Base {
             // date = '2019-04-14 00:00:00';
             // console.log('list', date)
             let data = {};
-            if (userinfo && userinfo[0].usertype == 0) {
-                data = yield model.where({ shstate: 0, endDate: { '>': think.datetime(date, 'YYYY-MM-DD') }, createbyuserid: userinfo[0].sysUserID }).order('activityID desc').page(page, size).countSelect();
+            if (userinfo && userinfo.usertype == 0) {
+                data = yield model.where({ shstate: 0, endDate: { '>': think.datetime(date, 'YYYY-MM-DD') }, createbyuserid: userinfo.sysUserID }).order('activityID desc').page(page, size).countSelect();
             } else {
                 data = yield model.where({ shstate: 0, endDate: { '>': think.datetime(date, 'YYYY-MM-DD') } }).page(page, size).order('activityID desc').countSelect();
             }
@@ -252,18 +279,18 @@ module.exports = class extends Base {
         return _asyncToGenerator(function* () {
             const page = _this8.get('pageindex') || 1;
             const size = _this8.get('pagesize') || 10;
-            let userinfo = yield _this8.cache('userinfo');
+            let userinfo = yield _this8.model('pagecache').getUserInfo(_this8.ctx.state.token, _this8.ctx.state.userId); // await this.cache('userinfo'+ this.ctx.state.token);
             const activityid = _this8.get('activityid');
 
             const model = _this8.model('question');
             model._pk = 'questionID';
             let list = [];
-            if (userinfo && userinfo[0] && userinfo[0].usertype == 0) {
+            if (userinfo && userinfo && userinfo.usertype == 0) {
                 let condition = {};
                 if (think.isEmpty(activityid) || activityid == 'undefined') {
-                    condition = { 'act.createbyuserid': userinfo[0].sysUserID, 'q.shstate': 0, 'cs.shstate': 0, 'act.shstate': 0, 's.questionid': ['!=', null] };
+                    condition = { 'act.createbyuserid': userinfo.sysUserID, 'q.shstate': 0, 'cs.shstate': 0, 'act.shstate': 0, 's.questionid': ['!=', null] };
                 } else {
-                    condition = { 'act.activityid': activityid, 'act.createbyuserid': userinfo[0].sysUserID, 'q.shstate': 0, 'cs.shstate': 0, 'act.shstate': 0, 's.questionid': ['!=', null] };
+                    condition = { 'act.activityid': activityid, 'act.createbyuserid': userinfo.sysUserID, 'q.shstate': 0, 'cs.shstate': 0, 'act.shstate': 0, 's.questionid': ['!=', null] };
                 }
                 list = yield model.field(['q.questionID', 'q.questiontitle', 'q.answera', 'q.answerb', 'q.answerc', 'q.answerd', 'q.rightanswer', 's.sceneryid', 's.activityid', 'cs.sceneryTitle', 'act.startAddress']).alias('q').join({
                     table: 'activity_scenery',

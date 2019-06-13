@@ -69,7 +69,7 @@ module.exports = class extends Base {
       // images(thumbUrl + '').resize(96).save(thumbSmallUrl);
       console.log('wxupdload', thumbUrl, thumbSmallUrl, name, userid);
       if (userid != 0) {
-        const imgObj = yield _this.model('source').add({ sourceType: sourcetype, sourceAddress: 'https://hsyj.100eduonline.com/static/images/' + name, targetid: insertid, userid: userid });
+        const imgObj = yield _this.model('source').add({ sourceType: sourcetype, sourceAddress: 'https://cdn.100eduonline.com/images/' + name, targetid: insertid, userid: userid });
         return _this.json(imgObj);
       } else {
         return _this.fail('登录信息过期,请重新登录');

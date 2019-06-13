@@ -63,17 +63,17 @@ module.exports = class extends Base {
         const size = this.get('pagesize') || 10;
         const schoolname = this.get('schoolname') || '';
         const areaid = this.get('areaid') || '';
-        let userinfo = await this.cache('userinfo');
+        let userinfo = await this.model('pagecache').getUserInfo(this.ctx.state.token, this.ctx.state.userId); // await this.cache('userinfo'+ this.ctx.state.token);
         
         const model = this.model('school');
         model._pk = 'schoolID';
         var data;
         if (think.isEmpty(schoolname) && think.isEmpty(areaid)) {
-            data = await model.where({schoolID: userinfo[0].schoolid}).page(page, size).countSelect();
+            data = await model.where({schoolID: userinfo.schoolid}).page(page, size).countSelect();
         } else if (!think.isEmpty(schoolname)) {
-            data = await model.where({schoolName: ['like', `%${schoolname}%`],schoolID: userinfo[0].schoolid}).page(page, size).countSelect();
+            data = await model.where({schoolName: ['like', `%${schoolname}%`],schoolID: userinfo.schoolid}).page(page, size).countSelect();
         } else {
-            data = await model.where({areaid: areaid, schoolID: userinfo[0].schoolid}).page(page, size).countSelect();
+            data = await model.where({areaid: areaid, schoolID: userinfo.schoolid}).page(page, size).countSelect();
         }
         
         const arrdata = [];

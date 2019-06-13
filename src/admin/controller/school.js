@@ -6,34 +6,35 @@ module.exports = class extends Base {
         const size = this.get('pagesize') || 10;
         const schoolname = this.get('schoolname') || '';
         const areaid = this.get('areaid') || '';
-        let userinfo = await this.cache('userinfo');
+        let userinfo = await this.model('pagecache').getUserInfo(this.ctx.state.token, this.ctx.state.userId); // await this.cache('userinfo'+ this.ctx.state.token);
+        // await this.model('pagecache').getUserInfo(this.ctx.state.token, this.ctx.state.userId)
+        // console.log('000--------------', this.ctx.state.token, this.ctx.state.userId, userinfo)
         if (think.isEmpty(userinfo)) {
-            return this.field('请先登录')
+            return this.fail('请先登录')
         }
 
         const model = this.model('school');
         model._pk = 'schoolID';
         var data;
         if (think.isEmpty(schoolname) && think.isEmpty(areaid)) {
-            if (userinfo[0].usertype == 1) { // 管理员
+            if (userinfo.usertype == 1) { // 管理员
                 data = await model.where({shstate: 0}).page(page, size).order('schoolID desc').countSelect();
             } else {
-                data = await model.where({shstate: 0, 
-                    _complex:{schoolID: userinfo[0].schoolid, parentid:userinfo[0].schoolid,_logic:'or'}}).page(page, size).order('schoolID desc').countSelect();
+                data = await model.where('shstate=0 and (schoolid='+userinfo.schoolid+' or parentid='+userinfo.schoolid+') and parentid !=0').page(page, size).order('schoolID desc').countSelect();
             }
         } else if (!think.isEmpty(schoolname)) {
-            if (userinfo[0].usertype == 1) { // 管理员
+            if (userinfo.usertype == 1) { // 管理员
                 data = await model.where({schoolName: ['like', `%${schoolname}%`], shstate: 0}).order('schoolID desc').page(page, size).countSelect();
             } else {
                 data = await model.where({schoolName: ['like', `%${schoolname}%`], shstate: 0,
-                _complex:{schoolID: userinfo[0].schoolid, parentid:userinfo[0].schoolid,_logic:'or'}}).order('schoolID desc').page(page, size).countSelect();
+                _complex:{schoolID: userinfo.schoolid, parentid:userinfo.schoolid,_logic:'or'}}).order('schoolID desc').page(page, size).countSelect();
             }
         } else {
-            if (userinfo[0].usertype == 1) { // 管理员
+            if (userinfo.usertype == 1) { // 管理员
                 data = await model.where({areaid: areaid, shstate: 0}).page(page, size).order('schoolID desc').countSelect();
             } else {
                 data = await model.where({areaid: areaid, shstate: 0, 
-                    _complex:{schoolID: userinfo[0].schoolid,parentid:userinfo[0].schoolid, _logic:'or'}}).page(page, size).order('schoolID desc').countSelect();
+                    _complex:{schoolID: userinfo.schoolid,parentid:userinfo.schoolid, _logic:'or'}}).page(page, size).order('schoolID desc').countSelect();
             }
         }
         
@@ -75,6 +76,7 @@ module.exports = class extends Base {
         await this.model('student').where({schoolid: id}).delete();
         await this.model('source').where({sourceType: 0, targetid: id}).delete();
         await this.model('discuss').where({distype: 2, targetid: id}).delete();
+        await this.model('user').where({schoolid: id}).delete();
         return this.success('学校及关联的景点、学生、图片、评论删除成功')
     }
     
@@ -92,7 +94,7 @@ module.exports = class extends Base {
         const parentid = this.post('parentid') || 0;
         const shortname = this.post('shortname');
         const id = this.get('id');
-        let userinfo = await this.cache('userinfo');
+        let userinfo = await this.model('pagecache').getUserInfo(this.ctx.state.token, this.ctx.state.userId); // await this.cache('userinfo'+ this.ctx.state.token);
 
         let param = {
             schoolName: schoolname,
@@ -105,7 +107,7 @@ module.exports = class extends Base {
             latitude: latitude,
             soundurl,
             videourl,areaid,parentid,
-            createbyuserid: userinfo[0].sysUserID
+            createbyuserid: userinfo.sysUserID
         }; 
         await this.getdatabyname('home_discuss');
         if (think.isEmpty(id)) {
@@ -122,7 +124,7 @@ module.exports = class extends Base {
                     //     sourceAddress: sourceaddress,
                     //     targetid: insertid
                     // });
-                    return this.json({
+                    return this.success('学校添加成功',{
                             insertid:insertid
                         });
                 }
@@ -131,7 +133,7 @@ module.exports = class extends Base {
             }
         } else {
             // 1 删除source, 2修改
-            await this.model('source').where({targetid:id}).delete();
+            // await this.model('source').where({targetid:id}).delete();
             await this.model('school').where({schoolID:id}).update(param);
             return this.success('学校修改成功')
         }

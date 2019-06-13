@@ -6,7 +6,7 @@ module.exports = class extends Base {
     async listAction() {
         const page = this.get('pageindex') || 1;
         const size = this.get('pagesize') || 10;
-        let userinfo = await this.cache('userinfo');
+        let userinfo = await this.model('pagecache').getUserInfo(this.ctx.state.token, this.ctx.state.userId); // await this.cache('userinfo' + this.ctx.state.token);
         console.log('session',userinfo)
 
         const studentid = this.get('studentid');
@@ -14,8 +14,8 @@ module.exports = class extends Base {
         model._pk = 'activityID';
         
         let data = {};
-        if (userinfo && userinfo[0].usertype == 0) {
-            data = await model.where({shstate: 0, createbyuserid: userinfo[0].sysUserID}).order('activityID desc').page(page,size).countSelect();
+        if (userinfo && userinfo.usertype == 0) {
+            data = await model.where({shstate: 0, createbyuserid: userinfo.sysUserID}).order('activityID desc').page(page,size).countSelect();
         } else {
             data = await model.where({shstate: 0 }).page(page,size).order('activityID desc').countSelect();
         }
@@ -79,7 +79,7 @@ module.exports = class extends Base {
         const isrecommend = this.post('isrecommend') || 0;
 
         const id = this.get('id');
-        let userinfo = await this.cache('userinfo');
+        let userinfo = await this.model('pagecache').getUserInfo(this.ctx.state.token, this.ctx.state.userId); // await this.cache('userinfo' + this.ctx.state.token);
 
         if (think.isEmpty(userinfo)) {
             return this.fail('请先登录')
@@ -105,7 +105,7 @@ module.exports = class extends Base {
             endSceneryid,
             isGroup,
             isrecommend,
-            groupNum,createbyuserid: userinfo[0].sysUserID
+            groupNum,createbyuserid: userinfo.sysUserID
         }; 
         await this.getdatabyname('home_discuss');
         

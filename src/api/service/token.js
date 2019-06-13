@@ -5,6 +5,20 @@ module.exports = class extends think.Service {
   /**
    * 根据header中的X-Nideshop-Token值获取用户id
    */
+  async getUser(token) {
+    if (!token) {
+      return null;
+    }
+
+    const result = await this.parse(token);
+    console.log("================2=====",result)
+    if (think.isEmpty(result) || result.user_id <= 0) {
+      return null;
+    }
+
+    return result;
+  }
+
   async getUserId(token) {
     if (!token) {
       return 0;
@@ -19,7 +33,7 @@ module.exports = class extends think.Service {
   }
 
   async create(userInfo) {
-    const token = jwt.sign(userInfo, secret);
+    const token = jwt.sign(JSON.stringify(userInfo), secret);
     return token;
   }
 
@@ -43,3 +57,5 @@ module.exports = class extends think.Service {
     return true;
   }
 };
+
+

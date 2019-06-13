@@ -15,7 +15,7 @@ module.exports = class extends Base {
         let telcondition = '';
         let wxcondition = '';
 
-        let userinfo = await this.cache('userinfo');
+        let userinfo = await this.model('pagecache').getUserInfo(this.ctx.state.token, this.ctx.state.userId); // await this.cache('userinfo'+ this.ctx.state.token);
         if (think.isEmpty(userinfo)) {
             return this.fail('请先登录')
         }
@@ -48,10 +48,10 @@ module.exports = class extends Base {
         const model = this.model('student');
         let data ;
          // shstate: 1 删除，2未验证，3验证中，4 验证通过
-        if (userinfo[0].usertype == 1) { // 管理员
+        if (userinfo.usertype == 1) { // 管理员
             data = await model.query("select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" and studentID limit "+start+","+pagesize+" ");
         } else {
-            data = await model.query("select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" and schoolid="+userinfo[0].schoolid+" and studentID limit "+start+","+pagesize+" ");
+            data = await model.query("select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" and schoolid="+userinfo.schoolid+" and studentID limit "+start+","+pagesize+" ");
         }
         return this.success({pageindex:pageindex,pagesize:pagesize,data})
     }

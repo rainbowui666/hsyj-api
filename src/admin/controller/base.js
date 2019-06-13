@@ -3,6 +3,10 @@ module.exports = class extends think.Controller {
       // 根据token值获取用户id
       this.ctx.state.token = this.ctx.header['sms-token'] || '';
       const tokenSerivce = think.service('token', 'admin');
+      this.ctx.state.userId = this.ctx.header['sms-userid']; // await tokenSerivce.getUserId(this.ctx.state.token);
+      // this.ctx.state.onlyuser = this.ctx.state.token+'_'+this.ctx.state.userId;
+     console.log('admin.before',  this.ctx.state.token , this.ctx.state.userId )
+      
       // const data = await this.cache('userinfo');
       // if (think.isEmpty(data)) {
       //   return this.fail(401, '请先登录');

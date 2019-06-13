@@ -11,21 +11,26 @@
         "exports",
         "think",
         "Service",
-        "getUserId",
+        "getUser",
         "token",
         "result",
         "parse",
+        "console",
+        "log",
         "isEmpty",
         "user_id",
+        "getUserId",
         "create",
         "userInfo",
         "sign",
+        "JSON",
+        "stringify",
         "verify",
         "err"
     ],
-    "mappings": ";;AAAA,MAAMA,MAAMC,QAAQ,cAAR,CAAZ;AACA,MAAMC,SAAS,2BAAf;;AAEAC,OAAOC,OAAP,GAAiB,cAAcC,MAAMC,OAApB,CAA4B;AAC3C;;;AAGMC,WAAN,CAAgBC,KAAhB,EAAuB;AAAA;;AAAA;AACrB,UAAI,CAACA,KAAL,EAAY;AACV,eAAO,CAAP;AACD;;AAED,YAAMC,SAAS,MAAM,MAAKC,KAAL,CAAWF,KAAX,CAArB;AACA,UAAIH,MAAMM,OAAN,CAAcF,MAAd,KAAyBA,OAAOG,OAAP,IAAkB,CAA/C,EAAkD;AAChD,eAAO,CAAP;AACD;;AAED,aAAOH,OAAOG,OAAd;AAVqB;AAWtB;;AAEKC,QAAN,CAAaC,QAAb,EAAuB;AAAA;AACrB,YAAMN,QAAQR,IAAIe,IAAJ,CAASD,QAAT,EAAmBZ,MAAnB,CAAd;AACA,aAAOM,KAAP;AAFqB;AAGtB;;AAEKE,OAAN,CAAYF,KAAZ,EAAmB;AAAA;AACjB,UAAIA,KAAJ,EAAW;AACT,YAAI;AACF,iBAAOR,IAAIgB,MAAJ,CAAWR,KAAX,EAAkBN,MAAlB,CAAP;AACD,SAFD,CAEE,OAAOe,GAAP,EAAY;AACZ,iBAAO,IAAP;AACD;AACF;AACD,aAAO,IAAP;AARiB;AASlB;;AAEKD,QAAN,CAAaR,KAAb,EAAoB;AAAA;;AAAA;AAClB,YAAMC,SAAS,MAAM,OAAKC,KAAL,CAAWF,KAAX,CAArB;AACA,UAAIH,MAAMM,OAAN,CAAcF,MAAd,CAAJ,EAA2B;AACzB,eAAO,KAAP;AACD;;AAED,aAAO,IAAP;AANkB;AAOnB;AAxC0C,CAA7C",
+    "mappings": ";;AAAA,MAAMA,MAAMC,QAAQ,cAAR,CAAZ;AACA,MAAMC,SAAS,2BAAf;;AAEAC,OAAOC,OAAP,GAAiB,cAAcC,MAAMC,OAApB,CAA4B;AAC3C;;;AAGMC,SAAN,CAAcC,KAAd,EAAqB;AAAA;;AAAA;AACnB,UAAI,CAACA,KAAL,EAAY;AACV,eAAO,IAAP;AACD;;AAED,YAAMC,SAAS,MAAM,MAAKC,KAAL,CAAWF,KAAX,CAArB;AACAG,cAAQC,GAAR,CAAY,wBAAZ,EAAqCH,MAArC;AACA,UAAIJ,MAAMQ,OAAN,CAAcJ,MAAd,KAAyBA,OAAOK,OAAP,IAAkB,CAA/C,EAAkD;AAChD,eAAO,IAAP;AACD;;AAED,aAAOL,MAAP;AAXmB;AAYpB;;AAEKM,WAAN,CAAgBP,KAAhB,EAAuB;AAAA;;AAAA;AACrB,UAAI,CAACA,KAAL,EAAY;AACV,eAAO,CAAP;AACD;;AAED,YAAMC,SAAS,MAAM,OAAKC,KAAL,CAAWF,KAAX,CAArB;AACA,UAAIH,MAAMQ,OAAN,CAAcJ,MAAd,KAAyBA,OAAOK,OAAP,IAAkB,CAA/C,EAAkD;AAChD,eAAO,CAAP;AACD;;AAED,aAAOL,OAAOK,OAAd;AAVqB;AAWtB;;AAEKE,QAAN,CAAaC,QAAb,EAAuB;AAAA;AACrB,YAAMT,QAAQR,IAAIkB,IAAJ,CAASC,KAAKC,SAAL,CAAeH,QAAf,CAAT,EAAmCf,MAAnC,CAAd;AACA,aAAOM,KAAP;AAFqB;AAGtB;;AAEKE,OAAN,CAAYF,KAAZ,EAAmB;AAAA;AACjB,UAAIA,KAAJ,EAAW;AACT,YAAI;AACF,iBAAOR,IAAIqB,MAAJ,CAAWb,KAAX,EAAkBN,MAAlB,CAAP;AACD,SAFD,CAEE,OAAOoB,GAAP,EAAY;AACZ,iBAAO,IAAP;AACD;AACF;AACD,aAAO,IAAP;AARiB;AASlB;;AAEKD,QAAN,CAAab,KAAb,EAAoB;AAAA;;AAAA;AAClB,YAAMC,SAAS,MAAM,OAAKC,KAAL,CAAWF,KAAX,CAArB;AACA,UAAIH,MAAMQ,OAAN,CAAcJ,MAAd,CAAJ,EAA2B;AACzB,eAAO,KAAP;AACD;;AAED,aAAO,IAAP;AANkB;AAOnB;AAtD0C,CAA7C",
     "file": "../../../src/api/service/token.js",
     "sourcesContent": [
-        "const jwt = require('jsonwebtoken');\nconst secret = 'SLDLKKDS323ssdd@#@@gfghje';\n\nmodule.exports = class extends think.Service {\n  /**\n   * 根据header中的X-Nideshop-Token值获取用户id\n   */\n  async getUserId(token) {\n    if (!token) {\n      return 0;\n    }\n\n    const result = await this.parse(token);\n    if (think.isEmpty(result) || result.user_id <= 0) {\n      return 0;\n    }\n\n    return result.user_id;\n  }\n\n  async create(userInfo) {\n    const token = jwt.sign(userInfo, secret);\n    return token;\n  }\n\n  async parse(token) {\n    if (token) {\n      try {\n        return jwt.verify(token, secret);\n      } catch (err) {\n        return null;\n      }\n    }\n    return null;\n  }\n\n  async verify(token) {\n    const result = await this.parse(token);\n    if (think.isEmpty(result)) {\n      return false;\n    }\n\n    return true;\n  }\n};\n"
+        "const jwt = require('jsonwebtoken');\nconst secret = 'SLDLKKDS323ssdd@#@@gfghje';\n\nmodule.exports = class extends think.Service {\n  /**\n   * 根据header中的X-Nideshop-Token值获取用户id\n   */\n  async getUser(token) {\n    if (!token) {\n      return null;\n    }\n\n    const result = await this.parse(token);\n    console.log(\"================2=====\",result)\n    if (think.isEmpty(result) || result.user_id <= 0) {\n      return null;\n    }\n\n    return result;\n  }\n\n  async getUserId(token) {\n    if (!token) {\n      return 0;\n    }\n\n    const result = await this.parse(token);\n    if (think.isEmpty(result) || result.user_id <= 0) {\n      return 0;\n    }\n\n    return result.user_id;\n  }\n\n  async create(userInfo) {\n    const token = jwt.sign(JSON.stringify(userInfo), secret);\n    return token;\n  }\n\n  async parse(token) {\n    if (token) {\n      try {\n        return jwt.verify(token, secret);\n      } catch (err) {\n        return null;\n      }\n    }\n    return null;\n  }\n\n  async verify(token) {\n    const result = await this.parse(token);\n    if (think.isEmpty(result)) {\n      return false;\n    }\n\n    return true;\n  }\n};\n\n\n"
     ]
 }

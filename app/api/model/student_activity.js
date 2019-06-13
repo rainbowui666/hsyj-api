@@ -3,11 +3,11 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 const _ = require('lodash');
 
 module.exports = class extends think.Model {
-    getStudentIsJoinActivity(studentid, activityid) {
+    getStudentIsJoinActivity(studentid, activityid, shstate) {
         var _this = this;
 
         return _asyncToGenerator(function* () {
-            const data = yield _this.model('student_activity').where({ studentID: studentid, activityid: activityid }).select();
+            const data = yield _this.model('student_activity').where({ studentID: studentid, activityid: activityid, shstate: shstate }).select();
 
             return data;
         })();
@@ -35,3 +35,4 @@ module.exports = class extends think.Model {
         })();
     }
 };
+//# sourceMappingURL=student_activity.js.map
