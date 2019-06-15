@@ -18,7 +18,7 @@ module.exports = class extends think.Model {
         // console.log('getUserInfo', token, userId)
         let data = null;
         if (userId != 0) {
-            data = await this.model('user').where({sysUserID: userId}).find();
+            data = await this.model('user').field(['schoolid','shstate','sysUserID','userName','usertype']).where({sysUserID: userId}).find();
         } else {
             data = await this.cache('userinfo'+ token);
         }
