@@ -11,11 +11,13 @@ module.exports = class extends Base {
             return this.fail('请先登录')
         }
 
-        let childschoolid = await this.cache('childSchool');
+        // let childschoolid = await this.cache('childSchool'+this.ctx.state.token);
+        let childschoolid = await this.model('school').field(['schoolID']).where({parentid: userinfo.schoolid}).getField('schoolID')
         const model = this.model('scenery');
         model._pk = 'sceneryID';
 
         var data;
+        console.log(userinfo, '  childschoolid----', childschoolid)
         if (scenerytitle == '') {
             if (userinfo.usertype == 1) { // 管理员
                 data = await model.where({shstate:0}).page(page, size).order('sceneryID desc').countSelect();
@@ -104,7 +106,7 @@ module.exports = class extends Base {
             await this.cache('home_activity_scenery', null, 'redis');
             // 上传景点图片
             if (insertid) {
-                return this.json({
+                return this.success({
                         insertid:insertid
                     });
             }

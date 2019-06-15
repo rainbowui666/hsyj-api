@@ -95,14 +95,14 @@ module.exports = class extends Base {
         return this.fail('登录失败');
       }
 
-      let childSchool = await this.model('school').field(['schoolID']).where({parentid: userData[0].schoolid}).getField('schoolID')
+      // let childSchool = await this.model('school').field(['schoolID']).where({parentid: userData[0].schoolid}).getField('schoolID')
       userData[0].token = sessionKey;
       this.cache('userinfo'+ sessionKey, userData);
 
       console.log(userData)
-      if (!think.isEmpty(childSchool)) {
-        this.cache('childSchool' + sessionKey, childSchool.join(','))
-      }
+      // if (!think.isEmpty(childSchool)) {
+      //   this.cache('childSchool' + sessionKey, childSchool.join(','))
+      // }
 
      // console.log(userData)
     // return this.success({ token: sessionKey, userInfo: newUserInfo });

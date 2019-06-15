@@ -15,7 +15,7 @@ module.exports = class extends Base {
         
         let data = {};
         if (userinfo && userinfo.usertype == 0) {
-            data = await model.where({shstate: 0, createbyuserid: userinfo.sysUserID}).order('activityID desc').page(page,size).countSelect();
+            data = await model.where({shstate: 0, createbyschoolid: userinfo.schoolid}).order('activityID desc').page(page,size).countSelect();
         } else {
             data = await model.where({shstate: 0 }).page(page,size).order('activityID desc').countSelect();
         }
@@ -36,6 +36,23 @@ module.exports = class extends Base {
         data.data = arrdata;
 
         return this.success(data)
+    }
+
+    async list2Action() {
+        const pageindex = this.get('pageindex') || 1;
+        const pagesize = this.get('pagesize') || 10;
+        let userinfo = await this.model('pagecache').getUserInfo(this.ctx.state.token, this.ctx.state.userId); // await this.cache('userinfo'+ this.ctx.state.token);
+        const activityid = this.get('activityid');
+
+        const model = this.model('activity_scenery');
+        let data = []
+        let counta;
+        if (userinfo && userinfo && userinfo.usertype == 0) {
+            data = await model.query("select acsc.sceneryid,acsc.activityid,act.startAddress,q.questionID,q.questiontitle,q.answera,q.answerb,q.answerc,q.answerd,q.rightanswer from culture_activity_scenery acsc inner join culture_activity act on act.activityID=acsc.activityid inner join culture_scenery s on acsc.sceneryid=s.sceneryID inner join culture_question q on acsc.questionid=q.questionID where acsc.activityid="+activityid);
+            counta = await model.query("select count(*) t from (select acsc.sceneryid,acsc.activityid,act.startAddress,q.questionID,q.questiontitle,q.answera,q.answerb,q.answerc,q.answerd,q.rightanswer from culture_activity_scenery acsc inner join culture_activity act on act.activityID=acsc.activityid inner join culture_scenery s on acsc.sceneryid=s.sceneryID inner join culture_question q on acsc.questionid=q.questionID where acsc.activityid="+activityid+" ) t ");
+        }
+        const pagecount = Math.ceil(counta[0].t / pagesize);
+        this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
     }
 
     async getdatabyname(name) {
@@ -105,7 +122,7 @@ module.exports = class extends Base {
             endSceneryid,
             isGroup,
             isrecommend,
-            groupNum,createbyuserid: userinfo.sysUserID
+            groupNum,createbyuserid: userinfo.sysUserID,createbyschoolid:userinfo.schoolid
         }; 
         await this.getdatabyname('home_discuss');
         
