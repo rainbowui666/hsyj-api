@@ -9,6 +9,13 @@ module.exports = class extends Base {
         return this.success('删除成功')
     }
 
+    async getUserListBySchoolidAction() {
+        const schoolid = this.get('schoolid');
+        const data = await this.model('user').where({schoolid:schoolid, shstate: 0}).select();
+        // const data = await this.model('user').field(['schoolid','shstate','sysUserID','userName','usertype']).where({schoolid:schoolid, shstate: 0}).select();
+        return this.success(data)
+    }
+
     async saveAction() {
         let username = this.post('username');
         const userData = {

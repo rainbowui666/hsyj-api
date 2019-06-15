@@ -48,8 +48,8 @@ module.exports = class extends Base {
         let data = []
         let counta;
         if (userinfo && userinfo && userinfo.usertype == 0) {
-            data = await model.query("select acsc.sceneryid,acsc.activityid,act.startAddress,q.questionID,q.questiontitle,q.answera,q.answerb,q.answerc,q.answerd,q.rightanswer from culture_activity_scenery acsc inner join culture_activity act on act.activityID=acsc.activityid inner join culture_scenery s on acsc.sceneryid=s.sceneryID inner join culture_question q on acsc.questionid=q.questionID where acsc.activityid="+activityid);
-            counta = await model.query("select count(*) t from (select acsc.sceneryid,acsc.activityid,act.startAddress,q.questionID,q.questiontitle,q.answera,q.answerb,q.answerc,q.answerd,q.rightanswer from culture_activity_scenery acsc inner join culture_activity act on act.activityID=acsc.activityid inner join culture_scenery s on acsc.sceneryid=s.sceneryID inner join culture_question q on acsc.questionid=q.questionID where acsc.activityid="+activityid+" ) t ");
+            data = await model.query("select acsc.sceneryid,s.sceneryTitle,acsc.activityid,act.startAddress,q.questionID,q.questiontitle,q.answera,q.answerb,q.answerc,q.answerd,q.rightanswer from culture_activity_scenery acsc inner join culture_activity act on act.activityID=acsc.activityid inner join culture_scenery s on acsc.sceneryid=s.sceneryID inner join culture_question q on acsc.questionid=q.questionID where acsc.activityid="+activityid);
+            counta = await model.query("select count(*) t from (select acsc.sceneryid,s.sceneryTitle,acsc.activityid,act.startAddress,q.questionID,q.questiontitle,q.answera,q.answerb,q.answerc,q.answerd,q.rightanswer from culture_activity_scenery acsc inner join culture_activity act on act.activityID=acsc.activityid inner join culture_scenery s on acsc.sceneryid=s.sceneryID inner join culture_question q on acsc.questionid=q.questionID where acsc.activityid="+activityid+" ) t ");
         }
         const pagecount = Math.ceil(counta[0].t / pagesize);
         this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})

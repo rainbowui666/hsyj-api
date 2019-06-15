@@ -13,14 +13,15 @@
         "get",
         "data",
         "model",
+        "field",
         "where",
         "shstate",
         "select",
         "success"
     ],
-    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;;AAE1BI,+BAAN,GAAoC;AAAA;;AAAA;AAChC,kBAAMC,WAAW,MAAKC,GAAL,CAAS,UAAT,CAAjB;AACA,kBAAMC,OAAO,MAAM,MAAKC,KAAL,CAAW,MAAX,EAAmBC,KAAnB,CAAyB,EAACJ,UAASA,QAAV,EAAoBK,SAAS,CAA7B,EAAzB,EAA0DC,MAA1D,EAAnB;AACA,mBAAO,MAAKC,OAAL,CAAaL,IAAb,CAAP;AAHgC;AAInC;AAN+B,CAApC",
+    "mappings": ";;AAAA,MAAMA,OAAOC,QAAQ,WAAR,CAAb;;AAEAC,OAAOC,OAAP,GAAiB,cAAcH,IAAd,CAAmB;;AAE1BI,+BAAN,GAAoC;AAAA;;AAAA;AAChC,kBAAMC,WAAW,MAAKC,GAAL,CAAS,UAAT,CAAjB;AACA;AACA,kBAAMC,OAAO,MAAM,MAAKC,KAAL,CAAW,MAAX,EAAmBC,KAAnB,CAAyB,CAAC,UAAD,EAAY,SAAZ,EAAsB,WAAtB,EAAkC,UAAlC,EAA6C,UAA7C,CAAzB,EAAmFC,KAAnF,CAAyF,EAACL,UAASA,QAAV,EAAoBM,SAAS,CAA7B,EAAzF,EAA0HC,MAA1H,EAAnB;AACA,mBAAO,MAAKC,OAAL,CAAaN,IAAb,CAAP;AAJgC;AAKnC;AAP+B,CAApC",
     "file": "../../../src/api/controller/user.js",
     "sourcesContent": [
-        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    \n    async getUserListBySchoolidAction() {\n        const schoolid = this.get('schoolid');\n        const data = await this.model('user').where({schoolid:schoolid, shstate: 0}).select();\n        return this.success(data)\n    }\n}"
+        "const Base = require('./base.js');\n\nmodule.exports = class extends Base {\n    \n    async getUserListBySchoolidAction() {\n        const schoolid = this.get('schoolid');\n        // const data = await this.model('user').where({schoolid:schoolid, shstate: 0}).select();\n        const data = await this.model('user').field(['schoolid','shstate','sysUserID','userName','usertype']).where({schoolid:schoolid, shstate: 0}).select();\n        return this.success(data)\n    }\n}"
     ]
 }
