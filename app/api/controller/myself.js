@@ -77,6 +77,7 @@ module.exports = class extends Base {
             const arrdata = [];
             for (const item of data) {
                 item.pics = yield _this3.model('activity').getPicsbyid(item.activityID);
+                item.shstate = yield _this3.model('activity').getstate(item.activityID);
                 // let joindate = await this.model('student_activity').getStudentIsJoinActivity(id,item.activityid);
                 // if (Number(new Date()) > Number(new Date(item.endDate)) && joindate && joindate.length > 0) {
                 //     item.hasjoin = '已完成'

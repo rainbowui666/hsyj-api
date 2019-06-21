@@ -9,10 +9,12 @@ module.exports = class extends Base {
         return _asyncToGenerator(function* () {
             const id = _this.post('id');
             const groupname = _this.post('groupname');
+            const studentid = _this.post('studentid');
 
             let param = {
                 activityid: id,
-                groupName: groupname
+                groupName: groupname,
+                studentid: studentid
             };
 
             const insertid = yield _this.model('group').add(param);
@@ -20,30 +22,67 @@ module.exports = class extends Base {
         })();
     }
 
-    joinGroupAction() {
+    readyScanAction() {
         var _this2 = this;
 
         return _asyncToGenerator(function* () {
-            const groupid = _this2.get('groupid');
             const studentid = _this2.get('studentid');
-            const activityid = _this2.get('activityid');
+            _this2.cache('scan' + studentid, studentid);
+            return _this2.success({ 'scan': studentid });
+        })();
+    }
+
+    joinGroupAction() {
+        var _this3 = this;
+
+        return _asyncToGenerator(function* () {
+            const groupid = _this3.get('groupid');
+            const studentid = _this3.get('studentid');
+            const activityid = _this3.get('activityid');
             let para = {
                 groupid, studentid, activityid
             };
 
-            let insertid = yield _this2.model('student_group').add(para);
-            return _this2.success('加入成功');
+            const scanstudnetid = yield _this3.cache('scan' + studentid);
+            if (!think.isEmpty(scanstudnetid)) {
+                _this3.cache('scan' + studentid, null);
+
+                const actData = yield _this3.model('activity').field(['activityID', 'groupNum']).where({ activityID: activityid }).find();
+                let groupnum = 0;
+                if (!think.isEmpty(actData)) {
+                    groupnum = parseInt(actData.groupNum);
+                }
+
+                const groupcount = yield _this3.model('student_group').where({ activityID: activityid }).count();
+                if (groupcount >= groupnum) {
+                    // console.log('fail group----')
+                    return _this3.fail('加入失败, 超过团体活动最大限制人数');
+                } else {
+                    console.log('joingroup------', groupid, studentid, activityid);
+                    // console.log('success group----')
+                    let insertid = yield _this3.model('student_group').add(para);
+                    return _this3.success('扫码加入成功');
+                }
+            } else {
+                return _this3.display('pages/groupSuccess');
+            }
         })();
     }
 
     showQrAction() {
-        var _this3 = this;
+        var _this4 = this;
 
         return _asyncToGenerator(function* () {
-            const url = _this3.get('url');
-            const qrService = _this3.service('qr', 'api');
-            _this3.type = 'image/svg+xml';
-            _this3.body = qrService.getQrByUrl(url);
+            const url = _this4.get('url');
+            const studentid = _this4.get('studentid');
+            const activityid = _this4.get('activityid');
+
+            console.log('showqr', url, studentid, activityid);
+
+            const qrService = _this4.service('qr', 'api');
+            _this4.type = 'image/svg+xml';
+            _this4.body = qrService.getQrByUrl(url + '&studentid=' + studentid + '&activityid=' + activityid);
         })();
     }
 };
+//# sourceMappingURL=group.js.map

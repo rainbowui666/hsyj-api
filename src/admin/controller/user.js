@@ -1,4 +1,5 @@
 const Base = require('./base.js');
+var CryptoJS = require('crypto-js');
 
 module.exports = class extends Base {
     async deleteAction() {
@@ -18,9 +19,16 @@ module.exports = class extends Base {
 
     async saveAction() {
         let username = this.post('username');
+        let pwd = this.post('pwd');
+        let key = CryptoJS.enc.Utf8.parse(this.ctx.state.crpkey);
+        var encrypted = CryptoJS.AES.encrypt(pwd, CryptoJS.enc.Utf8.parse(key), {
+            mode: CryptoJS.mode.ECB,
+            padding: CryptoJS.pad.Pkcs7
+        });
+
         const userData = {
             userName: username,
-            pwd: this.post('pwd'),
+            pwd: encrypted.toString(),
             usertype: this.post('usertype') || 0,
             schoolid: this.post('schoolid') || '',
             shstate: this.post('shstate') || 0

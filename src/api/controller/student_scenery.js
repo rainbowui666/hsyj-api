@@ -5,6 +5,8 @@ module.exports = class extends Base {
         const studentid = this.get('studentid');
         const sceneryid = this.get('sceneryid');
         const shstate = this.get('shstate');
+
+        // console.log('dataCount', dataCount.length, startSceneryid)
         let data = {
             studentid,sceneryid,shstate
         }

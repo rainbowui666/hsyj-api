@@ -16,6 +16,7 @@ module.exports = class extends think.Model {
         const modeldis = this.model('discuss');
         modeldis._pk = 'discussID';
         const disnum = await modeldis.where({distype: 1, targetid: id, shstate: 1}).count('discussID');
+        // 报名人数
         const applyNum = await model.where({activityid: id, shstate: 1}).count('activityid');
         return {
             // checkin: checkin,

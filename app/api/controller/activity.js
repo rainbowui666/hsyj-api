@@ -48,7 +48,15 @@ module.exports = class extends Base {
                 //     item.status = '';
                 // }
                 if (!think.isEmpty(studentid)) {
-                    let joindate = yield _this2.model('student_activity').getStudentIsJoinActivity(studentid, item.activityID, 1);
+
+                    // let joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,item.activityID, 1);
+                    let joindate = null;
+                    if (data.isGroup == 0) {
+                        joindate = yield _this2.model('student_activity').getStudentIsJoinActivity(studentid, item.activityID, 1);
+                    } else {
+                        joindate = yield _this2.model('student_activity').getStudentIsJoinGroup(studentid, item.activityID, 1);
+                    }
+
                     let start = Number(new Date(item.startDate));
                     let nowd = Number(new Date());
                     let end = Number(new Date(item.endDate));
@@ -61,14 +69,30 @@ module.exports = class extends Base {
                     //     item.hasjoin = '已报名' 
                     // }
 
-                    if (nowd > end && joindate && joindate.length > 0) {
-                        item.hasjoin = '已完成';
-                    } else if (start < nowd && nowd < end && joindate && joindate.length > 0) {
-                        item.hasjoin = '已报名,进行中';
-                    } else if (start < nowd && nowd < end) {
-                        item.hasjoin = '进行中';
-                    } else if (joindate && joindate.length > 0) {
-                        item.hasjoin = '已报名';
+                    if (joindate) {
+                        console.log('joindate---', joindate);
+                    }
+
+                    if (data.isGroup == 0) {
+                        if (nowd > end && joindate && joindate.iscomplate) {
+                            item.hasjoin = '已完成';
+                        } else if (start < nowd && nowd < end && joindate && joindate.isAttentention) {
+                            item.hasjoin = '已报名,进行中';
+                        } else if (start < nowd && nowd < end) {
+                            item.hasjoin = '进行中';
+                        } else if (joindate && joindate.isAttentention) {
+                            item.hasjoin = '已报名';
+                        }
+                    } else {
+                        if (nowd > end && joindate && joindate.length > 0) {
+                            item.hasjoin = '已完成';
+                        } else if (start < nowd && nowd < end && joindate && joindate.length > 0) {
+                            item.hasjoin = '已报名,进行中';
+                        } else if (start < nowd && nowd < end) {
+                            item.hasjoin = '进行中';
+                        } else if (joindate && joindate.length > 0) {
+                            item.hasjoin = '已报名';
+                        }
                     }
                 } else {
                     let start = Number(new Date(item.startDate));
@@ -108,7 +132,7 @@ module.exports = class extends Base {
                 // data.discussList = await this.model('discuss').getDiscussById(id,1);
                 data.shstate = yield _this3.model('activity').getstate(data.activityID);
                 if (!think.isEmpty(studentid)) {
-                    let joindate = yield _this3.model('student_activity').getStudentIsJoinActivity(studentid, data.activityID, 1);
+                    let joindate = yield _this3.model('student_activity').getActivityHasJoin(studentid, data.activityID, 1);
 
                     let start = Number(new Date(data.startDate));
                     let nowd = Number(new Date());
@@ -145,11 +169,12 @@ module.exports = class extends Base {
                 data.pics = yield _this4.model('activity').getPicsbyid(data.activityID);
                 // data.discussList = await this.model('discuss').getDiscussById(id,1);
                 data.shstate = yield _this4.model('activity').getstate(data.activityID);
-                let joindate = yield _this4.model('student_activity').getStudentIsJoinActivity(studentid, data.activityID, 1);
+                let joindate = yield _this4.model('student_activity').getStudentIsJoinGroup(studentid, data.activityID, 1);
                 let start = Number(new Date(data.startDate));
                 let nowd = Number(new Date());
                 let end = Number(new Date(data.endDate));
 
+                // console.log('joindate----group-', joindate.length)
                 // if (nowd > end && joindate && joindate.length > 0) {
                 //     data.hasjoin = '已完成'
                 // } else if(joindate && joindate.length > 0) {
@@ -199,8 +224,8 @@ module.exports = class extends Base {
             const activityid = _this6.get('activityid');
             const idcondition = activityid ? 'a.activityID=' + activityid : '1=1';
             const start = (pageindex - 1) * pagesize;
-            const data = yield model.query("select s.*,a.activityName,a.startSceneryid,a.endSceneryid,sc.schoolid,sc.address,sc.shdesc,sc.longitude,sc.latitude,sc.sctype,sc.shstate,sc.sceneryTitle from culture_activity_scenery as s left join culture_activity a on a.activityID=s.activityid left join culture_scenery sc on s.sceneryid=sc.sceneryID where " + idcondition + " and a.activityID limit " + start + "," + pagesize + " ");
-            const counta = yield model.query("select count(*) t from (select s.*,a.activityName,a.startSceneryid,a.endSceneryid,sc.schoolid,sc.address,sc.shdesc,sc.longitude,sc.latitude,sc.sctype,sc.shstate,sc.sceneryTitle from culture_activity_scenery as s left join culture_activity a on a.activityID=s.activityid left join culture_scenery sc on s.sceneryid=sc.sceneryID where " + idcondition + " ) t");
+            const data = yield model.query("select distinct(s.sceneryid),s.activityid,a.activityName,a.startSceneryid,a.endSceneryid,sc.schoolid,sc.address,sc.shdesc,sc.longitude,sc.latitude,sc.sctype,sc.shstate,sc.sceneryTitle from culture_activity_scenery as s inner join culture_activity a on a.activityID=s.activityid inner join culture_scenery sc on s.sceneryid=sc.sceneryID where " + idcondition + " and a.activityID limit " + start + "," + pagesize + " ");
+            const counta = yield model.query("select count(*) t from (select distinct(s.sceneryid),s.activityid,a.activityName,a.startSceneryid,a.endSceneryid,sc.schoolid,sc.address,sc.shdesc,sc.longitude,sc.latitude,sc.sctype,sc.shstate,sc.sceneryTitle from culture_activity_scenery as s inner join culture_activity a on a.activityID=s.activityid inner join culture_scenery sc on s.sceneryid=sc.sceneryID where " + idcondition + " ) t");
             const pagecount = Math.ceil(counta[0].t / pagesize);
 
             const arrdata = [];
@@ -209,6 +234,10 @@ module.exports = class extends Base {
             for (const item of data) {
                 item.pics = yield _this6.model('activity').getPicsbyid(item.activityid);
                 item.shstate = yield _this6.model('activity').getstate(item.activityid);
+                if (!think.isEmpty(studentid)) {
+                    item.sceneryState = yield _this6.model('scenery').getstudentstate(item.sceneryid, studentid, item.activityid);
+                }
+
                 arrScen.push(item.sceneryid);
                 arrSchool.push(item.schoolid);
                 // item.question = await this.model('student_activity').studentJoinActivityAndAnswer(studentid,item.activityID,item.questionid)

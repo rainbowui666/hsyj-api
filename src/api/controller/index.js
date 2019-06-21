@@ -43,13 +43,13 @@ module.exports = class extends Base {
         // } else if(joindate && joindate.length > 0) {
         //     item.hasjoin = '已报名' 
         // }
-        if (nowd > end && joindate && joindate.length > 0) {
+        if (nowd > end && joindate && joindate.iscomplate) {
           item.hasjoin = '已完成'
-        } else if (start < nowd && nowd < end && (joindate && joindate.length > 0)) {
+        } else if (start < nowd && nowd < end && (joindate && joindate.isAttentention)) {
           item.hasjoin = '已报名,进行中';
         } else if (start < nowd && nowd < end) {
           item.hasjoin = '进行中';
-        } else if(joindate && joindate.length > 0) {
+        } else if(joindate && joindate.isAttentention) {
           item.hasjoin = '已报名' 
         }
     } else {

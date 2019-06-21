@@ -10,7 +10,7 @@
         "exports",
         "think",
         "Model",
-        "getStudentIsJoinActivity",
+        "getActivityHasJoin",
         "studentid",
         "activityid",
         "shstate",
@@ -19,16 +19,36 @@
         "where",
         "studentID",
         "select",
+        "getStudentIsJoinActivity",
+        "actData",
+        "field",
+        "activityID",
+        "find",
+        "needschoolpass",
+        "needscenerypass",
+        "isEmpty",
+        "needSchoolPass",
+        "needSceneryPass",
+        "realattentscenery",
+        "dataScenery",
+        "getField",
+        "length",
+        "uniq",
+        "dataschool",
+        "join",
+        "sceneryID",
+        "iscomplate",
+        "isAttentention",
         "studentJoinActivityAndAnswer",
         "questionid",
         "questiondata",
         "questionID",
         "getJoinNum",
-        "length"
+        "getStudentIsJoinGroup"
     ],
-    "mappings": ";;AAAA,MAAMA,IAAIC,QAAQ,QAAR,CAAV;;AAEAC,OAAOC,OAAP,GAAiB,cAAcC,MAAMC,KAApB,CAA0B;AACjCC,4BAAN,CAA+BC,SAA/B,EAA0CC,UAA1C,EAAsDC,OAAtD,EAA+D;AAAA;;AAAA;AAC3D,kBAAMC,OAAO,MAAM,MAAKC,KAAL,CAAW,kBAAX,EAA+BC,KAA/B,CAAqC,EAACC,WAAWN,SAAZ,EAAuBC,YAAYA,UAAnC,EAA+CC,SAASA,OAAxD,EAArC,EAAuGK,MAAvG,EAAnB;;AAEA,mBAAOJ,IAAP;AAH2D;AAI9D;;AAEKK,gCAAN,CAAmCR,SAAnC,EAA8CC,UAA9C,EAAyDQ,UAAzD,EAAqE;AAAA;;AAAA;AACjE,kBAAMN,OAAO,MAAM,OAAKC,KAAL,CAAW,kBAAX,EAA+BC,KAA/B,CAAqC,EAACC,WAAUN,SAAX,EAAqBC,YAAWA,UAAhC,EAA2CC,SAAQ,CAAnD,EAArC,EAA4FK,MAA5F,EAAnB;AACA,kBAAMG,eAAe,MAAM,OAAKN,KAAL,CAAW,UAAX,EAAuBC,KAAvB,CAA6B,EAACM,YAAWF,UAAZ,EAA7B,EAAsDF,MAAtD,EAA3B;;AAEA,mBAAO;AACHJ,oBADG,EACEO;AADF,aAAP;AAJiE;AAOpE;;AAEKE,cAAN,CAAiBX,UAAjB,EAA6B;AAAA;;AAAA;AACzB,kBAAME,OAAO,MAAM,OAAKC,KAAL,CAAW,kBAAX,EAA+BC,KAA/B,CAAqC,EAACJ,YAAWA,UAAZ,EAAwBC,SAAQ,CAAhC,EAArC,EAAyEK,MAAzE,EAAnB;AACA,mBAAOJ,OAAOA,KAAKU,MAAZ,GAAqB,CAA5B;AAFyB;AAG5B;AAnBsC,CAA3C",
+    "mappings": "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",
     "file": "../../../src/api/model/student_activity.js",
     "sourcesContent": [
-        "const _ = require('lodash');\n\nmodule.exports = class extends think.Model {\n    async getStudentIsJoinActivity(studentid, activityid, shstate) {\n        const data = await this.model('student_activity').where({studentID: studentid, activityid: activityid, shstate: shstate}).select();\n        \n        return data;\n    }\n\n    async studentJoinActivityAndAnswer(studentid, activityid,questionid) {\n        const data = await this.model('student_activity').where({studentID:studentid,activityid:activityid,shstate:1}).select();\n        const questiondata = await this.model('question').where({questionID:questionid}).select();\n\n        return {\n            data,questiondata\n        }\n    }\n\n    async getJoinNum(activityid) {\n        const data = await this.model('student_activity').where({activityid:activityid, shstate:1}).select();\n        return data ? data.length : 0;\n    }\n}"
+        "const _ = require('lodash');\n\nmodule.exports = class extends think.Model {\n    async getActivityHasJoin(studentid, activityid, shstate) {\n        const data = await this.model('student_activity').where({studentID: studentid, activityid: activityid, shstate: shstate}).select();\n        return data\n    }\n    // 活动的景点签到\n    async getStudentIsJoinActivity(studentid, activityid, shstate) {\n        // 取景点阀值\n        const actData = await this.model('activity').field(['activityID','needSchoolPass','needSceneryPass']).where({activityID: activityid}).find();\n        let needschoolpass = 0;\n        let needscenerypass = 0;\n        if (!think.isEmpty(actData)) {\n            needschoolpass = actData.needSchoolPass;\n            needscenerypass = actData.needSceneryPass;\n        }\n\n        // 活动景点签到次数\n        let realattentscenery = 0; \n        let dataScenery = await this.model('attention_activity').field('sceneryid').where({studentid:studentid,activityid:activityid}).getField('sceneryid');\n        if (!think.isEmpty(dataScenery)) {\n            realattentscenery = dataScenery.length;\n        }\n\n        dataScenery = _.uniq(dataScenery)\n        // console.log('dataScenery------',dataScenery)\n\n        // 景点所属学校\n        let dataschool = 0;\n        if (!think.isEmpty(dataScenery)) {\n            dataScenery = dataScenery.join(',');\n            dataschool = await this.model('scenery').field('schoolid').where({sceneryID: ['in', dataScenery]}).getField('schoolid');\n            dataschool = _.uniq(dataschool)\n            // console.log('schoolid------',dataschool)\n        }\n\n        let iscomplate = false;\n        if (realattentscenery >= needscenerypass && dataschool && dataschool.length >= needschoolpass) {\n            iscomplate = true;\n        }\n\n        let isAttentention = false;\n        if (realattentscenery > 0) {\n            isAttentention = true;\n        }\n        // const data = await this.model('student_activity').where({studentID: studentid, activityid: activityid, shstate: shstate}).select();\n        \n        return {isAttentention, iscomplate};\n    }\n\n    async studentJoinActivityAndAnswer(studentid, activityid,questionid) {\n        const data = await this.model('student_activity').where({studentID:studentid,activityid:activityid,shstate:1}).select();\n        const questiondata = await this.model('question').where({questionID:questionid}).select();\n\n        return {\n            data,questiondata\n        }\n    }\n\n    async getJoinNum(activityid) {\n        const data = await this.model('student_activity').where({activityid:activityid, shstate:1}).select();\n        return data ? data.length : 0;\n    }\n\n    async getStudentIsJoinGroup(studentid, activityid, shstate) {\n        const data = await this.model('student_activity').where({studentID: studentid,activityid:activityid,shstate:shstate}).select();\n        // console.log('group-----', data)\n        return data;\n    }\n}"
     ]
 }

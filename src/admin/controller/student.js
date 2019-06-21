@@ -51,7 +51,8 @@ module.exports = class extends Base {
         if (userinfo.usertype == 1) { // 管理员
             data = await model.query("select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" and studentID limit "+start+","+pagesize+" ");
         } else {
-            data = await model.query("select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" and schoolid="+userinfo.schoolid+" and studentID limit "+start+","+pagesize+" ");
+            let childschoolid = await this.model('school').field(['schoolID']).where({parentid: userinfo.schoolid}).getField('schoolID')
+            data = await model.query("select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" and (schoolid="+userinfo.schoolid+"  or schoolid in ("+childschoolid+")) and studentID limit "+start+","+pagesize+" ");
         }
         return this.success({pageindex:pageindex,pagesize:pagesize,data})
     }
@@ -103,7 +104,7 @@ module.exports = class extends Base {
 
     async deleteAction() {
         const id = this.get('id');
-        const shstate = this.get('shstate');
+        // const shstate = this.get('shstate');
         // const data = {
         //     shstate: shstate
         // }
@@ -112,7 +113,7 @@ module.exports = class extends Base {
         await this.model('student_school').where({studentid: id}).delete();
         await this.model('student_activity').where({studentid: id}).delete();
         await this.model('discuss').where({studentid: id}).delete();
-        await this.model('student_discuss').where({studentid: id}).delete();
+        // await this.model('student_discuss').where({studentid: id}).delete();
         await this.model('answer_question').where({studentid: id}).delete();
         return this.success('成功')
     }

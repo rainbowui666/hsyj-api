@@ -60,22 +60,42 @@ module.exports = class extends Base {
         })();
     }
 
-    detailAction() {
+    getActivitySceneryDetailAction() {
         var _this4 = this;
 
         return _asyncToGenerator(function* () {
-            const id = _this4.get('id');
+            const id = _this4.get('sceneryid');
+            const studentid = _this4.get('studentid');
+            const activityid = _this4.get('activityid');
+
             const model = _this4.model('scenery');
+            model._pk = 'sceneryID';
+            const data = yield model.where({ sceneryID: id }).find();
+            if (!think.isEmpty(data)) {
+                data.pics = yield _this4.model('scenery').getPicsbyid(data.sceneryID);
+                data.shstate = yield _this4.model('scenery').getactivitystudentstate(data.sceneryID, studentid, activityid);
+                data.discussList = yield _this4.model('discuss').getDiscussById(id, 0);
+            }
+            return _this4.success(data);
+        })();
+    }
+
+    detailAction() {
+        var _this5 = this;
+
+        return _asyncToGenerator(function* () {
+            const id = _this5.get('id');
+            const model = _this5.model('scenery');
             const data = yield model.where({ sceneryID: id }).find();
 
             const arrdata = [];
             // for (const item of data.data) {
-            data.scenery = yield _this4.model('school').getScenerybyid(data.sceneryID);
+            data.scenery = yield _this5.model('school').getScenerybyid(data.sceneryID);
             //     // item.shstate = await this.model('school').getstate(item.schoolID);
             //     arrdata.push(item);
             // }
             // data.data = arrdata;
-            return _this4.success(data);
+            return _this5.success(data);
         })();
     }
 };

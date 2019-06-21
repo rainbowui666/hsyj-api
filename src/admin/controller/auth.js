@@ -1,5 +1,6 @@
 const Base = require('./base.js');
 var svgCaptcha = require('svg-captcha');
+var CryptoJS = require('crypto-js');
 var http = require('http');
 
 module.exports = class extends Base {
@@ -77,7 +78,24 @@ module.exports = class extends Base {
 
     const username = this.post('username');
     const pwd = this.post('pwd');
-    const data = await this.model('user').where({userName:username, pwd:pwd}).find();
+
+    let key = CryptoJS.enc.Utf8.parse('1234567890123456');
+
+    var encrypted = CryptoJS.AES.encrypt(pwd, CryptoJS.enc.Utf8.parse(key), {
+        mode: CryptoJS.mode.ECB,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    // 解密
+    var decrypt = CryptoJS.AES.decrypt(encrypted.toString(), CryptoJS.enc.Utf8.parse(key), {
+        mode: CryptoJS.mode.ECB,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    console.log('加密:---', encrypted.toString());
+    console.log("解密:---- "+decrypt.toString(CryptoJS.enc.Utf8));
+
+    const data = await this.model('user').where({userName:username, pwd:encrypted.toString()}).find();
     if (think.isEmpty(data)) {
       return this.fail(403, '账号或密码错误');
     } 
@@ -85,7 +103,7 @@ module.exports = class extends Base {
 
       const model = this.model('user');
       // let userData = await model.query("select u.*,ur.roleid,r.roleName,rp.permissionid,p.permissionName,ps.schoolid from culture_user u inner join culture_user_role ur on u.sysUserID=ur.sysuserid inner join culture_role r on r.roleID=ur.roleid inner join culture_role_permission rp on rp.roleid=r.roleID inner join culture_permission p on p.permissionID=rp.permissionid inner join culture_permission_school ps on ps.permissionid=p.permissionID where u.sysuserid="+id);
-      let userData = await model.query("select u.*,s.schoolName from culture_user u left join culture_school s on u.schoolid=s.schoolID where u.sysuserid="+id);
+      let userData = await model.query("select u.sysUserID,u.userName,u.usertype,u.schoolid,u.shstate,s.schoolName from culture_user u left join culture_school s on u.schoolid=s.schoolID where u.sysuserid="+id);
 
       const TokenSerivce = this.service('token', 'admin');
  
@@ -119,5 +137,27 @@ module.exports = class extends Base {
     const sysuserid = this.get('sysuserid');
     const data = await this.model('user').where({sysUserID:sysuserid}).find()
     return this.success(data);
+  }
+
+  async decrypStrAction() {
+    let str = this.get('str');
+    let key = CryptoJS.enc.Utf8.parse('1234567890123456');
+    var decrypt = CryptoJS.AES.decrypt(str, CryptoJS.enc.Utf8.parse(key), {
+        mode: CryptoJS.mode.ECB,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    console.log("解密:---- "+decrypt.toString(CryptoJS.enc.Utf8));
+    return this.success(decrypt.toString(CryptoJS.enc.Utf8))
+  }
+
+  async crypStrAction() {
+    let str = this.get('str');
+    let key = CryptoJS.enc.Utf8.parse('1234567890123456');
+    var encrypted = CryptoJS.AES.encrypt(str, CryptoJS.enc.Utf8.parse(key), {
+        mode: CryptoJS.mode.ECB,
+        padding: CryptoJS.pad.Pkcs7
+    });
+    return this.success(encrypted.toString())
   }
 };

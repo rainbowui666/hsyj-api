@@ -46,6 +46,22 @@ module.exports = class extends Base {
         return this.success(data);
     }
 
+    async getActivitySceneryDetailAction() {
+        const id = this.get('sceneryid');
+        const studentid = this.get('studentid');
+        const activityid = this.get('activityid');
+
+        const model = this.model('scenery');
+        model._pk = 'sceneryID';
+        const data = await model.where({sceneryID: id}).find();
+        if (!think.isEmpty(data)) {
+            data.pics = await this.model('scenery').getPicsbyid(data.sceneryID);
+            data.shstate = await this.model('scenery').getactivitystudentstate(data.sceneryID, studentid, activityid);
+            data.discussList = await this.model('discuss').getDiscussById(id,0);
+        }
+        return this.success(data);
+    }
+
     async detailAction() {
         const id = this.get('id');
         const model = this.model('scenery');

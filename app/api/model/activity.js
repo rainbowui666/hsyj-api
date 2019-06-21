@@ -25,6 +25,7 @@ module.exports = class extends think.Model {
             const modeldis = _this2.model('discuss');
             modeldis._pk = 'discussID';
             const disnum = yield modeldis.where({ distype: 1, targetid: id, shstate: 1 }).count('discussID');
+            // 报名人数
             const applyNum = yield model.where({ activityid: id, shstate: 1 }).count('activityid');
             return {
                 // checkin: checkin,
