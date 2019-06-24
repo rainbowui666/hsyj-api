@@ -42,7 +42,7 @@ module.exports = class extends Base {
                 
                 // let joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,item.activityID, 1);
                 let joindate = null;
-                if (data.isGroup == 0) {
+                if (item.isGroup == 0) {
                     joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,item.activityID, 1);
                 } else {
                     joindate = await this.model('student_activity').getStudentIsJoinGroup(studentid,item.activityID, 1);
@@ -61,11 +61,11 @@ module.exports = class extends Base {
                 // }
 
                 if (joindate) {
-                    console.log('joindate---', joindate)
+                    console.log('joindate---', joindate, start, nowd, end)
                 }
 
-                if (data.isGroup == 0) {
-                    if (nowd > end && joindate && joindate.iscomplate) {
+                // if (item.isGroup == 0) {
+                    if (joindate && joindate.iscomplate) {
                         item.hasjoin = '已完成'
                     } else if (start < nowd && nowd < end && (joindate && joindate.isAttentention)) {
                         item.hasjoin = '已报名,进行中';
@@ -74,17 +74,17 @@ module.exports = class extends Base {
                     } else if(joindate && joindate.isAttentention) {
                         item.hasjoin = '已报名' 
                     }
-                } else {
-                    if (nowd > end && joindate && joindate.length > 0) {
-                        item.hasjoin = '已完成'
-                    } else if (start < nowd && nowd < end && (joindate && joindate.length > 0)) {
-                        item.hasjoin = '已报名,进行中';
-                    } else if (start < nowd && nowd < end) {
-                        item.hasjoin = '进行中';
-                    } else if(joindate && joindate.length > 0) {
-                        item.hasjoin = '已报名' 
-                    }
-                }
+                // } else {
+                //     if (nowd > end && joindate && joindate.length > 0) {
+                //         item.hasjoin = '已完成'
+                //     } else if (start < nowd && nowd < end && (joindate && joindate.length > 0)) {
+                //         item.hasjoin = '已报名,进行中';
+                //     } else if (start < nowd && nowd < end) {
+                //         item.hasjoin = '进行中';
+                //     } else if(joindate && joindate.length > 0) {
+                //         item.hasjoin = '已报名' 
+                //     }
+                // }
             } else {
                 let start = Number(new Date(item.startDate));
                 let nowd = Number(new Date());
@@ -93,7 +93,7 @@ module.exports = class extends Base {
                 if (start < nowd && nowd < end) {
                     item.hasjoin = '进行中';
                 } else if (end < nowd) {
-                    item.hasjoin = '已完成'
+                    item.hasjoin = '已结束'
                 } else {
                     item.hasjoin = '未开始';
                 }
@@ -149,7 +149,7 @@ module.exports = class extends Base {
         const model = this.model('activity');
         model._pk = 'activityID';
         const data = await model.where({activityID: id}).find();
-        
+
         if (!think.isEmpty(data)) {
             data.pics = await this.model('activity').getPicsbyid(data.activityID);
             // data.discussList = await this.model('discuss').getDiscussById(id,1);
@@ -167,17 +167,17 @@ module.exports = class extends Base {
             // } else if (start < nowd && nowd < end) {
             //     data.hasjoin = '进行中';
             // }
-            if (nowd > end && joindate && joindate.length > 0) {
+            if (joindate && joindate.iscomplate) {
                 data.hasjoin = '已完成'
-            } else if (start < nowd && nowd < end && (joindate && joindate.length > 0)) {
+            } else if (start < nowd && nowd < end && ((joindate && joindate.isAttentention))) {
                 data.hasjoin = '已报名,进行中';
             } else if (start < nowd && nowd < end) {
                 data.hasjoin = '进行中';
-            } else if(joindate && joindate.length > 0) {
+            } else if(joindate && joindate.isAttentention) {
                 data.hasjoin = '已报名' 
             }
 
-            data.group=await this.model('group').where({activityid:data.activityID}).select();
+            data.group=await this.model('group').where({activityid:data.activityID, studentid: studentid}).select();
         }
         return this.success(data);
     }

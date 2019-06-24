@@ -56,6 +56,10 @@ module.exports = class extends Base {
         //     shstate: 1
         // }
         await this.model('scenery').where({sceneryID:id}).delete();
+        await this.model('student_scenery').where({sceneryid:id}).delete();
+        await this.model('activity_scenery').where({sceneryid:id}).delete();
+        await this.model('discuss').where({targetid:id, distype: 0}).delete();
+        await this.model('question').where({sceneryid:id}).delete();
         await this.cache('home_activity_scenery', null, 'redis');
         return this.success('删除成功')
     }

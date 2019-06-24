@@ -1,6 +1,7 @@
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 const Base = require('./base.js');
+const _ = require('lodash');
 
 module.exports = class extends Base {
     getMyallAction() {
@@ -45,7 +46,7 @@ module.exports = class extends Base {
         var _this3 = this;
 
         return _asyncToGenerator(function* () {
-            const id = _this3.get('studentid');
+            const studentid = _this3.get('studentid');
             const pageindex = _this3.get('pageindex') || 1;
             const pagesize = _this3.get('pagesize') || 5;
             const hasjoin = _this3.get('hasjoin');
@@ -56,40 +57,96 @@ module.exports = class extends Base {
             let data = null;
             let counta = null;
 
-            if (think.isEmpty(hasjoin)) {
-                data = yield model.query("select sa.studentID,sa.activityID,sa.shstate,sa.createdate, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " limit " + start + "," + pagesize + "");
-                counta = yield model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " ) t");
-            } else if (hasjoin == '进行中') {
-                data = yield model.query("select sa.studentID,sa.activityID,sa.shstate,sa.createdate, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " and (a.endDate > now() and now() > a.startDate) limit " + start + "," + pagesize + "");
-                counta = yield model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " and (a.endDate > now() and now() > a.startDate)) t");
-            } else if (hasjoin == '已完成') {
-                data = yield model.query("select sa.studentID,sa.activityID,sa.shstate,sa.createdate, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " and a.endDate < now() limit " + start + "," + pagesize + "");
-                counta = yield model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " and a.endDate < now()) t");
-            } else if (hasjoin == '已报名') {
-                data = yield model.query("select sa.studentID,sa.activityID,sa.shstate,sa.createdate, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " and a.startDate > now() limit " + start + "," + pagesize + "");
-                counta = yield model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " and a.startDate > now()) t");
-            } else {
-                data = yield model.query("select sa.studentID,sa.activityID,sa.shstate,sa.createdate, a.activityName,a.sponsor,a.startDate, a.endDate,case when (a.endDate > now() and now() > a.startDate) then '进行中' when a.endDate < now() then '已完成' when a.startDate > now() then '已报名' end as hasjoin from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " limit " + start + "," + pagesize + "");
-                counta = yield model.query("select count(*) t from (select sa.*, a.activityName,a.sponsor,a.startDate, a.endDate from culture_student_activity sa left join culture_activity a on sa.activityid=a.activityid where sa.studentid=" + id + " ) t");
+            // 参加了哪些活动
+            let dataAttendtionIds = yield _this3.model('attention_activity').field('activityid').where({ studentid: studentid }).getField('activityid');
+            if (!think.isEmpty(dataAttendtionIds)) {
+                dataAttendtionIds = _.uniq(dataAttendtionIds);
             }
-            const pagecount = Math.ceil(counta[0].t / pagesize);
+            // 取景点阀值
+            let arrActs = [];
+            if (!think.isEmpty(dataAttendtionIds)) {
+                for (let i = 0; i < dataAttendtionIds.length; i++) {
+                    let actData = yield _this3.model('activity').field(['activityID', 'needSchoolPass', 'needSceneryPass', 'isGroup']).where({ activityID: dataAttendtionIds[i] }).find();
+                    let needschoolpass = 0;
+                    let needscenerypass = 0;
+                    let isgroup = 0;
+                    if (!think.isEmpty(actData)) {
+                        needschoolpass = actData.needSchoolPass;
+                        needscenerypass = actData.needSceneryPass;
+                        isgroup = actData.isGroup;
+                    }
+
+                    // 活动景点签到次数
+                    let realattentscenery = 0;
+                    let dataScenery = yield _this3.model('attention_activity').field('sceneryid').where({ studentid: studentid, activityid: dataAttendtionIds[i] }).getField('sceneryid');
+                    if (!think.isEmpty(dataScenery)) {
+                        realattentscenery = dataScenery.length;
+                    }
+
+                    dataScenery = _.uniq(dataScenery);
+                    // 景点所属学校
+                    let dataschool = 0;
+                    if (!think.isEmpty(dataScenery)) {
+                        dataScenery = dataScenery.join(',');
+                        dataschool = yield _this3.model('scenery').field('schoolid').where({ sceneryID: ['in', dataScenery] }).getField('schoolid');
+                        dataschool = _.uniq(dataschool);
+                        // console.log('schoolid------',dataschool)
+                    }
+
+                    let iscomplate = false;
+                    if (isgroup == 0) {
+                        // 个人活动
+                        if (realattentscenery >= needscenerypass && dataschool && dataschool.length >= needschoolpass) {
+                            iscomplate = true;
+                        }
+                    } else {
+                        let joindate = yield _this3.model('student_activity').getStudentIsJoinGroup(studentid, dataAttendtionIds[i], 1);
+                        if (joindate && joindate.iscomplate) {
+                            iscomplate = true;
+                        }
+                    }
+
+                    arrActs.push({ activityid: dataAttendtionIds[i], iscomplate });
+                }
+            }
+            console.log('arr--------', arrActs, dataAttendtionIds);
+
+            const acModel = _this3.model('activity');
+            acModel._pk = 'activityID';
+            let arr = [];
+            if (hasjoin == '进行中' && dataAttendtionIds && dataAttendtionIds.length > 0) {
+                data = yield acModel.where('endDate > now() and now() > startDate and activityID in (' + dataAttendtionIds.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
+            } else if (hasjoin == '已完成' && arrActs && arrActs.length > 0) {
+
+                for (let i = 0; i < arrActs.length; i++) {
+                    if (arrActs[i].isAttentention && arrActs[i].iscomplate) {
+                        arr.push(arrActs[i].activityid);
+                    }
+                }
+                if (arr && arr.length > 0) {
+                    data = yield acModel.where('activityID in (' + arr.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
+                }
+            } else if (hasjoin == '已报名') {
+                let databmids = yield _this3.model('student_activity').field('activityid').where({ studentID: studentid, shstate: 1 }).getField('activityid');
+                databmids = _.uniq(databmids);
+                databmids = _.difference(databmids, arr);
+                if (databmids && databmids.length > 0) {
+                    data = yield acModel.where('activityID in (' + databmids.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
+                }
+            }
 
             const arrdata = [];
-            for (const item of data) {
-                item.pics = yield _this3.model('activity').getPicsbyid(item.activityID);
-                item.shstate = yield _this3.model('activity').getstate(item.activityID);
-                // let joindate = await this.model('student_activity').getStudentIsJoinActivity(id,item.activityid);
-                // if (Number(new Date()) > Number(new Date(item.endDate)) && joindate && joindate.length > 0) {
-                //     item.hasjoin = '已完成'
-                // } else if(joindate && joindate.length > 0) {
-                //     item.hasjoin = '已报名' 
-                // } else if (Number(new Date(item.startDate)) < Number(new Date()) < Number(new Date(item.endDate))) {
-                //     item.hasjoin = '进行中';
-                // }
-                arrdata.push(item);
+            if (!think.isEmpty(data)) {
+                for (const item of data.data) {
+                    item.pics = yield _this3.model('activity').getPicsbyid(item.activityID);
+                    item.shstate = yield _this3.model('activity').getstate(item.activityID);
+                    arrdata.push(item);
+                }
+                data.data = arrdata;
             }
-            data.data = arrdata;
-            return _this3.success({ counta: counta[0].t, pagecount: pagecount, pageindex: pageindex, pagesize: pagesize, data });
+            // return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
+
+            return _this3.success(data);
         })();
     }
 

@@ -151,9 +151,43 @@ module.exports = class extends Base {
             }
         } else {
             // 1 删除source, 2修改
-            // await this.model('source').where({targetid:id}).delete();        
             await this.model('activity').where({activityID:id}).update(param);
 
+            if (needSceneryRang.indexOf(',') != -1) {
+                // 请求的景点ids
+                let arrScenery =  needSceneryRang.split(',');
+
+                // 当前活动有哪些景点[]
+                let curSceneryData = await this.model('activity_scenery').field('sceneryid').where({activityid:id}).getField('sceneryid');
+                curSceneryData = curSceneryData.join(',').split(',');
+                if (curSceneryData && curSceneryData.length > 0) {
+                    curSceneryData = _.uniq(curSceneryData);
+                }
+
+                // 需要添加的数组
+                // console.log('before', arrScenery,curSceneryData)
+                let needAddArr = _.difference(arrScenery,curSceneryData);
+                if (needAddArr && needAddArr.length > 0) {
+                    for (let i = 0; i < needAddArr.length; i++) {
+                        arr.push({activityid: id, sceneryid: needAddArr[i]});
+                    }
+                    console.log('needaddarr', needAddArr)
+                    if (arr && arr.length > 0) {
+                        await this.model('activity_scenery').addMany(arr);
+                    }
+                }
+
+                // 需要删除的
+                // console.log('after',curSceneryData, arrScenery)
+                let needDelArr = _.difference(curSceneryData, arrScenery);
+                console.log('needdelarr', needDelArr)
+                if (needDelArr && needDelArr.length > 0) {
+                    // let dd = await this.model('activity_scenery').where('activityid='+id+' and sceneryid in ('+needDelArr+')').select();
+                    // console.log('del---', dd)
+                    await this.model('activity_scenery').where('activityid='+id+' and  sceneryid in ('+needDelArr+')').delete();
+                }
+                await this.cache('home_activity_scenery', null);
+            }
             // if (needSceneryRang.indexOf(',') != -1) {
             //     await this.model('activity_scenery').where({activityid:id}).delete();
             //     let arrScenery =  needSceneryRang.split(',');
@@ -220,12 +254,13 @@ await this.getdatabyname('home_discuss');
         //     shstate: 1
         // }
         await this.getdatabyname('home_discuss');
+        this.cache('home_activity_scenery', null);
         await this.model('activity').where({activityID:id}).delete();
         await this.model('group').where({activityid:id}).delete();
         await this.model('student_group').where({activityid:id}).delete();
         await this.model('activity_scenery').where({activityid:id}).delete();
         await this.model('student_activity').where({activityid:id}).delete();
-        await this.model('discuss').where({target:id,distype:1}).delete();
+        await this.model('discuss').where({targetid:id,distype:1}).delete();
         return this.success('活动删除成功')
     }
 

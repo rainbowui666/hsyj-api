@@ -69,7 +69,7 @@ module.exports = class extends Base {
           if (start < nowd && nowd < end) {
             item.hasjoin = '进行中';
           } else if (end < nowd) {
-            item.hasjoin = '已完成';
+            item.hasjoin = '已结束';
           } else {
             item.hasjoin = '未开始';
           }

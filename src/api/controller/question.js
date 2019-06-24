@@ -20,11 +20,11 @@ module.exports = class extends Base {
         const model = this.model('activity_scenery');
         let data = null;
         if (!think.isEmpty(activityid) && !think.isEmpty(sceneryid)) {
-            data = await model.query("select aa.activityid,q.* from culture_activity_scenery aa inner join culture_question q on q.sceneryid=aa.sceneryid where aa.activityid="+activityid+" and aa.sceneryid="+sceneryid);
+            data = await model.query("select aa.activityid,q.* from culture_activity_scenery aa inner join culture_question q on q.questionid=aa.questionid where aa.activityid="+activityid+" and aa.sceneryid="+sceneryid);
         } else if(!think.isEmpty(activityid)) {
-            data = await model.query("select aa.activityid,q.* from culture_activity_scenery aa inner join culture_question q on q.sceneryid=aa.sceneryid where aa.activityid="+activityid);
+            data = await model.query("select aa.activityid,q.* from culture_activity_scenery aa inner join culture_question q on q.questionid=aa.questionid where aa.activityid="+activityid);
         } else if(!think.isEmpty(sceneryid)) {
-            data = await model.query("select aa.activityid,q.* from culture_activity_scenery aa inner join culture_question q on q.sceneryid=aa.sceneryid where aa.sceneryid="+sceneryid);
+            data = await model.query("select aa.activityid,q.* from culture_activity_scenery aa inner join culture_question q on q.questionid=aa.questionid where aa.sceneryid="+sceneryid);
         }
         return this.success(data);
     }
