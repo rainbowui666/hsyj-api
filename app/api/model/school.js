@@ -78,7 +78,7 @@ module.exports = class extends think.Model {
         return _asyncToGenerator(function* () {
             const model = _this5.model('student_scenery');
             model._pk = 'sceneryid';
-            const checkin = yield model.where({ schoolid: id, shstate: 1 }).count('schoolid');
+            const checkin = yield model.where({ sceneryid: id, shstate: 1 }).count('sceneryid');
             const wantto = yield model.where({ sceneryid: id, shstate: 0 }).count('sceneryid');
             // const sharenum = await model.where({schoolid: id, shstate: 4}).count('schoolid');
 

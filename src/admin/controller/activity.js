@@ -39,10 +39,13 @@ module.exports = class extends Base {
     }
 
     async list2Action() {
-        const pageindex = this.get('pageindex') || 1;
-        const pagesize = this.get('pagesize') || 10;
+        let pageindex = this.get('pageindex') || 1;
+        let pagesize = this.get('pagesize') || 10;
         let userinfo = await this.model('pagecache').getUserInfo(this.ctx.state.token, this.ctx.state.userId); // await this.cache('userinfo'+ this.ctx.state.token);
         const activityid = this.get('activityid');
+
+        pageindex = parseInt(pageindex);
+        pagesize = parseInt(pagesize)
 
         const model = this.model('activity_scenery');
         let data = []
@@ -52,7 +55,7 @@ module.exports = class extends Base {
             counta = await model.query("select count(*) t from (select acsc.sceneryid,s.sceneryTitle,acsc.activityid,act.startAddress,q.questionID,q.questiontitle,q.answera,q.answerb,q.answerc,q.answerd,q.rightanswer from culture_activity_scenery acsc inner join culture_activity act on act.activityID=acsc.activityid inner join culture_scenery s on acsc.sceneryid=s.sceneryID inner join culture_question q on acsc.questionid=q.questionID where acsc.activityid="+activityid+" ) t ");
         }
         const pagecount = Math.ceil(counta[0].t / pagesize);
-        this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
+        this.success({count:counta[0].t,totalPages:pagecount,currentPage:pageindex,pageSize:pagesize,data})
     }
 
     async getdatabyname(name) {

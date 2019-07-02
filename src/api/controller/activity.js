@@ -32,12 +32,6 @@ module.exports = class extends Base {
 
         for (const item of data.data) {
             item.pics = await this.model('activity').getPicsbyid(item.activityID);
-            // console.log(Number(new Date(item.startDate)), Number(new Date()), Number(new Date(item.endDate)))
-            // if (Number(new Date(item.startDate)) <= Number(new Date()) <= Number(new Date(item.endDate))) {
-            //     item.status='进行中';
-            // } else {
-            //     item.status = '';
-            // }
             if (!think.isEmpty(studentid)) {
                 
                 // let joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,item.activityID, 1);
@@ -45,46 +39,26 @@ module.exports = class extends Base {
                 if (item.isGroup == 0) {
                     joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,item.activityID, 1);
                 } else {
-                    joindate = await this.model('student_activity').getStudentIsJoinGroup(studentid,item.activityID, 1);
+                    joindate = await this.model('student_activity').getStudentIsJoinGroup2(studentid,item.activityID, 1);
                 }
 
                 let start = Number(new Date(item.startDate));
                 let nowd = Number(new Date());
                 let end = Number(new Date(item.endDate));
 
-                // if (nowd > end && joindate && joindate.length > 0) {
-                //     item.hasjoin = '已完成'
-                // } else if (start < nowd && nowd < end) {
-                //     item.hasjoin = '进行中';
-                // } else if(joindate && joindate.length > 0) {
-                //     item.hasjoin = '已报名' 
-                // }
-
                 if (joindate) {
                     console.log('joindate---', joindate, start, nowd, end)
                 }
 
-                // if (item.isGroup == 0) {
-                    if (joindate && joindate.iscomplate) {
-                        item.hasjoin = '已完成'
-                    } else if (start < nowd && nowd < end && (joindate && joindate.isAttentention)) {
-                        item.hasjoin = '已报名,进行中';
-                    } else if (start < nowd && nowd < end) {
-                        item.hasjoin = '进行中';
-                    } else if(joindate && joindate.isAttentention) {
-                        item.hasjoin = '已报名' 
-                    }
-                // } else {
-                //     if (nowd > end && joindate && joindate.length > 0) {
-                //         item.hasjoin = '已完成'
-                //     } else if (start < nowd && nowd < end && (joindate && joindate.length > 0)) {
-                //         item.hasjoin = '已报名,进行中';
-                //     } else if (start < nowd && nowd < end) {
-                //         item.hasjoin = '进行中';
-                //     } else if(joindate && joindate.length > 0) {
-                //         item.hasjoin = '已报名' 
-                //     }
-                // }
+                if (joindate && joindate.iscomplate) {
+                    item.hasjoin = '已完成'
+                } else if (start < nowd && nowd < end && (joindate && joindate.isAttentention)) {
+                    item.hasjoin = '已报名,进行中';
+                } else if (start < nowd && nowd < end) {
+                    item.hasjoin = '进行中';
+                } else if(joindate && joindate.isAttentention) {
+                    item.hasjoin = '已报名' 
+                }
             } else {
                 let start = Number(new Date(item.startDate));
                 let nowd = Number(new Date());
@@ -119,22 +93,24 @@ module.exports = class extends Base {
             // data.discussList = await this.model('discuss').getDiscussById(id,1);
             data.shstate = await this.model('activity').getstate(data.activityID);
             if (!think.isEmpty(studentid)) {
-                let joindate = await this.model('student_activity').getActivityHasJoin(studentid,data.activityID, 1);
+                let joindate = null;
+                if (data.isGroup == 0) {
+                    joindate = await this.model('student_activity').getStudentIsJoinActivity(studentid,data.activityID, 1);
+                } else {
+                    joindate = await this.model('student_activity').getStudentIsJoinGroup2(studentid,data.activityID, 1);
+                }
                 
-
                 let start = Number(new Date(data.startDate));
                 let nowd = Number(new Date());
                 let end = Number(new Date(data.endDate));
-            console.log('getactivitydetail', start, nowd, end, joindate)
 
-                // 1561046400000 1560347475342 1561737600000
-                if (nowd > end && joindate && joindate.length > 0) {
+                if (joindate && joindate.iscomplate) {
                     data.hasjoin = '已完成'
-                } else if (start < nowd && nowd < end && (joindate && joindate.length > 0)) {
+                } else if (start < nowd && nowd < end && (joindate && joindate.isAttentention)) {
                     data.hasjoin = '已报名,进行中';
                 } else if (start < nowd && nowd < end) {
                     data.hasjoin = '进行中';
-                } else if(joindate && joindate.length > 0) {
+                } else if(joindate && joindate.isAttentention) {
                     data.hasjoin = '已报名' 
                 }
                 
@@ -154,19 +130,11 @@ module.exports = class extends Base {
             data.pics = await this.model('activity').getPicsbyid(data.activityID);
             // data.discussList = await this.model('discuss').getDiscussById(id,1);
             data.shstate = await this.model('activity').getstate(data.activityID);
-            let joindate = await this.model('student_activity').getStudentIsJoinGroup(studentid,data.activityID, 1);
+            let joindate = await this.model('student_activity').getStudentIsJoinGroup2(studentid,data.activityID, 1);
             let start = Number(new Date(data.startDate));
             let nowd = Number(new Date());
             let end = Number(new Date(data.endDate));
 
-            // console.log('joindate----group-', joindate.length)
-            // if (nowd > end && joindate && joindate.length > 0) {
-            //     data.hasjoin = '已完成'
-            // } else if(joindate && joindate.length > 0) {
-            //     data.hasjoin = '已报名' 
-            // } else if (start < nowd && nowd < end) {
-            //     data.hasjoin = '进行中';
-            // }
             if (joindate && joindate.iscomplate) {
                 data.hasjoin = '已完成'
             } else if (start < nowd && nowd < end && ((joindate && joindate.isAttentention))) {
@@ -178,6 +146,15 @@ module.exports = class extends Base {
             }
 
             data.group=await this.model('group').where({activityid:data.activityID, studentid: studentid}).select();
+
+            // 团队人数是否到达活动要求人数
+            let countgroupids = await this.model('student_group').field('studentid').where({activityid: id}).getField('studentid');
+            if (!think.isEmpty(countgroupids)) {
+                countgroupids = _.uniq(countgroupids);
+                data.totalgroupstudents = countgroupids.length;
+            } else {
+                data.totalgroupstudents = 0;
+            }
         }
         return this.success(data);
     }

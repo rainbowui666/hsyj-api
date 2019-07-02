@@ -10,7 +10,7 @@ module.exports = class extends Base {
         return _asyncToGenerator(function* () {
             const id = _this.get('studentid');
             const shstate = _this.get('shstate');
-            const data = yield _this.model('student_activity').query("select count(studentID) as attentionActivityTimes,(select count(studentID) as attentions from culture_student_activity where studentid=" + id + " and shstate=" + shstate + ") attentionSceneryTimes, (select count(studentid) as attent from culture_discuss where studentid=" + id + ") attentionDiscuss from culture_student_scenery where studentid=" + id + " and shstate=" + shstate + "");
+            const data = yield _this.model('student_activity').query("select count(studentID) as attentionSceneryTimes,(select count(studentID) as attentions from culture_attention_activity where studentid=" + id + " and shstate=" + shstate + ") attentionJoinActivityTimes, (select count(studentID) as attentions from culture_student_activity where studentid=" + id + " and shstate=" + shstate + ") attentionBaomingTimes, (select count(studentid) as attent from culture_discuss where studentid=" + id + ") attentionDiscuss from culture_student_scenery where studentid=" + id + " and shstate=" + shstate + "");
             return _this.success(data);
         })();
     }
@@ -109,27 +109,35 @@ module.exports = class extends Base {
                     arrActs.push({ activityid: dataAttendtionIds[i], iscomplate });
                 }
             }
-            console.log('arr--------', arrActs, dataAttendtionIds);
+            // console.log('arr--------', arrActs, dataAttendtionIds)
 
             const acModel = _this3.model('activity');
             acModel._pk = 'activityID';
-            let arr = [];
-            if (hasjoin == '进行中' && dataAttendtionIds && dataAttendtionIds.length > 0) {
-                data = yield acModel.where('endDate > now() and now() > startDate and activityID in (' + dataAttendtionIds.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
-            } else if (hasjoin == '已完成' && arrActs && arrActs.length > 0) {
-
-                for (let i = 0; i < arrActs.length; i++) {
-                    if (arrActs[i].isAttentention && arrActs[i].iscomplate) {
-                        arr.push(arrActs[i].activityid);
-                    }
+            let arr = []; // 已完成
+            for (let i = 0; i < arrActs.length; i++) {
+                if (arrActs[i].iscomplate) {
+                    arr.push(arrActs[i].activityid);
                 }
+            }
+
+            // 进行中
+            if (hasjoin == 1 && dataAttendtionIds && dataAttendtionIds.length > 0) {
+                dataAttendtionIds = _.difference(dataAttendtionIds, arr);
+                console.log('进行中------', dataAttendtionIds);
+                data = yield acModel.where('endDate > now() and now() > startDate and activityID in (' + dataAttendtionIds.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
+            } else if (hasjoin == 2 && arrActs && arrActs.length > 0) {
+                // 已完成
                 if (arr && arr.length > 0) {
+                    console.log('已完成------', arr);
                     data = yield acModel.where('activityID in (' + arr.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
                 }
-            } else if (hasjoin == '已报名') {
+            } else if (hasjoin == 0) {
+                // 已报名
                 let databmids = yield _this3.model('student_activity').field('activityid').where({ studentID: studentid, shstate: 1 }).getField('activityid');
                 databmids = _.uniq(databmids);
                 databmids = _.difference(databmids, arr);
+                databmids = _.difference(databmids, dataAttendtionIds);
+                console.log('已报名------', databmids);
                 if (databmids && databmids.length > 0) {
                     data = yield acModel.where('activityID in (' + databmids.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
                 }
@@ -145,8 +153,11 @@ module.exports = class extends Base {
                 data.data = arrdata;
             }
             // return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
-
-            return _this3.success(data);
+            if (!think.isEmpty(data)) {
+                return _this3.success(data);
+            } else {
+                return _this3.success({ count: 0, currentPage: 1, pageSize: pagesize, totalPage: 0, data: [] });
+            }
         })();
     }
 
@@ -173,9 +184,9 @@ module.exports = class extends Base {
             const model = _this5.model('student_scenery');
             let data = null;
             if (!think.isEmpty(studentid)) {
-                data = yield model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.studentid=" + studentid + " and ss.shstate=1 and ss.sceneryid not in (select targetid from culture_discuss where distype=0 and studentid=" + studentid + ")");
+                data = yield model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss inner join culture_scenery s on ss.sceneryid=s.sceneryid where ss.studentid=" + studentid + " and ss.shstate=1 and ss.sceneryid not in (select targetid from culture_discuss where distype=0 and studentid=" + studentid + ")");
             } else {
-                data = yield model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss left join culture_scenery s on ss.sceneryid=s.sceneryid where s.shstate=0 and ss.shstate=1 and ss.sceneryid not in (select targetid from culture_discuss where distype=0)");
+                data = yield model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss inner join culture_scenery s on ss.sceneryid=s.sceneryid where ss.shstate=1 and ss.sceneryid not in (select targetid from culture_discuss where distype=0)");
             }
             const arrdata = [];
             for (const item of data) {

@@ -2,8 +2,8 @@ const Base = require('./base.js');
 
 module.exports = class extends Base {
     async getStudentListAction() {
-        const pageindex = this.post('pageindex') || 1;
-        const pagesize = this.post('pagesize') || 10;
+        let pageindex = this.post('pageindex') || 1;
+        let pagesize = this.post('pagesize') || 10;
 
         const stuno = this.post('stuno');
         const studentName = this.post('studentname');
@@ -43,18 +43,25 @@ module.exports = class extends Base {
         } else {
             wxcondition = "wxchat='"+wxchat+"'"
         }
-        
+
+        pageindex = parseInt(pageindex);
+        pagesize = parseInt(pagesize)
+
         const start = (pageindex -1) * pagesize;
         const model = this.model('student');
-        let data ;
+        let data, counta;
          // shstate: 1 删除，2未验证，3验证中，4 验证通过
         if (userinfo.usertype == 1) { // 管理员
-            data = await model.query("select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" and studentID limit "+start+","+pagesize+" ");
+            data = await model.query("select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" order by studentID desc limit "+start+","+pagesize+" ");
+            counta = await model.query("select count(*) t from (select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" ) t");
         } else {
             let childschoolid = await this.model('school').field(['schoolID']).where({parentid: userinfo.schoolid}).getField('schoolID')
-            data = await model.query("select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" and (schoolid="+userinfo.schoolid+"  or schoolid in ("+childschoolid+")) and studentID limit "+start+","+pagesize+" ");
+            data = await model.query("select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" and (schoolid="+userinfo.schoolid+"  or schoolid in ("+childschoolid+")) order by studentID desc limit "+start+","+pagesize+" ");
+            counta = await model.query("select count(*) t from (select * from culture_student where " +stunocondition+" and "+studentnamecondition+" and "+telcondition+" and "+wxcondition+" and (schoolid="+userinfo.schoolid+"  or schoolid in ("+childschoolid+")) ) t");
         }
-        return this.success({pageindex:pageindex,pagesize:pagesize,data})
+        const pagecount = Math.ceil(counta[0].t / pagesize);
+
+        return this.success({count:counta[0].t,totalPages:pagecount,currentPage:pageindex,pageSize:pagesize,data})
     }
 
     async addEditAction() {

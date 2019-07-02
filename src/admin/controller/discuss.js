@@ -4,18 +4,34 @@ module.exports = class extends Base {
     async listAction() {
         const model =  this.model('discuss');
         model._pk ="discussID";
-        const pageindex = this.get('pageindex') || 1;
-        const pagesize = this.get('pagesize') || 5;
+        let pageindex = this.get('pageindex') || 1;
+        let pagesize = this.get('pagesize') || 5;
+        const scenerytype = this.get('scenerytype');
         const shstate = this.get('shstate');
         const distype = this.get('distype');
 
+        // let typecondi = ''
+        // if (!think.isEmpty(scenerytype)) {
+        //     typecondi = 'scenerytype=1'
+        // } else if (distype == 0){
+        //     typecondi = 'scenerytype!=1 or scenerytype is null'
+        // } else {
+        //     typecondi = '1=1'
+        // }
+
+        pageindex = parseInt(pageindex);
+        pagesize = parseInt(pagesize)
         const start = (pageindex -1) * pagesize;
         let data,counta;
+        // data = await model.query("select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" and "+typecondi+" order by d.discussID desc limit "+start+","+pagesize+" ");
+        // counta = await model.query("select count(*) t from (select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" and "+typecondi+") t ");
         data = await model.query("select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" order by d.discussID desc limit "+start+","+pagesize+" ");
         counta = await model.query("select count(*) t from (select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+") t ");
+
+        const waitApprove = await model.field('discussID').where({distype: distype, shstate: 0}).getField('discussID');
       
         const pagecount = Math.ceil(counta[0].t / pagesize); //(counta[0].t + parseInt(pagesize - 1)) / pagesize;
-        return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
+        return this.success({count:counta[0].t,totalPages:pagecount,currentPage:pageindex,pageSize:pagesize,data, waitApprove:waitApprove.length});
     }
 
     async getdatabyname(name) {

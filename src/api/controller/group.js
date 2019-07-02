@@ -1,4 +1,5 @@
 const Base = require('./base.js');
+const _ = require('lodash');
 
 module.exports = class extends Base {
     async addEditAction() {
@@ -6,6 +7,13 @@ module.exports = class extends Base {
         const groupname = this.post('groupname');
         const studentid = this.post('studentid')
 
+        if (think.isEmpty(groupname)) {
+            return this.fail('团队名称必填')
+        }
+        const dataExsts = await this.model('group').where({groupName: groupname}).select();
+        if (dataExsts && dataExsts.data && dataExsts.data.length > 0) {
+            return this.fail('团队名称重复,添加失败')
+        }
         let param = {
             activityid:id,
             groupName:groupname,
@@ -13,13 +21,25 @@ module.exports = class extends Base {
         }
 
         const insertid = await this.model('group').add(param);
+        if (!think.isEmpty(insertid)) {
+            let para2 = {
+                groupid:insertid,studentid:studentid,activityid:id
+            }
+            let insertidgr = await this.model('student_group').add(para2);
+        }
         return this.success('添加成功')
     }
 
     async readyScanAction() {
         const studentid = this.get('studentid');
         this.cache('scan'+studentid, studentid);
+        console.log('readyScanAction-------------------')
         return this.success({'scan': studentid})
+    }
+
+    async showGroupAction() {
+        const groupid = this.get('groupid');
+        return this.success({groupid: groupid})
     }
 
     async joinGroupAction() {
@@ -31,6 +51,7 @@ module.exports = class extends Base {
         }
 
         const scanstudnetid = await this.cache('scan'+studentid);
+        console.log('scanstudnetid-----', scanstudnetid, groupid,studentid,activityid)
         if (!think.isEmpty(scanstudnetid)) {  
             this.cache('scan'+studentid, null);
                   
@@ -40,15 +61,16 @@ module.exports = class extends Base {
                 groupnum = parseInt(actData.groupNum);
             }
 
-            const groupcount = await this.model('student_group').where({activityID: activityid}).count();
+            let groupcount = await this.model('student_group').field('studentid').where({activityID: activityid}).getField('studentid');
+            groupcounts = _.uniq(groupcounts);
             if (groupcount >= groupnum) {
-                // console.log('fail group----')
                 return this.fail('加入失败, 超过团体活动最大限制人数')
             } else {
                 console.log('joingroup------',groupid,studentid,activityid)
                 // console.log('success group----')
                 let insertid = await this.model('student_group').add(para);
-                return this.success('扫码加入成功')
+                const groupdate = await this.model('group').where({groupid: groupid}).find();
+                return this.success({msg:'扫码加入成功',groupName: groupdate.groupName});
             }
         } else {
             return this.display('pages/groupSuccess')

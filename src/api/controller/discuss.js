@@ -5,12 +5,20 @@ module.exports = class extends Base {
         const distype = this.get('distype');
         const targetid = this.get('targetid') || 0;
         const studentid = this.get('studentid');
+        const scenerytype = this.get('scenerytype');
         const content = this.post('content');
         const shstate = this.post('shstate') || 0;   
 
         const model = this.model('discuss');
-        let data = {
-            distype,targetid,studentid,content,shstate
+        let data = null;
+        if (think.isEmpty(scenerytype)) {
+            data = {
+                distype,targetid,studentid,content,shstate
+            }
+        } else {
+            data = {
+                distype,targetid,studentid,content,shstate,scenerytype
+            }
         }
 
         let insertid = await model.add(data);
@@ -85,7 +93,7 @@ module.exports = class extends Base {
             studentcondition = 'a.studentid='+studentid;
         }
         const start = (pageindex -1) * pagesize;
-        const data = await model.query("select a.discussID,s.studentName,s.photo,a.distype,a.targetid,a.studentid,a.content,a.shstate,a.isrecommend,a.createdate, case  when distype=0 then (select scenerytitle from culture_scenery where "+scenerycondition+" limit 1) when distype=1 then (select activityname from culture_activity where "+activitycondition+" limit 1) when distype=2 then (select schoolname from culture_school where "+schoolcondition+" limit 1) when distype=3 then \"APP首页\" end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where "+typeconition+" and "+studentcondition+" and "+statusconditionn+" and a.shstate=1 order by discussID desc limit "+start+","+pagesize+" ");
+        const data = await model.query("select a.discussID,s.studentName,s.photo,a.distype,a.targetid,a.scenerytype,a.studentid,a.content,a.shstate,a.isrecommend,a.createdate, case  when distype=0 then (select scenerytitle from culture_scenery where "+scenerycondition+" limit 1) when distype=1 then (select activityname from culture_activity where "+activitycondition+" limit 1) when distype=2 then (select schoolname from culture_school where "+schoolcondition+" limit 1) when distype=3 then \"APP首页\" end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where "+typeconition+" and "+studentcondition+" and "+statusconditionn+" and a.shstate=1 order by discussID desc limit "+start+","+pagesize+" ");
         const counta = await model.query("select count(*) t from (select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,  case  when distype=0 then (select scenerytitle from culture_scenery where "+scenerycondition+" limit 1) when distype=1 then (select activityname from culture_activity where "+activitycondition+" limit 1) when distype=2 then (select schoolname from culture_school where "+schoolcondition+" limit 1) when distype=3 then \"APP首页\" end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where "+typeconition+" and "+studentcondition+" and "+statusconditionn+" and a.shstate=1) t ");
         const pagecount = Math.ceil(counta[0].t / pagesize); //(counta[0].t + parseInt(pagesize - 1)) / pagesize;
         return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
