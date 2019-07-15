@@ -15,6 +15,15 @@ module.exports = class extends Base {
             if (think.isEmpty(groupname)) {
                 return _this.fail('团队名称必填');
             }
+
+            // 有没有加入团队
+            const groupstudnetData = yield _this.model('student_group').where({ activityid: id, studentid: studentid }).select();
+            if (!think.isEmpty(groupstudnetData)) {
+                // console.log('groupstudnetData', groupstudnetData)
+                // groupstudnetData.groupname = await this.model('group').field('groupName').where({groupID: groupstudnetData[0].groupid}).find()
+                return _this.fail('你已加入过团队,不能再创建团队');
+            }
+
             const dataExsts = yield _this.model('group').where({ groupName: groupname }).select();
             if (dataExsts && dataExsts.data && dataExsts.data.length > 0) {
                 return _this.fail('团队名称重复,添加失败');
@@ -42,7 +51,7 @@ module.exports = class extends Base {
         return _asyncToGenerator(function* () {
             const studentid = _this2.get('studentid');
             _this2.cache('scan' + studentid, studentid);
-            console.log('readyScanAction-------------------');
+            // console.log('readyScanAction-------------------')
             return _this2.success({ 'scan': studentid });
         })();
     }
@@ -67,8 +76,17 @@ module.exports = class extends Base {
                 groupid, studentid, activityid
             };
 
+            const hasCreateGroup = yield _this4.model('group').where({ groupid: groupid, studentid: studentid, activityid: activityid }).select();
+            if (!think.isEmpty(hasCreateGroup)) {
+                return _this4.fail('你已创建团队,不能再加入团队');
+            }
+            const hasjoinData = yield _this4.model('student_group').field('studentid').where({ activityID: activityid, studentid: studentid }).getField('studentid');
+            if (!think.isEmpty(hasjoinData)) {
+                return _this4.fail('你已加过团队,不能再加入团队');
+            }
+
             const scanstudnetid = yield _this4.cache('scan' + studentid);
-            console.log('scanstudnetid-----', scanstudnetid, groupid, studentid, activityid);
+            // console.log('joinGroup.scanstudnetid-----', scanstudnetid, groupid,studentid,activityid)
             if (!think.isEmpty(scanstudnetid)) {
                 _this4.cache('scan' + studentid, null);
 
@@ -78,9 +96,10 @@ module.exports = class extends Base {
                     groupnum = parseInt(actData.groupNum);
                 }
 
-                let groupcount = yield _this4.model('student_group').field('studentid').where({ activityID: activityid }).getField('studentid');
-                groupcounts = _.uniq(groupcounts);
-                if (groupcount >= groupnum) {
+                let groupcount = yield _this4.model('student_group').field('studentid').where({ activityID: activityid, groupid: groupid }).getField('studentid');
+                groupcount = _.uniq(groupcount);
+                console.log('groupcount=====', groupcount, groupnum);
+                if (groupcount.length >= groupnum) {
                     return _this4.fail('加入失败, 超过团体活动最大限制人数');
                 } else {
                     console.log('joingroup------', groupid, studentid, activityid);

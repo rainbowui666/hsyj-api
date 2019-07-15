@@ -32,23 +32,7 @@ module.exports = class extends Base {
         return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
     }
 
-    async getMyActivityListAction() {
-        const studentid = this.get('studentid');
-        const pageindex = this.get('pageindex') || 1;
-        const pagesize = this.get('pagesize') || 5;
-        const hasjoin = this.get('hasjoin');
-
-        const start = (pageindex -1) * pagesize;
-        const model =  this.model('student');
-        model._pk = "studentID";
-        let data = null;
-        let counta = null;
-
-        // 参加了哪些活动
-        let dataAttendtionIds = await this.model('attention_activity').field('activityid').where({studentid: studentid}).getField('activityid')
-        if (!think.isEmpty(dataAttendtionIds)) {
-            dataAttendtionIds = _.uniq(dataAttendtionIds)
-        }
+    async getArrStatu(dataAttendtionIds, studentid) {
         // 取景点阀值
         let arrActs = [];
         if (!think.isEmpty(dataAttendtionIds)) {
@@ -86,7 +70,7 @@ module.exports = class extends Base {
                         iscomplate = true;
                     }
                 } else {
-                    let joindate = await this.model('student_activity').getStudentIsJoinGroup(studentid,dataAttendtionIds[i], 1);
+                    let joindate = await this.model('student_activity').getStudentIsJoinGroup2(studentid,dataAttendtionIds[i], 1);
                     if ((joindate && joindate.iscomplate)) {
                         iscomplate = true;
                     }
@@ -95,6 +79,28 @@ module.exports = class extends Base {
                 arrActs.push({activityid: dataAttendtionIds[i], iscomplate});
             }
         }
+        return arrActs;
+    }
+
+    async getMyActivityListAction() {
+        const studentid = this.get('studentid');
+        const pageindex = this.get('pageindex') || 1;
+        const pagesize = this.get('pagesize') || 5;
+        const hasjoin = this.get('hasjoin');
+
+        const start = (pageindex -1) * pagesize;
+        const model =  this.model('student');
+        model._pk = "studentID";
+        let data = null;
+        let counta = null;
+
+        // 参加了哪些活动
+        let dataAttendtionIds = await this.model('attention_activity').field('activityid').where({studentid: studentid}).getField('activityid')
+        if (!think.isEmpty(dataAttendtionIds)) {
+            dataAttendtionIds = _.uniq(dataAttendtionIds)
+        }
+        
+        let arrActs = await this.getArrStatu(dataAttendtionIds, studentid);
 // console.log('arr--------', arrActs, dataAttendtionIds)
 
         const acModel = this.model('activity');
@@ -106,24 +112,50 @@ module.exports = class extends Base {
             }
         }
 
+        let arrComp = [];
+        let databmids = [];
+
+        if (hasjoin == 0 || (hasjoin == 2 && arrActs && arrActs.length > 0)) {
+            databmids = await this.model('student_activity').field('activityid').where({studentID: studentid,shstate:1}).getField('activityid');
+            databmids = _.uniq(databmids);
+            arrComp = await this.getArrStatu(databmids, studentid);
+        }
+
         // 进行中
         if (hasjoin == 1 && dataAttendtionIds && dataAttendtionIds.length > 0) {
             dataAttendtionIds = _.difference(dataAttendtionIds, arr);
             console.log('进行中------', dataAttendtionIds)
             data = await acModel.where('endDate > now() and now() > startDate and activityID in ('+dataAttendtionIds.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect()
         } else if (hasjoin == 2 && arrActs && arrActs.length > 0) { // 已完成
-            if (arr && arr.length > 0) {
-                console.log('已完成------', arr)
-                data = await acModel.where('activityID in ('+arr.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect();
+            let arr2 = [];
+            for (let i = 0; i < arrComp.length; i++) {
+                if (arrComp[i].iscomplate) {
+                    arr2.push(arrComp[i].activityid);
+                }
+            }
+
+            if (arr2 && arr2.length > 0) {
+                console.log('已完成------', arr2)
+                data = await acModel.where('activityID in ('+arr2.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect();
             }
         } else if (hasjoin == 0) { // 已报名
-            let databmids = await this.model('student_activity').field('activityid').where({studentID: studentid,shstate:1}).getField('activityid');
-            databmids = _.uniq(databmids);
-            databmids = _.difference(databmids,arr);
-            databmids = _.difference(databmids,dataAttendtionIds);
+            
+
+            // databmids = _.difference(databmids,arr);
+            // databmids = _.difference(databmids,dataAttendtionIds);
+            let arr2 = [];
+            for (let i = 0; i < arrComp.length; i++) {
+                if (!arrComp[i].iscomplate) {
+                    arr2.push(arrComp[i].activityid);
+                }
+            }
+            
+
             console.log('已报名------', databmids)
-            if (databmids && databmids.length > 0) {
-                data = await acModel.where('activityID in ('+databmids.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect();
+            console.log('已完成------', arr)
+            console.log('报名活动------', arrComp)
+            if (arr2 && arr2.length > 0) {
+                data = await acModel.where('activityID in ('+arr2.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect();
             }
         }
 

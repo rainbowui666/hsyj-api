@@ -148,9 +148,10 @@ module.exports = class extends think.Model {
     }
 
     async getActiveStatus(studentid, activityid, needscenerypass, needschoolpass, ispass) {
-        let arr = [];
+        let arr = {};
         // 活动景点签到次数
         let realattentscenery = 0; 
+        // console.log('getActiveStatus.studentid', studentid)
         let dataScenery = await this.model('attention_activity').field('sceneryid').where({studentid:studentid,activityid:activityid}).getField('sceneryid');
         if (!think.isEmpty(dataScenery)) {
             realattentscenery = dataScenery.length;
@@ -167,14 +168,14 @@ module.exports = class extends think.Model {
             // console.log('schoolid------',dataschool, dataScenery)
         }
 
-        if (ispass == null) {
+        if (think.isEmpty(ispass)) {
             if (dataScenery.length >= needscenerypass && dataschool.length >= needschoolpass) {
-                arr.push({studentid: studentid, gosceneries: dataScenery, schoolbelong: dataschool, pass: true});
+                arr = {studentid: studentid, gosceneries: dataScenery, schoolbelong: dataschool, pass: true};
             } else {
-                arr.push({studentid: studentid, gosceneries: dataScenery, schoolbelong: dataschool, pass: false});
+                arr = {studentid: studentid, gosceneries: dataScenery, schoolbelong: dataschool, pass: false};
             }
         } else {
-            arr.push({studentid: studentid, gosceneries: dataScenery, schoolbelong: dataschool, pass: ispass});
+            arr = {studentid: studentid, gosceneries: dataScenery, schoolbelong: dataschool, pass: ispass};
         }
 
         return arr;
@@ -209,31 +210,56 @@ module.exports = class extends think.Model {
                 if (!think.isEmpty(groupStudentIds)) {
                     groupStudentIds = _.uniq(groupStudentIds);
                     let inarr = _.includes(groupStudentIds, parseInt(studentid));
-                    console.log('groupStudentIds', groupStudentIds, inarr)
+                    console.log('groupStudentIds', groupcreateid, groupStudentIds, inarr)
                     // 是否满足活动团队人数和student是否在团队
                     if (inarr && groupStudentIds.length > 0 && groupStudentIds.length >= needgroupnum) {
                         // 团队创建人是否完成
-                        arr = await this.getActiveStatus(groupcreateid, activityid, needscenerypass, needschoolpass);
-                    } else {
+                        if (!think.isEmpty(groupcreateid) && groupcreateid.length > 0) {
+                            for (let j = 0; j < groupcreateid.length; j++) {
+                                let obj = await this.getActiveStatus(groupcreateid[j], activityid, needscenerypass, needschoolpass);
+                                if (obj.pass) {
+                                    arr.push(obj);
+                                    break; // 团队创建人完成
+                                }
+                            }
+                        }
+                        if (arr.length > 0) {
+                            console.log('difference', groupStudentIds, arr[0].studentid)
+                            groupStudentIds = _.difference(groupStudentIds, [arr[0].studentid]);
+                            console.log('difference.after', groupStudentIds)
+                            for (let i = 0; i < groupStudentIds.length; i++) {
+                                arr.push({studentid: groupStudentIds[i], gosceneries: [], schoolbelong: [], pass: true});
+                            }
+                        }
+                        // arr = await this.getActiveStatus(groupcreateid, activityid, needscenerypass, needschoolpass);
+                        // break;
+                    } 
+                    else {
+                        console.log('else----', studentid, groupStudentIds, inarr)
                         arr.push({studentid: studentid, gosceneries: [], schoolbelong: [], pass: false});
                     }
-                    console.log('aaa', arr)
+                    console.log('aaaaaaa', arr)
                 }
             }
         }
+        // console.log('aaa', arr.length, arr)
+        arr = arr.find((c) => (c.studentid == studentid));
+        // console.log('aaa2', arr)
 
         let isAttentention = false;
         let iscomplate = false;
-        if (arr.length >= needgroupnum) {
-            for (let i = 0; i < arr.length; i++) {
-                if (!arr[i].pass) {
+        // if (arr.length >= needgroupnum) {
+            // for (let i = 0; i < arr.length; i++) {
+                if (!think.isEmpty(arr)) {
+                if (!arr.pass) {
                     iscomplate = false;
-                    break;
+                    // break;
                 } else {
                     iscomplate = true;
                 }
             }
-        }
+            // }
+        // }
 
         // if (checkindata.includes(parseInt(studentid))) {
             const databm = await this.model('student_activity').where({studentID: studentid,activityid:activityid,shstate:shstate}).select();

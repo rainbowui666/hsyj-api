@@ -42,26 +42,10 @@ module.exports = class extends Base {
         })();
     }
 
-    getMyActivityListAction() {
+    getArrStatu(dataAttendtionIds, studentid) {
         var _this3 = this;
 
         return _asyncToGenerator(function* () {
-            const studentid = _this3.get('studentid');
-            const pageindex = _this3.get('pageindex') || 1;
-            const pagesize = _this3.get('pagesize') || 5;
-            const hasjoin = _this3.get('hasjoin');
-
-            const start = (pageindex - 1) * pagesize;
-            const model = _this3.model('student');
-            model._pk = "studentID";
-            let data = null;
-            let counta = null;
-
-            // 参加了哪些活动
-            let dataAttendtionIds = yield _this3.model('attention_activity').field('activityid').where({ studentid: studentid }).getField('activityid');
-            if (!think.isEmpty(dataAttendtionIds)) {
-                dataAttendtionIds = _.uniq(dataAttendtionIds);
-            }
             // 取景点阀值
             let arrActs = [];
             if (!think.isEmpty(dataAttendtionIds)) {
@@ -100,7 +84,7 @@ module.exports = class extends Base {
                             iscomplate = true;
                         }
                     } else {
-                        let joindate = yield _this3.model('student_activity').getStudentIsJoinGroup(studentid, dataAttendtionIds[i], 1);
+                        let joindate = yield _this3.model('student_activity').getStudentIsJoinGroup2(studentid, dataAttendtionIds[i], 1);
                         if (joindate && joindate.iscomplate) {
                             iscomplate = true;
                         }
@@ -109,15 +93,50 @@ module.exports = class extends Base {
                     arrActs.push({ activityid: dataAttendtionIds[i], iscomplate });
                 }
             }
+            return arrActs;
+        })();
+    }
+
+    getMyActivityListAction() {
+        var _this4 = this;
+
+        return _asyncToGenerator(function* () {
+            const studentid = _this4.get('studentid');
+            const pageindex = _this4.get('pageindex') || 1;
+            const pagesize = _this4.get('pagesize') || 5;
+            const hasjoin = _this4.get('hasjoin');
+
+            const start = (pageindex - 1) * pagesize;
+            const model = _this4.model('student');
+            model._pk = "studentID";
+            let data = null;
+            let counta = null;
+
+            // 参加了哪些活动
+            let dataAttendtionIds = yield _this4.model('attention_activity').field('activityid').where({ studentid: studentid }).getField('activityid');
+            if (!think.isEmpty(dataAttendtionIds)) {
+                dataAttendtionIds = _.uniq(dataAttendtionIds);
+            }
+
+            let arrActs = yield _this4.getArrStatu(dataAttendtionIds, studentid);
             // console.log('arr--------', arrActs, dataAttendtionIds)
 
-            const acModel = _this3.model('activity');
+            const acModel = _this4.model('activity');
             acModel._pk = 'activityID';
             let arr = []; // 已完成
             for (let i = 0; i < arrActs.length; i++) {
                 if (arrActs[i].iscomplate) {
                     arr.push(arrActs[i].activityid);
                 }
+            }
+
+            let arrComp = [];
+            let databmids = [];
+
+            if (hasjoin == 0 || hasjoin == 2 && arrActs && arrActs.length > 0) {
+                databmids = yield _this4.model('student_activity').field('activityid').where({ studentID: studentid, shstate: 1 }).getField('activityid');
+                databmids = _.uniq(databmids);
+                arrComp = yield _this4.getArrStatu(databmids, studentid);
             }
 
             // 进行中
@@ -127,61 +146,77 @@ module.exports = class extends Base {
                 data = yield acModel.where('endDate > now() and now() > startDate and activityID in (' + dataAttendtionIds.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
             } else if (hasjoin == 2 && arrActs && arrActs.length > 0) {
                 // 已完成
-                if (arr && arr.length > 0) {
-                    console.log('已完成------', arr);
-                    data = yield acModel.where('activityID in (' + arr.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
+                let arr2 = [];
+                for (let i = 0; i < arrComp.length; i++) {
+                    if (arrComp[i].iscomplate) {
+                        arr2.push(arrComp[i].activityid);
+                    }
+                }
+
+                if (arr2 && arr2.length > 0) {
+                    console.log('已完成------', arr2);
+                    data = yield acModel.where('activityID in (' + arr2.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
                 }
             } else if (hasjoin == 0) {
                 // 已报名
-                let databmids = yield _this3.model('student_activity').field('activityid').where({ studentID: studentid, shstate: 1 }).getField('activityid');
-                databmids = _.uniq(databmids);
-                databmids = _.difference(databmids, arr);
-                databmids = _.difference(databmids, dataAttendtionIds);
+
+
+                // databmids = _.difference(databmids,arr);
+                // databmids = _.difference(databmids,dataAttendtionIds);
+                let arr2 = [];
+                for (let i = 0; i < arrComp.length; i++) {
+                    if (!arrComp[i].iscomplate) {
+                        arr2.push(arrComp[i].activityid);
+                    }
+                }
+
                 console.log('已报名------', databmids);
-                if (databmids && databmids.length > 0) {
-                    data = yield acModel.where('activityID in (' + databmids.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
+                console.log('已完成------', arr);
+                console.log('报名活动------', arrComp);
+                if (arr2 && arr2.length > 0) {
+                    data = yield acModel.where('activityID in (' + arr2.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
                 }
             }
 
             const arrdata = [];
             if (!think.isEmpty(data)) {
                 for (const item of data.data) {
-                    item.pics = yield _this3.model('activity').getPicsbyid(item.activityID);
-                    item.shstate = yield _this3.model('activity').getstate(item.activityID);
+                    item.pics = yield _this4.model('activity').getPicsbyid(item.activityID);
+                    item.shstate = yield _this4.model('activity').getstate(item.activityID);
                     arrdata.push(item);
                 }
                 data.data = arrdata;
             }
             // return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
             if (!think.isEmpty(data)) {
-                return _this3.success(data);
+                return _this4.success(data);
             } else {
-                return _this3.success({ count: 0, currentPage: 1, pageSize: pagesize, totalPage: 0, data: [] });
+                return _this4.success({ count: 0, currentPage: 1, pageSize: pagesize, totalPage: 0, data: [] });
             }
         })();
     }
 
     getMyDiscussAction() {
-        var _this4 = this;
-
-        return _asyncToGenerator(function* () {
-            const studentid = _this4.get('studentid');
-            const pageindex = _this4.get('pageindex') || 1;
-            const pagesize = _this4.get('pagesize') || 5;
-
-            const model = _this4.model('discuss');
-            model._pk = "discussID";
-            const data = yield model.where({ studentid: studentid, shstate: 1 }).order('discussID desc').page(pageindex, pagesize).countSelect();
-            return _this4.success(data);
-        })();
-    }
-
-    getMySceneryAction() {
         var _this5 = this;
 
         return _asyncToGenerator(function* () {
             const studentid = _this5.get('studentid');
-            const model = _this5.model('student_scenery');
+            const pageindex = _this5.get('pageindex') || 1;
+            const pagesize = _this5.get('pagesize') || 5;
+
+            const model = _this5.model('discuss');
+            model._pk = "discussID";
+            const data = yield model.where({ studentid: studentid, shstate: 1 }).order('discussID desc').page(pageindex, pagesize).countSelect();
+            return _this5.success(data);
+        })();
+    }
+
+    getMySceneryAction() {
+        var _this6 = this;
+
+        return _asyncToGenerator(function* () {
+            const studentid = _this6.get('studentid');
+            const model = _this6.model('student_scenery');
             let data = null;
             if (!think.isEmpty(studentid)) {
                 data = yield model.query("select ss.*,s.sceneryTitle,s.shdesc,s.sctype from culture_student_scenery ss inner join culture_scenery s on ss.sceneryid=s.sceneryid where ss.studentid=" + studentid + " and ss.shstate=1 and ss.sceneryid not in (select targetid from culture_discuss where distype=0 and studentid=" + studentid + ")");
@@ -190,12 +225,12 @@ module.exports = class extends Base {
             }
             const arrdata = [];
             for (const item of data) {
-                item.pics = yield _this5.model('scenery').getPicsbyid(item.sceneryid);
-                item.shstate = yield _this5.model('scenery').getstate(item.sceneryid);
+                item.pics = yield _this6.model('scenery').getPicsbyid(item.sceneryid);
+                item.shstate = yield _this6.model('scenery').getstate(item.sceneryid);
                 arrdata.push(item);
             }
             data.data = arrdata;
-            return _this5.success(data);
+            return _this6.success(data);
         })();
     }
 };

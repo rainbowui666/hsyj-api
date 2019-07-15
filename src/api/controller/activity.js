@@ -145,15 +145,20 @@ module.exports = class extends Base {
                 data.hasjoin = '已报名' 
             }
 
-            data.group=await this.model('group').where({activityid:data.activityID, studentid: studentid}).select();
+            let groupData = await this.model('group').where({activityid:data.activityID, studentid: studentid}).select();
+            data.group = groupData;
 
             // 团队人数是否到达活动要求人数
-            let countgroupids = await this.model('student_group').field('studentid').where({activityid: id}).getField('studentid');
-            if (!think.isEmpty(countgroupids)) {
-                countgroupids = _.uniq(countgroupids);
-                data.totalgroupstudents = countgroupids.length;
+            if (!think.isEmpty(groupData)) {
+                let countgroupids = await this.model('student_group').field('studentid').where({activityid: id,groupid: groupData[0].groupid}).getField('studentid');
+                if (!think.isEmpty(countgroupids)) {
+                    countgroupids = _.uniq(countgroupids);
+                    data.totalgroupstudents = countgroupids.length;
+                } else {
+                    data.totalgroupstudents = 0;
+                }
             } else {
-                data.totalgroupstudents = 0;
+                data.totalgroupstudents = -1;
             }
         }
         return this.success(data);

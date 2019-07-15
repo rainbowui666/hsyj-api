@@ -1,13 +1,52 @@
 const Base = require('./base.js');
 
 module.exports = class extends Base {
+
+    uncodeUtf16(str){
+        var reg = /\&#.*?;/g;
+        var result = str.replace(reg,function(char){
+            var H,L,code;
+            if(char.length == 9 ){
+                code = parseInt(char.match(/[0-9]+/g));
+                H = Math.floor((code-0x10000) / 0x400)+0xD800;
+                L = (code - 0x10000) % 0x400 + 0xDC00;
+                return unescape("%u"+H.toString(16)+"%u"+L.toString(16));
+            }else{
+                return char;
+            }
+        });
+        return result;
+     }
+
+    utf16toEntities(str) {
+        var patt=/[\ud800-\udbff][\udc00-\udfff]/g;
+        // 检测utf16字符正则
+        str = str.replace(patt, function(char){
+            var H, L, code;
+            if (char.length===2) {
+                H = char.charCodeAt(0);
+                // 取出高位
+                L = char.charCodeAt(1);
+                // 取出低位
+                code = (H - 0xD800) * 0x400 + 0x10000 + L - 0xDC00;
+                // 转换算法
+                return "&#" + code + ";";
+            } else {
+                return char;
+            }
+        });
+        return str;
+    }
+
     async addAction() {
         const distype = this.get('distype');
         const targetid = this.get('targetid') || 0;
         const studentid = this.get('studentid');
         const scenerytype = this.get('scenerytype');
-        const content = this.post('content');
+        const content = this.utf16toEntities(this.post('content'));
         const shstate = this.post('shstate') || 0;   
+
+        console.log('content', content)
 
         const model = this.model('discuss');
         let data = null;
@@ -95,6 +134,12 @@ module.exports = class extends Base {
         const start = (pageindex -1) * pagesize;
         const data = await model.query("select a.discussID,s.studentName,s.photo,a.distype,a.targetid,a.scenerytype,a.studentid,a.content,a.shstate,a.isrecommend,a.createdate, case  when distype=0 then (select scenerytitle from culture_scenery where "+scenerycondition+" limit 1) when distype=1 then (select activityname from culture_activity where "+activitycondition+" limit 1) when distype=2 then (select schoolname from culture_school where "+schoolcondition+" limit 1) when distype=3 then \"APP首页\" end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where "+typeconition+" and "+studentcondition+" and "+statusconditionn+" and a.shstate=1 order by discussID desc limit "+start+","+pagesize+" ");
         const counta = await model.query("select count(*) t from (select a.discussID,s.studentName,a.distype,a.targetid,a.studentid,a.content,a.shstate,  case  when distype=0 then (select scenerytitle from culture_scenery where "+scenerycondition+" limit 1) when distype=1 then (select activityname from culture_activity where "+activitycondition+" limit 1) when distype=2 then (select schoolname from culture_school where "+schoolcondition+" limit 1) when distype=3 then \"APP首页\" end as targetaddress from culture_discuss a left join culture_student s on s.studentid=a.studentid where "+typeconition+" and "+studentcondition+" and "+statusconditionn+" and a.shstate=1) t ");
+        if (!think.isEmpty(data) && data.length > 0) {
+            for (let i = 0; i < data.length; i++) {
+                data[i].content = this.uncodeUtf16(data[i].content);
+            }
+        }
+
         const pagecount = Math.ceil(counta[0].t / pagesize); //(counta[0].t + parseInt(pagesize - 1)) / pagesize;
         return this.success({counta:counta[0].t,pagecount:pagecount,pageindex:pageindex,pagesize:pagesize,data})
     }
@@ -130,7 +175,7 @@ module.exports = class extends Base {
         const data = await model.where({shstate:1}).order('discussID desc').page(pageindex, pagesize).countSelect();
 
         const arrdata = [];
-        for (const item of data.data) {
+        for (let item of data.data) {
             if (item.distype == 0) { // 景点
                 item.pics = await this.model('scenery').getPicsbyid(item.targetid);
             } else if (item.distype == 1) { // 活动
@@ -141,6 +186,7 @@ module.exports = class extends Base {
             } else {
                 item.pics = []
             }
+            item.content = this.uncodeUtf16(item.content);
             // item.likednum = await this.model('discuss').where({discussID:item.discussID, studentid:studentid}).getField('clicknum', true);
             item.likednum = await this.model('like_discuss').where({discussid:item.discussID, studentid:studentid}).count();
             item.poto = await this.model('student').field(['photo','studentName']).where({studentID:item.studentid}).find();

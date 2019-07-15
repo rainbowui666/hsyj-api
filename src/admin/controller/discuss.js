@@ -1,6 +1,22 @@
 const Base = require('./base.js');
 
 module.exports = class extends Base {
+    uncodeUtf16(str){
+        var reg = /\&#.*?;/g;
+        var result = str.replace(reg,function(char){
+            var H,L,code;
+            if(char.length == 9 ){
+                code = parseInt(char.match(/[0-9]+/g));
+                H = Math.floor((code-0x10000) / 0x400)+0xD800;
+                L = (code - 0x10000) % 0x400 + 0xDC00;
+                return unescape("%u"+H.toString(16)+"%u"+L.toString(16));
+            }else{
+                return char;
+            }
+        });
+        return result;
+     }
+
     async listAction() {
         const model =  this.model('discuss');
         model._pk ="discussID";
@@ -28,6 +44,11 @@ module.exports = class extends Base {
         data = await model.query("select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" order by d.discussID desc limit "+start+","+pagesize+" ");
         counta = await model.query("select count(*) t from (select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+") t ");
 
+        if (!think.isEmpty(data) && data.length > 0) {
+            for (let i = 0; i < data.length; i++) {
+                data[i].content = this.uncodeUtf16(data[i].content);
+            }
+        }
         const waitApprove = await model.field('discussID').where({distype: distype, shstate: 0}).getField('discussID');
       
         const pagecount = Math.ceil(counta[0].t / pagesize); //(counta[0].t + parseInt(pagesize - 1)) / pagesize;

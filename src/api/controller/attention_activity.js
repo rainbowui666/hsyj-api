@@ -12,8 +12,8 @@ module.exports = class extends Base {
 
         // 是否有数据
         const dataCount = await this.model('attention_activity').where({studentid:studentid,sceneryid:startSceneryid,activityid:activityid}).select();
-
-        if (sceneryid == startSceneryid) {
+console.log('startSceneryid', startSceneryid)
+        if (sceneryid == startSceneryid || think.isEmpty(startSceneryid)) {
             let data = {
                 studentid,sceneryid,shstate,activityid
             }
