@@ -19,7 +19,7 @@ module.exports = class extends Base {
             return this.fail('你已加入过团队,不能再创建团队')
         }
         
-        const dataExsts = await this.model('group').where({groupName: groupname}).select();
+        const dataExsts = await this.model('group').where({groupName: groupname, activityid:id}).select();
         if (dataExsts && dataExsts.length > 0) {
             return this.fail('团队名称被抢注,请更换')
         }

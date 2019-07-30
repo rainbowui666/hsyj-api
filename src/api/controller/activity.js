@@ -194,6 +194,7 @@ module.exports = class extends Base {
         for (const item of data) {
             item.pics = await this.model('activity').getPicsbyid(item.activityid);
             item.shstate = await this.model('activity').getstate(item.activityid);
+            item.group = await this.model('student_group').where({activityid:activityid, studentid: studentid}).select();
             if (!think.isEmpty(studentid)) {
                 item.sceneryState = await this.model('scenery').getstudentstate(item.sceneryid, studentid, item.activityid);
             }

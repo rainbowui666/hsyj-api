@@ -217,6 +217,7 @@ module.exports = class extends Base {
             for (const item of data) {
                 item.pics = yield _this6.model('activity').getPicsbyid(item.activityid);
                 item.shstate = yield _this6.model('activity').getstate(item.activityid);
+                item.group = yield _this6.model('student_group').where({ activityid: activityid, studentid: studentid }).select();
                 if (!think.isEmpty(studentid)) {
                     item.sceneryState = yield _this6.model('scenery').getstudentstate(item.sceneryid, studentid, item.activityid);
                 }

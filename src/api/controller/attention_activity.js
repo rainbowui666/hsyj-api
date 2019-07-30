@@ -32,4 +32,15 @@ console.log('startSceneryid', startSceneryid)
         const data = await this.model('attention_activity').add(para);
         return this.success('签到成功');
     }
+
+    async isGroupCreatorAction() {
+        const studentid = this.get('studentid');
+        const groupid = this.get('groupid');
+        const activityid = this.get('activityid');
+        const data = await this.model('group').field('studentid').where({groupid:groupid, activityid:activityid,studentid:studentid}).getField('studentid', true);
+        if (!think.isEmpty(data)) {
+            return this.success({isCreator: 'yes'})
+        }
+        return this.fail('不是团队创建人')
+    }
 }

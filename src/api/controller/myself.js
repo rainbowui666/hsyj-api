@@ -136,7 +136,7 @@ module.exports = class extends Base {
         if (hasjoin == 1 && dataAttendtionIds && dataAttendtionIds.length > 0) {
             dataAttendtionIds = _.difference(dataAttendtionIds, arr);
             dataAttendtionIds = _.difference(dataAttendtionIds, arr2);
-            // console.log('进行中------', dataAttendtionIds)
+            console.log('进行中------', dataAttendtionIds)
             data = await acModel.where('endDate > now() and now() > startDate and activityID in ('+dataAttendtionIds.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect()
         } else if (hasjoin == 2) { // 已完成
 
@@ -156,6 +156,7 @@ module.exports = class extends Base {
                 }
             }
             arr3 = _.difference(arr3, arr2);
+            arr3 = _.difference(arr3, dataAttendtionIds);
 
             // console.log('已报名------', databmids)
             // console.log('已完成------', arr)
