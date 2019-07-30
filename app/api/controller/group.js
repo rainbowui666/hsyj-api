@@ -25,8 +25,8 @@ module.exports = class extends Base {
             }
 
             const dataExsts = yield _this.model('group').where({ groupName: groupname }).select();
-            if (dataExsts && dataExsts.data && dataExsts.data.length > 0) {
-                return _this.fail('团队名称重复,添加失败');
+            if (dataExsts && dataExsts.length > 0) {
+                return _this.fail('团队名称被抢注,请更换');
             }
             let param = {
                 activityid: id,
@@ -106,6 +106,15 @@ module.exports = class extends Base {
                     // console.log('success group----')
                     let insertid = yield _this4.model('student_group').add(para);
                     const groupdate = yield _this4.model('group').where({ groupid: groupid }).find();
+
+                    // 报名
+                    let hasbaomin = yield _this4.model('student_activity').where({ activityid: activityid, studentID: studentid }).find();
+                    if (think.isEmpty(hasbaomin)) {
+                        let para3 = {
+                            studentID: studentid, activityid: activityid, shstate: 1
+                        };
+                        let insertid2 = yield _this4.model('student_activity').add(para3);
+                    }
                     return _this4.success({ msg: '扫码加入成功', groupName: groupdate.groupName });
                 }
             } else {

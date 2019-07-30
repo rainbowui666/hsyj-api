@@ -101,7 +101,7 @@ module.exports = class extends Base {
         }
         
         let arrActs = await this.getArrStatu(dataAttendtionIds, studentid);
-// console.log('arr--------', arrActs, dataAttendtionIds)
+
 
         const acModel = this.model('activity');
         acModel._pk = 'activityID';
@@ -121,18 +121,24 @@ module.exports = class extends Base {
             arrComp = await this.getArrStatu(databmids, studentid);
         }
 
-        // 进行中
-        if (hasjoin == 1 && dataAttendtionIds && dataAttendtionIds.length > 0) {
-            dataAttendtionIds = _.difference(dataAttendtionIds, arr);
-            console.log('进行中------', dataAttendtionIds)
-            data = await acModel.where('endDate > now() and now() > startDate and activityID in ('+dataAttendtionIds.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect()
-        } else if (hasjoin == 2 && arrActs && arrActs.length > 0) { // 已完成
-            let arr2 = [];
+       
+        let arr2 = [];
+        if (arrActs && arrActs.length > 0) {
             for (let i = 0; i < arrComp.length; i++) {
                 if (arrComp[i].iscomplate) {
                     arr2.push(arrComp[i].activityid);
                 }
             }
+        }
+
+        console.log('arr--------', dataAttendtionIds, arr2);
+        // 进行中
+        if (hasjoin == 1 && dataAttendtionIds && dataAttendtionIds.length > 0) {
+            dataAttendtionIds = _.difference(dataAttendtionIds, arr);
+            dataAttendtionIds = _.difference(dataAttendtionIds, arr2);
+            // console.log('进行中------', dataAttendtionIds)
+            data = await acModel.where('endDate > now() and now() > startDate and activityID in ('+dataAttendtionIds.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect()
+        } else if (hasjoin == 2) { // 已完成
 
             if (arr2 && arr2.length > 0) {
                 console.log('已完成------', arr2)
@@ -143,19 +149,19 @@ module.exports = class extends Base {
 
             // databmids = _.difference(databmids,arr);
             // databmids = _.difference(databmids,dataAttendtionIds);
-            let arr2 = [];
+            let arr3 = [];
             for (let i = 0; i < arrComp.length; i++) {
                 if (!arrComp[i].iscomplate) {
-                    arr2.push(arrComp[i].activityid);
+                    arr3.push(arrComp[i].activityid);
                 }
             }
-            
+            arr3 = _.difference(arr3, arr2);
 
-            console.log('已报名------', databmids)
-            console.log('已完成------', arr)
-            console.log('报名活动------', arrComp)
-            if (arr2 && arr2.length > 0) {
-                data = await acModel.where('activityID in ('+arr2.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect();
+            // console.log('已报名------', databmids)
+            // console.log('已完成------', arr)
+            console.log('报名活动------', arr3)
+            if (arr3 && arr3.length > 0) {
+                data = await acModel.where('activityID in ('+arr3.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect();
             }
         }
 
@@ -183,7 +189,7 @@ module.exports = class extends Base {
 
         const model = this.model('discuss')
         model._pk="discussID";
-        const data = await model.where({studentid: studentid, shstate:1}).order('discussID desc').page(pageindex, pagesize).countSelect();
+        const data = await model.where({studentid: studentid}).order('discussID desc').page(pageindex, pagesize).countSelect();
         return this.success(data)
     }
 

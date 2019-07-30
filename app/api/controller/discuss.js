@@ -185,10 +185,10 @@ module.exports = class extends Base {
 
             // await this.cache('home_discuss'+pageindex+'_'+pagesize, null);
             const homedata = yield _this4.cache('home_discuss' + pageindex + '_' + pagesize);
-            if (!think.isEmpty(homedata)) {
-                console.log('read from cache', 'home_discuss' + pageindex + '_' + pagesize);
-                return _this4.success(homedata);
-            }
+            // if (!think.isEmpty(homedata)) {
+            //     console.log('read from cache', 'home_discuss'+pageindex+'_'+pagesize)
+            //     return this.success(homedata)
+            // }
             const data = yield model.where({ shstate: 1 }).order('discussID desc').page(pageindex, pagesize).countSelect();
 
             const arrdata = [];
@@ -208,7 +208,8 @@ module.exports = class extends Base {
                 item.content = _this4.uncodeUtf16(item.content);
                 // item.likednum = await this.model('discuss').where({discussID:item.discussID, studentid:studentid}).getField('clicknum', true);
                 item.likednum = yield _this4.model('like_discuss').where({ discussid: item.discussID, studentid: studentid }).count();
-                item.poto = yield _this4.model('student').field(['photo', 'studentName']).where({ studentID: item.studentid }).find();
+                item.photo = yield _this4.model('student').field(['photo']).where({ studentID: item.studentid }).getField('photo', true);
+                item.studentName = yield _this4.model('student').field('studentName').where({ studentID: item.studentid }).getField('studentName', true);
                 arrdata.push(item);
             }
             data.data = arrdata;

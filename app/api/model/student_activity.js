@@ -163,7 +163,7 @@ module.exports = class extends think.Model {
 
 
             // const data = await this.model('student_activity').where({studentID: studentid,activityid:activityid,shstate:shstate}).select();
-            console.log('getStudentIsJoinGroup-----', arr, isAttentention, iscomplate, needschoolpass, needscenerypass, needgroupnum);
+            // console.log('getStudentIsJoinGroup-----', arr, isAttentention, iscomplate, needschoolpass,needscenerypass, needgroupnum)
             return { isAttentention, iscomplate };
         })();
     }
@@ -252,9 +252,9 @@ module.exports = class extends think.Model {
                                 }
                             }
                             if (arr.length > 0) {
-                                console.log('difference', groupStudentIds, arr[0].studentid);
+                                // console.log('difference', groupStudentIds, arr[0].studentid)
                                 groupStudentIds = _.difference(groupStudentIds, [arr[0].studentid]);
-                                console.log('difference.after', groupStudentIds);
+                                // console.log('difference.after', groupStudentIds)
                                 for (let i = 0; i < groupStudentIds.length; i++) {
                                     arr.push({ studentid: groupStudentIds[i], gosceneries: [], schoolbelong: [], pass: true });
                                 }
@@ -262,10 +262,10 @@ module.exports = class extends think.Model {
                             // arr = await this.getActiveStatus(groupcreateid, activityid, needscenerypass, needschoolpass);
                             // break;
                         } else {
-                            console.log('else----', studentid, groupStudentIds, inarr);
+                            // console.log('else----', studentid, groupStudentIds, inarr)
                             arr.push({ studentid: studentid, gosceneries: [], schoolbelong: [], pass: false });
                         }
-                        console.log('aaaaaaa', arr);
+                        // console.log('aaaaaaa', arr)
                     }
                 }
             }
@@ -301,7 +301,7 @@ module.exports = class extends think.Model {
 
 
             // const data = await this.model('student_activity').where({studentID: studentid,activityid:activityid,shstate:shstate}).select();
-            console.log('getStudentIsJoinGroup-----', arr, isAttentention, iscomplate, needschoolpass, needscenerypass, needgroupnum);
+            // console.log('getStudentIsJoinGroup-----', arr, isAttentention, iscomplate, needschoolpass,needscenerypass, needgroupnum)
             return { isAttentention, iscomplate };
         })();
     }

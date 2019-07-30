@@ -168,10 +168,10 @@ module.exports = class extends Base {
 
         // await this.cache('home_discuss'+pageindex+'_'+pagesize, null);
         const homedata = await this.cache('home_discuss'+pageindex+'_'+pagesize);
-        if (!think.isEmpty(homedata)) {
-            console.log('read from cache', 'home_discuss'+pageindex+'_'+pagesize)
-            return this.success(homedata)
-        }
+        // if (!think.isEmpty(homedata)) {
+        //     console.log('read from cache', 'home_discuss'+pageindex+'_'+pagesize)
+        //     return this.success(homedata)
+        // }
         const data = await model.where({shstate:1}).order('discussID desc').page(pageindex, pagesize).countSelect();
 
         const arrdata = [];
@@ -189,7 +189,8 @@ module.exports = class extends Base {
             item.content = this.uncodeUtf16(item.content);
             // item.likednum = await this.model('discuss').where({discussID:item.discussID, studentid:studentid}).getField('clicknum', true);
             item.likednum = await this.model('like_discuss').where({discussid:item.discussID, studentid:studentid}).count();
-            item.poto = await this.model('student').field(['photo','studentName']).where({studentID:item.studentid}).find();
+            item.photo = await this.model('student').field(['photo']).where({studentID:item.studentid}).getField('photo', true);
+            item.studentName = await this.model('student').field('studentName').where({studentID:item.studentid}).getField('studentName', true);
             arrdata.push(item)
         }
         data.data = arrdata;
