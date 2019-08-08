@@ -182,7 +182,7 @@ module.exports = class extends think.Model {
     }
 
     // 团体活动每个人都要完成阀值才算完成
-    async getStudentIsJoinGroup2(studentid, activityid, shstate) {
+    async getStudentIsJoinGroup2bak(studentid, activityid, shstate) {
         // 取景点阀值和人数
         const actData = await this.model('activity').field(['activityID','needSchoolPass','needSceneryPass','groupNum']).where({activityID: activityid}).find();
         let needschoolpass = 0;
@@ -199,7 +199,7 @@ module.exports = class extends think.Model {
         let groupData = await this.model('group').field(['groupid','studentid']).where({activityid:activityid}).getField('groupid,studentid');
         let groupIds = groupData.groupid;
         let groupcreateid = groupData.studentid;
-        // console.log('groupids---', groupIds)
+        console.log('groupids---', groupIds)
         groupIds = _.uniq(groupIds);
 
         // 查找团队成员
@@ -242,7 +242,90 @@ module.exports = class extends think.Model {
                 }
             }
         }
-        // console.log('aaa', arr.length, arr)
+        console.log('aaa', arr.length, arr)
+        arr = arr.find((c) => (c.studentid == studentid));
+        // console.log('aaa2', arr)
+
+        let isAttentention = false;
+        let iscomplate = false;
+        // if (arr.length >= needgroupnum) {
+            // for (let i = 0; i < arr.length; i++) {
+                if (!think.isEmpty(arr)) {
+                if (!arr.pass) {
+                    iscomplate = false;
+                    // break;
+                } else {
+                    iscomplate = true;
+                }
+            }
+            // }
+        // }
+
+        // if (checkindata.includes(parseInt(studentid))) {
+            const databm = await this.model('student_activity').where({studentID: studentid,activityid:activityid,shstate:shstate}).select();
+            if (!think.isEmpty(databm) && databm.length > 0) {
+                isAttentention = true;
+            }
+        // } else {
+        //     iscomplate = false;
+        // }
+
+        
+        
+        // const data = await this.model('student_activity').where({studentID: studentid,activityid:activityid,shstate:shstate}).select();
+        // console.log('getStudentIsJoinGroup-----', arr, isAttentention, iscomplate, needschoolpass,needscenerypass, needgroupnum)
+        return {isAttentention, iscomplate};
+    }
+
+    // 团体活动每个人都要完成阀值才算完成
+    async getStudentIsJoinGroup2(studentid, activityid, shstate) {
+        // 取景点阀值和人数
+        const actData = await this.model('activity').field(['activityID','needSchoolPass','needSceneryPass','groupNum']).where({activityID: activityid}).find();
+        let needschoolpass = 0;
+        let needscenerypass = 0;
+        let needgroupnum = 0;
+        if (!think.isEmpty(actData)) {
+            needschoolpass = actData.needSchoolPass;
+            needscenerypass = actData.needSceneryPass;
+            needgroupnum = actData.groupNum;
+        }
+        let arr = [];
+
+        // 查找studentid所在的团队
+        let belongGroupid = await this.model('student_group').field('groupid').where({ activityid: activityid, studentid: studentid}).getField('groupid');
+        if (!think.isEmpty(belongGroupid)) {
+            // 查找团队成员
+            let groupStudentIds = await this.model('student_group').field('studentid').where({groupid: belongGroupid[0], activityid: activityid}).getField('studentid');
+            if (!think.isEmpty(groupStudentIds)) {
+                // 是否满足活动团队人数
+                if (groupStudentIds.length > 0 && groupStudentIds.length >= needgroupnum) {
+                    // 团队创建者
+                    let createid = await this.model('group').field('studentid').where({groupid: belongGroupid[0]}).getField('studentid');
+                    if (!think.isEmpty(createid) && createid.length > 0) {
+                        
+                            let obj = await this.getActiveStatus(createid[0], activityid, needscenerypass, needschoolpass);
+                            if (obj.pass) {
+                                arr.push(obj);
+                                // 团队创建人完成
+                            }
+                       
+                    }
+                    if (arr.length > 0) {
+                        
+                            arr.push({studentid: studentid, gosceneries: [], schoolbelong: [], pass: true});
+                        
+                    } else {
+                        arr.push({studentid: studentid, gosceneries: [], schoolbelong: [], pass: false});
+                    }
+                }
+            } else {
+                arr.push({studentid: studentid, gosceneries: [], schoolbelong: [], pass: false});
+            }
+        } else {
+            arr.push({studentid: studentid, gosceneries: [], schoolbelong: [], pass: false});
+        }
+    
+        console.log('aaa', arr.length, arr)
         arr = arr.find((c) => (c.studentid == studentid));
         // console.log('aaa2', arr)
 

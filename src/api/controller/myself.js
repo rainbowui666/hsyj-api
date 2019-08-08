@@ -131,11 +131,15 @@ module.exports = class extends Base {
             }
         }
 
-        console.log('arr--------', dataAttendtionIds, arr2);
+        console.log('arr--------', dataAttendtionIds, arr, arr2);
         // 进行中
         if (hasjoin == 1 && dataAttendtionIds && dataAttendtionIds.length > 0) {
-            dataAttendtionIds = _.difference(dataAttendtionIds, arr);
-            dataAttendtionIds = _.difference(dataAttendtionIds, arr2);
+            if (!_.isEqual(dataAttendtionIds, arr)) {
+                dataAttendtionIds = _.difference(dataAttendtionIds, arr);
+            }
+            if (!_.isEqual(dataAttendtionIds, arr2)) {
+                dataAttendtionIds = _.difference(dataAttendtionIds, arr2);
+            }
             console.log('进行中------', dataAttendtionIds)
             data = await acModel.where('endDate > now() and now() > startDate and activityID in ('+dataAttendtionIds.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect()
         } else if (hasjoin == 2) { // 已完成
