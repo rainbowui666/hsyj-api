@@ -141,7 +141,9 @@ module.exports = class extends Base {
                 dataAttendtionIds = _.difference(dataAttendtionIds, arr2);
             }
             console.log('进行中------', dataAttendtionIds)
-            data = await acModel.where('endDate > now() and now() > startDate and activityID in ('+dataAttendtionIds.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect()
+            if (dataAttendtionIds && dataAttendtionIds.length > 0) {
+                data = await acModel.where('endDate > now() and now() > startDate and activityID in ('+dataAttendtionIds.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect()
+            }
         } else if (hasjoin == 2) { // 已完成
 
             if (arr2 && arr2.length > 0) {
@@ -159,8 +161,12 @@ module.exports = class extends Base {
                     arr3.push(arrComp[i].activityid);
                 }
             }
-            arr3 = _.difference(arr3, arr2);
-            arr3 = _.difference(arr3, dataAttendtionIds);
+            if (!_.isEqual(arr3, arr2)) {
+                arr3 = _.difference(arr3, arr2);
+            }
+            if (!_.isEqual(arr3, dataAttendtionIds)) {
+                arr3 = _.difference(arr3, dataAttendtionIds);
+            }
 
             // console.log('已报名------', databmids)
             // console.log('已完成------', arr)
