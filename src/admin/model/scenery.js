@@ -39,8 +39,8 @@ module.exports = class extends think.Model {
         return topActive;
     }
     async getManagerTopScenery(id) {
-        const names = await this.query('select sceneryTitle from culture_scenery where sceneryID in (select  a.sceneryid from (select sceneryid,count(sceneryid) num  from culture_student_scenery where sceneryid in (select sceneryID from culture_scenery where schoolid='+id+') group by sceneryid order by num desc limit 5) a)')
-        const activitys = await this.query('select sceneryid,count(sceneryid) num  from culture_student_scenery where sceneryid in (select sceneryID from culture_scenery where schoolid='+id+') group by sceneryid order by num desc limit 5');
+        const names = await this.query('select sceneryTitle from culture_scenery where sceneryID in (select  a.sceneryid from (select sceneryid,count(sceneryid) num  from culture_student_scenery where sceneryid in (select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+')) group by sceneryid order by num desc limit 5) a)')
+        const activitys = await this.query('select sceneryid,count(sceneryid) num  from culture_student_scenery where sceneryid in (select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+')) group by sceneryid order by num desc limit 5');
         const topActive = [];
 
         for(let i=0;i<names.length;i++){
@@ -80,14 +80,14 @@ module.exports = class extends think.Model {
     }
 
     async getTourist(id) {
-        const num1 = await this.query('select count(1) from culture_discuss where targetid in ( select sceneryID from culture_scenery where schoolid='+id+')')||0;
-        const num2 = await this.query('select count(1) from culture_student_scenery where sceneryid in ( select sceneryID from culture_scenery where schoolid='+id+')')||0;
-        return num1+num2;
+        const num1 = await this.query('select count(1) count from culture_discuss where targetid in ( select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+'))');
+        const num2 = await this.query('select count(1) count from culture_student_scenery where sceneryid in ( select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+'))');
+        return num1[0].count+num2[0].count;
     }
 
     async getDiscuss(id) {
-        const num1 = await this.query('select count(1) from culture_discuss where targetid in ( select sceneryID from culture_scenery where schoolid='+id+')')||0;
-        const num2 = await this.query('select count(1) from culture_discuss where targetid in ( select activityID from culture_activity where createbyschoolid='+id+')')||0;
-        return num1+num2;
+        const num1 = await this.query('select count(1) count from culture_discuss where targetid in ( select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+'))');
+        const num2 = await this.query('select count(1) count from culture_discuss where targetid in ( select activityID from culture_activity where createbyschoolid='+id+')');
+        return num1[0].count+num2[0].count;
     }
 }
