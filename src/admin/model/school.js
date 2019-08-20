@@ -3,6 +3,10 @@ module.exports = class extends think.Model {
         const data = await this.model('source').where({sourceType: 0, targetid: id}).select();
         return data;
     }
+    async getStudentCount(id) {
+        const num2 = await this.query("SELECT  DATE_FORMAT(any_value(insert_date), '%Y') year,count(1) num   FROM    culture_student where schoolid in (select schoolID from culture_school where parentid="+id+")  GROUP BY DATE_FORMAT( 'insert_date', '%Y%u')");
+        return num2;
+    }
 
     async getSchoolNameByIds(ids) {
         let str = '';
