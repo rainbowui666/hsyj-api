@@ -80,9 +80,23 @@ module.exports = class extends think.Model {
     }
 
     async getTourist(id) {
-        const num1 = await this.query('select count(1) count from culture_discuss where targetid in ( select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+'))');
-        const num2 = await this.query('select count(1) count from culture_student_scenery where sceneryid in ( select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+'))');
-        return num1[0].count+num2[0].count;
+        const num1s = await this.query('select distinct studentid   from culture_discuss where targetid in ( select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+'))');
+        const num2s = await this.query('select distinct studentid   from culture_student_scenery where sceneryid in ( select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+'))');
+
+        const set = new Set();
+        if(num1s&&num1s.length>0){
+            for(const n1 of num1s){
+                set.add(n1)
+            }
+        }
+
+        if(num2s&&num2s.length>0){
+            for(const n1 of num2s){
+                set.add(n1)
+            }
+        }
+
+        return set.size;
     }
 
     async getDiscuss(id) {
