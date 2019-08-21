@@ -95,7 +95,8 @@ module.exports = class extends Base {
         let counta = null;
 
         // 参加了哪些活动
-        let dataAttendtionIds = await this.model('attention_activity').field('activityid').where({studentid: studentid}).getField('activityid')
+        // let dataAttendtionIds = await this.model('attention_activity').field('activityid').where({studentid: studentid}).getField('activityid')
+        let dataAttendtionIds = await this.model('student_activity').field('activityid').where({studentid: studentid}).getField('activityid')
         if (!think.isEmpty(dataAttendtionIds)) {
             dataAttendtionIds = _.uniq(dataAttendtionIds)
         }
@@ -116,7 +117,7 @@ module.exports = class extends Base {
         let databmids = [];
 
         if (hasjoin == 0 || (hasjoin == 2 && arrActs && arrActs.length > 0)) {
-            databmids = await this.model('student_activity').field('activityid').where({studentID: studentid,shstate:1}).getField('activityid');
+            databmids = await this.model('student_activity').field('activityid').where({studentID: studentid}).getField('activityid');
             databmids = _.uniq(databmids);
             arrComp = await this.getArrStatu(databmids, studentid);
         }
@@ -172,7 +173,7 @@ module.exports = class extends Base {
             // console.log('已完成------', arr)
             console.log('报名活动------', arr3)
             if (arr3 && arr3.length > 0) {
-                data = await acModel.where('activityID in ('+arr3.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect();
+                data = await acModel.where('endDate < now() and activityID in ('+arr3.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect();
             }
         }
 

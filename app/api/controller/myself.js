@@ -113,7 +113,8 @@ module.exports = class extends Base {
             let counta = null;
 
             // 参加了哪些活动
-            let dataAttendtionIds = yield _this4.model('attention_activity').field('activityid').where({ studentid: studentid }).getField('activityid');
+            // let dataAttendtionIds = await this.model('attention_activity').field('activityid').where({studentid: studentid}).getField('activityid')
+            let dataAttendtionIds = yield _this4.model('student_activity').field('activityid').where({ studentid: studentid }).getField('activityid');
             if (!think.isEmpty(dataAttendtionIds)) {
                 dataAttendtionIds = _.uniq(dataAttendtionIds);
             }
@@ -133,7 +134,7 @@ module.exports = class extends Base {
             let databmids = [];
 
             if (hasjoin == 0 || hasjoin == 2 && arrActs && arrActs.length > 0) {
-                databmids = yield _this4.model('student_activity').field('activityid').where({ studentID: studentid, shstate: 1 }).getField('activityid');
+                databmids = yield _this4.model('student_activity').field('activityid').where({ studentID: studentid }).getField('activityid');
                 databmids = _.uniq(databmids);
                 arrComp = yield _this4.getArrStatu(databmids, studentid);
             }
@@ -147,13 +148,19 @@ module.exports = class extends Base {
                 }
             }
 
-            console.log('arr--------', dataAttendtionIds, arr2);
+            console.log('arr--------', dataAttendtionIds, arr, arr2);
             // 进行中
             if (hasjoin == 1 && dataAttendtionIds && dataAttendtionIds.length > 0) {
-                dataAttendtionIds = _.difference(dataAttendtionIds, arr);
-                dataAttendtionIds = _.difference(dataAttendtionIds, arr2);
+                if (!_.isEqual(dataAttendtionIds, arr)) {
+                    dataAttendtionIds = _.difference(dataAttendtionIds, arr);
+                }
+                if (!_.isEqual(dataAttendtionIds, arr2)) {
+                    dataAttendtionIds = _.difference(dataAttendtionIds, arr2);
+                }
                 console.log('进行中------', dataAttendtionIds);
-                data = yield acModel.where('endDate > now() and now() > startDate and activityID in (' + dataAttendtionIds.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
+                if (dataAttendtionIds && dataAttendtionIds.length > 0) {
+                    data = yield acModel.where('endDate > now() and now() > startDate and activityID in (' + dataAttendtionIds.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
+                }
             } else if (hasjoin == 2) {
                 // 已完成
 
@@ -173,14 +180,18 @@ module.exports = class extends Base {
                         arr3.push(arrComp[i].activityid);
                     }
                 }
-                arr3 = _.difference(arr3, arr2);
-                arr3 = _.difference(arr3, dataAttendtionIds);
+                if (!_.isEqual(arr3, arr2)) {
+                    arr3 = _.difference(arr3, arr2);
+                }
+                if (!_.isEqual(arr3, dataAttendtionIds)) {
+                    arr3 = _.difference(arr3, dataAttendtionIds);
+                }
 
                 // console.log('已报名------', databmids)
                 // console.log('已完成------', arr)
                 console.log('报名活动------', arr3);
                 if (arr3 && arr3.length > 0) {
-                    data = yield acModel.where('activityID in (' + arr3.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
+                    data = yield acModel.where('endDate < now() and activityID in (' + arr3.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
                 }
             }
 
