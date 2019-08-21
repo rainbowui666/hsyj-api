@@ -17,7 +17,7 @@ module.exports = class extends Base {
             model._pk = 'schoolID';
             var data;
             if (think.isEmpty(schoolname) && think.isEmpty(areaid)) {
-                data = yield model.where({ shstate: 0 }).page(page, size).order('schoolID asc').countSelect();
+                data = yield model.where('parentid!=0').page(page, size).order('schoolID asc').countSelect();
             } else if (!think.isEmpty(schoolname)) {
                 data = yield model.where('schoolName like ' + `%${schoolname}%` + ' and shstate = 0 and parentid=0 and parentid=-1').order('schoolID asc').page(page, size).countSelect();
             } else {

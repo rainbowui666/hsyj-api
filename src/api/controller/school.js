@@ -12,7 +12,7 @@ module.exports = class extends Base {
         model._pk = 'schoolID';
         var data;
         if (think.isEmpty(schoolname) && think.isEmpty(areaid)) {
-            data = await model.where({shstate: 0}).page(page, size).order('schoolID asc').countSelect();
+            data = await model.where('parentid!=0').page(page, size).order('schoolID asc').countSelect();
         } else if (!think.isEmpty(schoolname)) {
             data = await model.where('schoolName like '+`%${schoolname}%`+' and shstate = 0 and parentid=0 and parentid=-1').order('schoolID asc').page(page, size).countSelect();
         } else {
