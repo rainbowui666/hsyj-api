@@ -5,7 +5,7 @@ module.exports = class extends Base {
     async numbListAction() {
        const id = this.get('schoolId')
        let childschoolid = await this.model('school').field(['schoolID']).where({parentid: id}).getField('schoolID')
-       const data = await this.model('student').query("select count(1) num from culture_student where shstate=4 and  (schoolid="+id+"  or schoolid in ("+childschoolid+"))");
+       const data = await this.model('student').query("select count( DISTINCT studentID) num from culture_student where shstate=4 and  schoolid in ("+childschoolid+")");
        
        const tourist = await this.model('scenery').getTourist(id);
        const students = data[0].num;
