@@ -6,6 +6,7 @@ module.exports = {
 
     publicAction: [
         'index',
-        'user/save'
+        'user/save',
+        "count/getHotMapData"
     ]
 }
