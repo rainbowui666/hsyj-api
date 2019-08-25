@@ -191,7 +191,7 @@ module.exports = class extends Base {
                 // console.log('已完成------', arr)
                 console.log('报名活动------', arr3);
                 if (arr3 && arr3.length > 0) {
-                    data = yield acModel.where('endDate < now() and activityID in (' + arr3.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
+                    data = yield acModel.where('(endDate < now() or startDate > now()) and activityID in (' + arr3.join(',') + ')').order('activityID desc').page(pageindex, pagesize).countSelect();
                 }
             }
 
