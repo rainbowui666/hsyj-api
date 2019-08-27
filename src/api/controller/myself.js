@@ -116,7 +116,7 @@ module.exports = class extends Base {
         let arrComp = [];
         let databmids = [];
 
-        if (hasjoin == 0 || (hasjoin == 2 && arrActs && arrActs.length > 0)) {
+        if (arrActs && arrActs.length > 0) {
             databmids = await this.model('student_activity').field('activityid').where({studentID: studentid}).getField('activityid');
             databmids = _.uniq(databmids);
             arrComp = await this.getArrStatu(databmids, studentid);
@@ -135,11 +135,18 @@ module.exports = class extends Base {
         console.log('arr--------', dataAttendtionIds, arr, arr2);
         // 进行中
         if (hasjoin == 1 && dataAttendtionIds && dataAttendtionIds.length > 0) {
-            if (!_.isEqual(dataAttendtionIds, arr)) {
-                dataAttendtionIds = _.difference(dataAttendtionIds, arr);
-            }
-            if (!_.isEqual(dataAttendtionIds, arr2)) {
+            // if (!_.isEqual(dataAttendtionIds, arr)) {
+            //     dataAttendtionIds = _.difference(dataAttendtionIds, arr);
+            // }
+            // if (!_.isEqual(dataAttendtionIds, arr2)) {
+            //     dataAttendtionIds = _.difference(dataAttendtionIds, arr2);
+            // }
+            if (arr2 && arr2.length > 0) {
                 dataAttendtionIds = _.difference(dataAttendtionIds, arr2);
+            }
+
+            if (arr && arr.length > 0) {
+                dataAttendtionIds = _.difference(dataAttendtionIds, arr);
             }
             console.log('进行中------', dataAttendtionIds)
             if (dataAttendtionIds && dataAttendtionIds.length > 0) {
@@ -153,24 +160,50 @@ module.exports = class extends Base {
             }
         } else if (hasjoin == 0) { // 已报名
             
-
-            // databmids = _.difference(databmids,arr);
-            // databmids = _.difference(databmids,dataAttendtionIds);
             let arr3 = [];
+            console.log('arrComp---', arrComp)
             for (let i = 0; i < arrComp.length; i++) {
                 if (!arrComp[i].iscomplate) {
                     arr3.push(arrComp[i].activityid);
                 }
             }
-            if (!_.isEqual(arr3, arr2)) {
+            
+            // if (!_.isEqual(arr3, arr2)) {
+            //     arr3 = _.difference(arr3, arr2);
+            // }
+            // console.log('arr3---', arr3, dataAttendtionIds, _.isEqual(arr3, dataAttendtionIds));
+            // if (!_.isEqual(arr3, dataAttendtionIds)) {
+                
+            // }
+            // if (arr3.length == 0) {
+            //     arr3 = _.difference(dataAttendtionIds, arr3);
+            // }
+
+
+            // 进行中
+            if (arr2 && arr2.length > 0) {
+                dataAttendtionIds = _.difference(dataAttendtionIds, arr2);
+            }
+
+            if (arr && arr.length > 0) {
+                dataAttendtionIds = _.difference(dataAttendtionIds, arr);
+            }
+            // end
+
+            // 已经完成
+            if (arr2 && arr2.length > 0) {
                 arr3 = _.difference(arr3, arr2);
             }
-            if (!_.isEqual(arr3, dataAttendtionIds)) {
+       
+
+            if (dataAttendtionIds && dataAttendtionIds.length > 0) {
                 arr3 = _.difference(arr3, dataAttendtionIds);
             }
 
-            // console.log('已报名------', databmids)
-            // console.log('已完成------', arr)
+            if (arr3.length == 0) {
+                arr3 = _.difference(dataAttendtionIds, arr3);
+            }
+
             console.log('报名活动------', arr3)
             if (arr3 && arr3.length > 0) {
                 data = await acModel.where('(endDate < now() or startDate > now()) and activityID in ('+arr3.join(',')+')').order('activityID desc').page(pageindex,pagesize).countSelect();
