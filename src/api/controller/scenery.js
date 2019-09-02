@@ -76,4 +76,6 @@ module.exports = class extends Base {
         // data.data = arrdata;
         return this.success(data)
     }
+
+
 }
