@@ -263,6 +263,7 @@ await this.getdatabyname('home_discuss');
         await this.model('student_group').where({activityid:id}).delete();
         await this.model('activity_scenery').where({activityid:id}).delete();
         await this.model('student_activity').where({activityid:id}).delete();
+        await this.model('attention_activity').where({activityid:id}).delete();
         await this.model('discuss').where({targetid:id,distype:1}).delete();
         return this.success('活动删除成功')
     }
