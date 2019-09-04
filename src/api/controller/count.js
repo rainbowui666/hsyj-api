@@ -41,7 +41,7 @@ module.exports = class extends Base {
     async getTopSceneryAction() {
         const id = this.get('id');
         const scenerys =  await this.model('scenery').getTopScenery(id);
-        this.trunString(scenerys);
+        // this.trunString(scenerys);
         return this.json(scenerys)
     }
 

@@ -25,7 +25,7 @@ module.exports = class extends Base {
     async topActivityAction() {
         const id = this.get('schoolId')
         const activitys =  await this.model('activity').getManagerTopActivity(id);
-        this.trunString(activitys);
+        // this.trunString(activitys);
         return this.json(activitys)
     }
 
@@ -38,13 +38,13 @@ module.exports = class extends Base {
     async topSceneryAction() {
         const id = this.get('schoolId')
         const scenerys =  await this.model('scenery').getManagerTopScenery(id);
-        this.trunString(scenerys);
+        // this.trunString(scenerys);
         return this.json(scenerys)
     }
     async topSignSceneryAction() {
         const id = this.get('schoolId')
         const scenerys =  await this.model('scenery').getTopManagerSignScenery(id);
-        this.trunString(scenerys);
+        // this.trunString(scenerys);
         return this.json(scenerys)
     }
 
