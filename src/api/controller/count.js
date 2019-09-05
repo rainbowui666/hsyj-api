@@ -10,7 +10,7 @@ module.exports = class extends Base {
         //     ids.push(s.sceneryid);
         // });
         // const sql = `select sceneryid,count(1) num from culture_student_scenery where sceneryid in (${ids.join(",")}) and to_days('createdate') = to_days(now()) group by sceneryid`;
-        const sql = `select sceneryid,count(1) num from culture_student_scenery where activityid=${id} group by sceneryid`;
+        const sql = `select sceneryid,count(1) num from culture_attention_activity where activityid=${id} group by sceneryid`;
 
         // const sql = `select sceneryid,count(1) num from culture_student_scenery  group by sceneryid`
         const counts = await this.model('student_scenery').query(sql);

@@ -70,8 +70,8 @@ module.exports = class extends think.Model {
     }
 
     async getTopScenery(id) {
-        const names = await this.query('select sceneryTitle from culture_scenery where sceneryID in (select  a.sceneryid from (select sceneryid,count(sceneryid) num  from culture_student_scenery where activityid='+id+' GROUP BY sceneryid  order by num desc limit 5) a)')
-        const activitys = await this.query('select sceneryid,count(sceneryid) num  from culture_student_scenery where activityid='+id+' GROUP BY sceneryid  order by num desc limit 5');
+        const names = await this.query('select sceneryTitle from culture_scenery where sceneryID in (select  a.sceneryid from (select sceneryid,count(sceneryid) num  from culture_attention_activity where activityid='+id+' GROUP BY sceneryid  order by num desc limit 5) a)')
+        const activitys = await this.query('select sceneryid,count(sceneryid) num  from culture_attention_activity where activityid='+id+' GROUP BY sceneryid  order by num desc limit 5');
         const topActive = [];
 
         for(let i=0;i<names.length;i++){
