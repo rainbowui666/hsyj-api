@@ -136,7 +136,7 @@ module.exports = class extends Base {
             
             // 上传活动图片
             if (insertid) {
-                if (needSceneryRang.indexOf(',') != -1) {
+                if (needSceneryRang.indexOf(',') != -1 || (needSceneryRang!=null && needSceneryRang!='') ) {
                     let arrScenery =  needSceneryRang.split(',');
                     console.log('arrscenry', arrScenery)
                     for (let i = 0; i < arrScenery.length; i++) {
