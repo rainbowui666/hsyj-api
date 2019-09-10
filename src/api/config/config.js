@@ -9,5 +9,6 @@ module.exports = {
         'user/save',
         "count/getHotMapData",
         "count/getTopScenery",
+        "count/getTopGroup"
     ]
 }
