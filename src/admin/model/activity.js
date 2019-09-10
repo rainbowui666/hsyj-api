@@ -37,8 +37,17 @@ module.exports = class extends think.Model {
     }
 
     async topActivityOrg() {
-        const sponsor = await this.query('select sponsor,count(sponsor) num  from culture_activity group by sponsor order by num desc limit 5');
-        return sponsor;
+        const activitys = await this.query('select createbyschoolid,count(createbyschoolid) num from culture_activity  group by createbyschoolid order by num desc limit 5');
+        const topActive = [];
+
+        for(const activity of activitys ){
+            const name = await this.model('culture_school').where({schoolID:activity.createbyschoolid}).find();
+            topActive.push({
+                sponsor:name.schoolName,
+                num:activity.num
+            })
+        }
+        return topActive;
     }
     async topManagerActivityOrg(id) {
         const sponsor = await this.query('select sponsor,count(sponsor) num  from culture_activity where createbyschoolid='+id+' group by sponsor order by num desc limit 5');
