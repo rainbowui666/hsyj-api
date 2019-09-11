@@ -41,7 +41,7 @@ module.exports = class extends think.Model {
         const topActive = [];
 
         for(const activity of activitys ){
-            const name = await this.model('culture_school').where({schoolID:activity.createbyschoolid}).find();
+            const name = await this.model('school').where({schoolID:activity.createbyschoolid}).find();
             topActive.push({
                 sponsor:name.schoolName,
                 num:activity.num

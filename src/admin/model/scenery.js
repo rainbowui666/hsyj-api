@@ -62,6 +62,18 @@ module.exports = class extends think.Model {
             }
         });
 
+        _.each(jtopActive,(active)=>{
+            const a = _.find(topActive,(ja)=>{
+                return ja.name == active.name
+            });
+            if(!a){
+                topActive.push({
+                    name:active.name,
+                    num:active.num
+                })
+            }
+        });
+
         var compare = function(obj1,obj2){
                 var val1 = obj1.num;
                 var val2 = obj2.num;
@@ -108,6 +120,18 @@ module.exports = class extends think.Model {
             });
             if(a){
                 active.num = active.num+a.num;
+            }
+        });
+
+        _.each(jtopActive,(active)=>{
+            const a = _.find(topActive,(ja)=>{
+                return ja.name == active.name
+            });
+            if(!a){
+                topActive.push({
+                    name:active.name,
+                    num:active.num
+                })
             }
         });
 
@@ -159,6 +183,18 @@ module.exports = class extends think.Model {
             }
         });
 
+        _.each(jtopActive,(active)=>{
+            const a = _.find(topActive,(ja)=>{
+                return ja.name == active.name
+            });
+            if(!a){
+                topActive.push({
+                    name:active.name,
+                    num:active.num
+                })
+            }
+        });
+
 
 
         var compare = function(obj1,obj2){
@@ -204,6 +240,18 @@ module.exports = class extends think.Model {
             });
             if(a){
                 active.num = active.num+a.num;
+            }
+        });
+
+        _.each(jtopActive,(active)=>{
+            const a = _.find(topActive,(ja)=>{
+                return ja.name == active.name
+            });
+            if(!a){
+                topActive.push({
+                    name:active.name,
+                    num:active.num
+                })
             }
         });
 
