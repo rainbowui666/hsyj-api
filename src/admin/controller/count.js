@@ -20,24 +20,24 @@ module.exports = class extends Base {
 
     async topActivityAction() {
         const activitys =  await this.model('activity').getTopActivity();
-        this.trunString(activitys);
+        // this.trunString(activitys);
         return this.json(activitys)
     }
 
     async topActivityOrgAction() {
         const activitys =  await this.model('activity').topActivityOrg();
-        this.trunString(activitys);
+        // this.trunString(activitys);
         return this.json(activitys)
     }
 
     async topSceneryAction() {
         const scenerys =  await this.model('scenery').getTopScenery();
-        this.trunString(scenerys);
+        // this.trunString(scenerys);
         return this.json(scenerys)
     }
     async topSignSceneryAction() {
         const scenerys =  await this.model('scenery').getTopSignScenery();
-        this.trunString(scenerys);
+        // this.trunString(scenerys);
         return this.json(scenerys)
     }
 

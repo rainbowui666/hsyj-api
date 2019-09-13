@@ -26,57 +26,253 @@ module.exports = class extends think.Model {
     }
 
     async getTopScenery() {
-        const names = await this.query('select sceneryTitle from culture_scenery where sceneryID in (select  a.sceneryid from (select sceneryid,count(sceneryid) num  from culture_student_scenery group by sceneryid order by num desc limit 5) a)')
-        const activitys = await this.query('select sceneryid,count(sceneryid) num  from culture_student_scenery group by sceneryid order by num desc limit 5');
+        const activitys = await this.query('select sceneryid,count(sceneryid) num  from culture_attention_activity group by sceneryid order by num desc limit 5');
         const topActive = [];
-
-        for(let i=0;i<names.length;i++){
+        
+        
+        for(const activity of activitys ){
+            const name = await this.model('scenery').where({sceneryID:activity.sceneryid}).find();
             topActive.push({
-                name:names[i].sceneryTitle,
-                num:activitys[i].num
+                name:name.sceneryTitle,
+                num:activity.num
             })
         }
+
+       
+
+        const jactivitys = await this.query('select sceneryid,count(sceneryid) num  from culture_student_scenery group by sceneryid order by num desc limit 5');
+        const jtopActive = [];
+        
+        
+        for(const activity of jactivitys ){
+            const name = await this.model('scenery').where({sceneryID:activity.sceneryid}).find();
+            jtopActive.push({
+                name:name.sceneryTitle,
+                num:activity.num
+            })
+        }
+
+
+        _.each(topActive,(active)=>{
+            const a = _.find(jtopActive,(ja)=>{
+                return ja.name == active.name
+            });
+            if(a){
+                active.num = active.num+a.num;
+            }
+        });
+
+        _.each(jtopActive,(active)=>{
+            const a = _.find(topActive,(ja)=>{
+                return ja.name == active.name
+            });
+            if(!a){
+                topActive.push({
+                    name:active.name,
+                    num:active.num
+                })
+            }
+        });
+
+        var compare = function(obj1,obj2){
+                var val1 = obj1.num;
+                var val2 = obj2.num;
+                if(val1 < val2){
+                   return 1;
+                }else if(val1 > val2){
+                   return -1;
+                }else{
+                   return 0;
+                }
+            }
+       
+        topActive.sort(compare);
+
+
         return topActive;
     }
     async getManagerTopScenery(id) {
-        const names = await this.query('select sceneryTitle from culture_scenery where sceneryID in (select  a.sceneryid from (select sceneryid,count(sceneryid) num  from culture_student_scenery where sceneryid in (select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+')) group by sceneryid order by num desc limit 5) a)')
-        const activitys = await this.query('select sceneryid,count(sceneryid) num  from culture_student_scenery where sceneryid in (select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+')) group by sceneryid order by num desc limit 5');
+        const activitys = await this.query('select sceneryid,count(sceneryid) num  from culture_attention_activity where sceneryid in (select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+')) group by sceneryid order by num desc limit 5');
         const topActive = [];
 
-        for(let i=0;i<names.length;i++){
+        for(const activity of activitys ){
+            const name = await this.model('scenery').where({sceneryID:activity.sceneryid}).find();
             topActive.push({
-                name:names[i].sceneryTitle,
-                num:activitys[i].num
+                name:name.sceneryTitle,
+                num:activity.num
             })
         }
+
+        const jactivitys = await this.query('select sceneryid,count(sceneryid) num  from culture_student_scenery where sceneryid in (select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+')) group by sceneryid order by num desc limit 5');
+        const jtopActive = [];
+
+        for(const activity of jactivitys ){
+            const name = await this.model('scenery').where({sceneryID:activity.sceneryid}).find();
+            jtopActive.push({
+                name:name.sceneryTitle,
+                num:activity.num
+            })
+        }
+
+        _.each(topActive,(active)=>{
+            const a = _.find(jtopActive,(ja)=>{
+                return ja.name == active.name
+            });
+            if(a){
+                active.num = active.num+a.num;
+            }
+        });
+
+        _.each(jtopActive,(active)=>{
+            const a = _.find(topActive,(ja)=>{
+                return ja.name == active.name
+            });
+            if(!a){
+                topActive.push({
+                    name:active.name,
+                    num:active.num
+                })
+            }
+        });
+
+        var compare = function(obj1,obj2){
+                var val1 = obj1.num;
+                var val2 = obj2.num;
+                if(val1 < val2){
+                   return 1;
+                }else if(val1 > val2){
+                   return -1;
+                }else{
+                   return 0;
+                }
+            }
+       
+        topActive.sort(compare);
+
+
+
         return topActive;
     }
 
     async getTopSignScenery() {
-        const names = await this.query('select schoolName from culture_school where schoolID in (select a.schoolid from (select schoolid,count(schoolid) num from culture_student where studentID in (select studentid from culture_student_scenery where studentid in (select studentid from culture_student where schoolid is not null)) group by schoolid order by num desc) a)')
-        const activitys = await this.query('select schoolid,count(schoolid) num from culture_student where studentID in (select studentid from culture_student_scenery where studentid in (select studentid from culture_student where schoolid is not null)) group by schoolid order by num desc');
+        const schoolds = await this.query('select schoolId,schoolName from culture_school where parentid>0');
         const topActive = [];
-
-        for(let i=0;i<names.length;i++){
+        for(const s of schoolds){
+            const nums = await this.query("select count(DISTINCT studentid,sceneryid,activityid) num from culture_attention_activity where activityid in (select activityID from culture_activity where  needSchoolRang like '%"+s.schoolId+"%')");
             topActive.push({
-                name:names[i].schoolName,
-                num:activitys[i].num
+                            name:s.schoolName,
+                            num:nums[0].num
             })
         }
-        return topActive;
+
+        const jtopActive = [];
+        for(const s of schoolds){
+            const nums = await this.query("select count(DISTINCT studentid,sceneryid) num  from culture_student_scenery where sceneryid in  (select sceneryid from culture_activity_scenery where activityid in (select activityID from culture_activity where  needSchoolRang like '%"+s.schoolId+"%'))");
+            jtopActive.push({
+                            name:s.schoolName,
+                            num:nums[0].num
+            })
+        }
+
+        _.each(topActive,(active)=>{
+            const a = _.find(jtopActive,(ja)=>{
+                return ja.name == active.name
+            });
+            if(a){
+                active.num = active.num+a.num;
+            }
+        });
+
+        _.each(jtopActive,(active)=>{
+            const a = _.find(topActive,(ja)=>{
+                return ja.name == active.name
+            });
+            if(!a){
+                topActive.push({
+                    name:active.name,
+                    num:active.num
+                })
+            }
+        });
+
+
+
+        var compare = function(obj1,obj2){
+                var val1 = obj1.num;
+                var val2 = obj2.num;
+                if(val1 < val2){
+                   return 1;
+                }else if(val1 > val2){
+                   return -1;
+                }else{
+                   return 0;
+                }
+            }
+        var sortArr = topActive.sort(compare);
+        if(sortArr.length>5){
+            return sortArr.slice(4);
+        }else{
+            return sortArr
+        }
     }
     async getTopManagerSignScenery(id) {
-        const names = await this.query('select schoolName from culture_school where schoolID in (select a.schoolid from (select schoolid,count(schoolid) num from culture_student where studentID in (select studentid from culture_student_scenery where studentid in (select studentid from culture_student where schoolid in (select schoolId from culture_school where parentid='+id+'))) group by schoolid order by num desc) a)')
-        const activitys = await this.query('select schoolid,count(schoolid) num from culture_student where studentID in (select studentid from culture_student_scenery where studentid in (select studentid from culture_student where schoolid in (select schoolId from culture_school where parentid='+id+'))) group by schoolid order by num desc');
+        const schoolds = await this.query('select schoolId,schoolName from culture_school where parentid='+id+'');
         const topActive = [];
-
-        for(let i=0;i<names.length;i++){
+        for(const s of schoolds){
+            const nums = await this.query("select count(DISTINCT studentid,sceneryid,activityid) num from culture_attention_activity where activityid in (select activityID from culture_activity where  needSchoolRang like '%"+s.schoolId+"%')");
             topActive.push({
-                name:names[i].schoolName,
-                num:activitys[i].num
+                            name:s.schoolName,
+                            num:nums[0].num
             })
         }
-        return topActive;
+        const jtopActive = [];
+        for(const s of schoolds){
+            const nums = await this.query("select count(sceneryid) num  from culture_student_scenery where sceneryid in  (select sceneryid from culture_activity_scenery where activityid in (select activityID from culture_activity where  needSchoolRang like '%"+s.schoolId+"%'))");
+            jtopActive.push({
+                            name:s.schoolName,
+                            num:nums[0].num
+            })
+        }
+
+        _.each(topActive,(active)=>{
+            const a = _.find(jtopActive,(ja)=>{
+                return ja.name == active.name
+            });
+            if(a){
+                active.num = active.num+a.num;
+            }
+        });
+
+        _.each(jtopActive,(active)=>{
+            const a = _.find(topActive,(ja)=>{
+                return ja.name == active.name
+            });
+            if(!a){
+                topActive.push({
+                    name:active.name,
+                    num:active.num
+                })
+            }
+        });
+
+        var compare = function(obj1,obj2){
+                var val1 = obj1.num;
+                var val2 = obj2.num;
+                if(val1 < val2){
+                   return 1;
+                }else if(val1 > val2){
+                   return -1;
+                }else{
+                   return 0;
+                }
+            }
+        var sortArr = topActive.sort(compare);
+      
+        if(sortArr.length>5){
+            return sortArr.slice(4);
+        }else{
+            return sortArr
+        }
     }
 
     async getTourist(id) {

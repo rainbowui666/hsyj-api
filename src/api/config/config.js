@@ -7,6 +7,8 @@ module.exports = {
     publicAction: [
         'index',
         'user/save',
-        "count/getHotMapData"
+        "count/getHotMapData",
+        "count/getTopScenery",
+        "count/getTopGroup"
     ]
 }
