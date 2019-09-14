@@ -63,17 +63,11 @@ module.exports = class extends Base {
     }
 
     async getUnsignCountExceptEndSceneryAction() {
-        //const id = this.get('sceneryid');
-        //const studentid = this.get('studentid');
         const activityid = this.get('activityid');
         const groupid = this.get('groupid');
-
         const model = this.model('scenery');
-        const count = await model.query("select count(*) from culture_activity_scenery cas left join culture_activity a on cas.activityid=a.activityid left join culture_group g on g.activityid=cas.activityid left join culture_attention_activity aa on aa.studentid=g.studentid and aa.activityid=g.activityid and aa.sceneryid=cas.sceneryid  where aa.activityid="+activityid+" and g.groupid="+groupid+" and cas.sceneryid<>a.endSceneryid and a.endSceneryid!=null and aa.createdate is null");
-        //if (!think.isEmpty(data)) {
-            data.count = count;
-        //}
-        return this.success(data);
+        const count = await model.query("select count(*) unsigncount from culture_activity_scenery cas left join culture_activity a on cas.activityid=a.activityid left join culture_group g on g.activityid=cas.activityid left join culture_attention_activity aa on aa.studentid=g.studentid and aa.activityid=g.activityid and aa.sceneryid=cas.sceneryid  where a.activityid="+activityid+" and g.groupid="+groupid+" and cas.sceneryid<>a.endSceneryid and a.endSceneryid is not null and aa.createdate is null");
+        return this.success(count);
     }
 
     async detailAction() {
