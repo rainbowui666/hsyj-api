@@ -44,38 +44,67 @@ module.exports = class extends Base {
         // this.trunString(scenerys);
         return this.json(scenerys)
     }
+    async getGroupMapDataAction() {
+        const activityid = this.get('id');
+        const studentId = this.get('studentId');
+        // const groupId = this.get('groupId');
+        const groupStudent = await this.model('student_group').where({studentid:studentId,activityid:activityid}).find();
+        const scenerys = await this.model('activity_scenery').where({activityid}).order('sceneryid').select();
+        const scenery = await this.model('scenery').where({sceneryID:scenerys[0].sceneryid}).find();
+        if(think.isEmpty(groupStudent)){
+            return this.json({center:scenery});
+        }else{
+            const ower = await this.model('group').where({groupid:groupStudent.groupid}).find();
+            const returnList = await this.getGroupScenery(activityid,ower.studentid);
+            return this.json({center:scenery,data:returnList,group:ower});
+        }
+        
+    }
+
+    async clickGroupMapDataAction() {
+        const activityid = this.get('id');
+        const groupId = this.get('groupId');
+        const ower = await this.model('group').where({groupid:groupId}).find();
+        const returnList = await this.getGroupScenery(activityid,ower.studentid);
+        return this.json({data:returnList,group:ower});
+    }
+
+    async getGroupScenery(activityid,studentid){
+        const list = await this.model('attention_activity').where({activityid,studentid}).order('createdate').select();
+        const returnList = [];
+        for(const item of list){
+            const scenery = await this.model('scenery').where({sceneryID:item.sceneryid}).find();
+            scenery.sigin = item;
+            returnList.push(scenery)
+        }
+        return returnList;
+    }
 
     async getTopGroupAction() {
         const id = this.get('id');
         const groups =  await this.model('group').where({activityid:id}).select()||[];
         const returnGroup = [];
         for(const group of groups){
-            const students =  await this.model('student_group').where({groupid:group.groupid}).select()||[];
             let times = 0;
             let nums = 0;
-            let owerNum = 0;
-            for(const student of students){
-                const sums =  await this.model('scenery').getTopGroupStudent(student.studentid,id);
-                times += sums[0]?sums[0].time:0;
-                nums += sums[0]?sums[0].num:0;
-                if(group.studentid===student.studentid){
-                    owerNum = sums[0]?sums[0].num:0;
-                }
-            }
+            const sums =  await this.model('scenery').getTopGroupStudent(group.studentid,id);
+            times = sums[0].time
+            nums = sums[0].num
             const scs =  await this.model('activity_scenery').where({activityid:id}).select()||[];
             returnGroup.push({
+                id:group.groupid,
                 name:group.groupName,
                 times,
                 num:nums,
-                isDone:owerNum>=scs.length
+                isDone:scs.length-nums
             })
         }
 
         var compare = function(obj1,obj2){
-                var val1 = obj1.times;
-                var val2 = obj2.times;
-                var val3 = obj1.nums;
-                var val4 = obj2.nums;
+                var val1 = obj1.nums;
+                var val2 = obj2.nums;
+                var val3 = obj1.times;
+                var val4 = obj2.times;
                 if(val1 < val2){
                    return 1;
                 }else if(val1 > val2){

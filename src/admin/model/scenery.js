@@ -66,7 +66,7 @@ module.exports = class extends think.Model {
             const a = _.find(topActive,(ja)=>{
                 return ja.name == active.name
             });
-            if(!a){
+            if(!a&&active.num>0){
                 topActive.push({
                     name:active.name,
                     num:active.num
@@ -127,7 +127,7 @@ module.exports = class extends think.Model {
             const a = _.find(topActive,(ja)=>{
                 return ja.name == active.name
             });
-            if(!a){
+            if(!a&&active.num>0){
                 topActive.push({
                     name:active.name,
                     num:active.num
@@ -155,19 +155,21 @@ module.exports = class extends think.Model {
     }
 
     async getTopSignScenery() {
-        const schoolds = await this.query('select schoolId,schoolName from culture_school where parentid>0');
+        const schoolds = await this.query('select schoolId,schoolName from culture_school where parentid=0');
         const topActive = [];
         for(const s of schoolds){
-            const nums = await this.query("select count(DISTINCT studentid,sceneryid,activityid) num from culture_attention_activity where activityid in (select activityID from culture_activity where  needSchoolRang like '%"+s.schoolId+"%')");
-            topActive.push({
-                            name:s.schoolName,
-                            num:nums[0].num
-            })
+            const nums = await this.query("select count(DISTINCT studentid,sceneryid,activityid) num from culture_attention_activity where activityid in (select activityID from culture_activity where  createbyschoolid="+s.schoolId+")");
+            if(nums[0].num>0){
+                topActive.push({
+                                name:s.schoolName,
+                                num:nums[0].num
+                })
+            }
         }
 
         const jtopActive = [];
         for(const s of schoolds){
-            const nums = await this.query("select count(DISTINCT studentid,sceneryid) num  from culture_student_scenery where sceneryid in  (select sceneryid from culture_activity_scenery where activityid in (select activityID from culture_activity where  needSchoolRang like '%"+s.schoolId+"%'))");
+            const nums = await this.query("select count(DISTINCT studentid,sceneryid) num  from culture_student_scenery where sceneryid in  (select sceneryid from culture_activity_scenery where activityid in (select activityID from culture_activity where  createbyschoolid="+s.schoolId+"))");
             jtopActive.push({
                             name:s.schoolName,
                             num:nums[0].num
@@ -187,7 +189,7 @@ module.exports = class extends think.Model {
             const a = _.find(topActive,(ja)=>{
                 return ja.name == active.name
             });
-            if(!a){
+            if(!a&&active.num>0){
                 topActive.push({
                     name:active.name,
                     num:active.num
@@ -216,18 +218,21 @@ module.exports = class extends think.Model {
         }
     }
     async getTopManagerSignScenery(id) {
-        const schoolds = await this.query('select schoolId,schoolName from culture_school where parentid='+id+'');
+        const schoolds = await this.query('select schoolId,schoolName from culture_school where schoolId='+id+'');
         const topActive = [];
         for(const s of schoolds){
-            const nums = await this.query("select count(DISTINCT studentid,sceneryid,activityid) num from culture_attention_activity where activityid in (select activityID from culture_activity where  needSchoolRang like '%"+s.schoolId+"%')");
-            topActive.push({
-                            name:s.schoolName,
-                            num:nums[0].num
-            })
+            const nums = await this.query("select count(DISTINCT studentid,sceneryid,activityid) num from culture_attention_activity where activityid in (select activityID from culture_activity where  createbyschoolid="+s.schoolId+")");
+            if(nums[0].num>0){
+                topActive.push({
+                    name:s.schoolName,
+                    num:nums[0].num
+                })
+            }
+            
         }
         const jtopActive = [];
         for(const s of schoolds){
-            const nums = await this.query("select count(sceneryid) num  from culture_student_scenery where sceneryid in  (select sceneryid from culture_activity_scenery where activityid in (select activityID from culture_activity where  needSchoolRang like '%"+s.schoolId+"%'))");
+            const nums = await this.query("select count(sceneryid) num  from culture_student_scenery where sceneryid in  (select sceneryid from culture_activity_scenery where activityid in (select activityID from culture_activity where  createbyschoolid="+s.schoolId+"))");
             jtopActive.push({
                             name:s.schoolName,
                             num:nums[0].num
@@ -247,7 +252,7 @@ module.exports = class extends think.Model {
             const a = _.find(topActive,(ja)=>{
                 return ja.name == active.name
             });
-            if(!a){
+            if(!a&&active.num>0){
                 topActive.push({
                     name:active.name,
                     num:active.num
