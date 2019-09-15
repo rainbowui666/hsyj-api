@@ -218,7 +218,7 @@ module.exports = class extends think.Model {
         }
     }
     async getTopManagerSignScenery(id) {
-        const schoolds = await this.query('select schoolId,schoolName from culture_school where id='+id+'');
+        const schoolds = await this.query('select schoolId,schoolName from culture_school where schoolId='+id+'');
         const topActive = [];
         for(const s of schoolds){
             const nums = await this.query("select count(DISTINCT studentid,sceneryid,activityid) num from culture_attention_activity where activityid in (select activityID from culture_activity where  createbyschoolid="+s.schoolId+")");
