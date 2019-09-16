@@ -145,7 +145,10 @@ module.exports = class extends Base {
                 data.hasjoin = '已报名' 
             }
 
-            let groupData = await this.model('group').where({activityid:data.activityID, studentid: studentid}).select();
+            let groupId = await this.model('student_group').field('studentid').where({activityid: id,studentid: studentid}).getField('groupid');
+            let groupData = null;
+            if (!think.isEmpty(groupId)) groupData = await this.model('group').where({groupid:groupId}).select();
+            else groupData = await this.model('group').where({activityid:data.activityID, studentid: studentid}).select();
             data.group = groupData;
 
             // 团队人数是否到达活动要求人数
