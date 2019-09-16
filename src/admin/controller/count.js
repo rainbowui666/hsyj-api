@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 module.exports = class extends Base {
     async numbListAction() {
-       const tourist = await this.model('student').count('1');
+       const tourist = await this.model('scenery').getAdminTourist();
        const students = await this.model('student').where({'stuNo':['!=',null]}).count('1');
        const discuss = await this.model('discuss').count('1');
        const activity = await this.model('activity').count('1');
