@@ -39,10 +39,12 @@ module.exports = class extends Base {
         pagesize = parseInt(pagesize)
         const start = (pageindex -1) * pagesize;
         let data,counta;
+        // console.log('this.ctx.state.userId=' + this.ctx.state.userId);
+        // console.dir(this.ctx.state);
         // data = await model.query("select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" and "+typecondi+" order by d.discussID desc limit "+start+","+pagesize+" ");
         // counta = await model.query("select count(*) t from (select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" and "+typecondi+") t ");
-        data = await model.query("select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" order by d.discussID desc limit "+start+","+pagesize+" ");
-        counta = await model.query("select count(*) t from (select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+") t ");
+        data = await model.query("select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" and d.targetid in (select cs.sceneryID from culture_scenery cs where cs.schoolid in (select sch.schoolID from culture_school sch where sch.parentid=(select u.schoolid from culture_user u where u.sysUserID="+this.ctx.state.userId+"))) order by d.discussID desc limit "+start+","+pagesize+" ");
+        counta = await model.query("select count(*) t from (select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID and d.targetid in (select cs.sceneryID from culture_scenery cs where cs.schoolid in (select sch.schoolID from culture_school sch where sch.parentid=(select u.schoolid from culture_user u where u.sysUserID="+this.ctx.state.userId+"))) where d.distype="+distype+") t ");
 
         if (!think.isEmpty(data) && data.length > 0) {
             for (let i = 0; i < data.length; i++) {
