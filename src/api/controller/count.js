@@ -88,7 +88,10 @@ module.exports = class extends Base {
             let times = 0;
             let nums = 0;
             const sums =  await this.model('scenery').getTopGroupStudent(group.studentid,id);
-            times = sums[0].time
+            times = sums[0].time||"00:00:00"
+            if(times.indexOf('NaN')>=0){
+                times = "00:00:00"
+            }
             nums = sums[0].num
             const scs =  await this.model('activity_scenery').where({activityid:id}).select()||[];
             returnGroup.push({

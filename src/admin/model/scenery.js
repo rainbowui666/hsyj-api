@@ -232,7 +232,7 @@ module.exports = class extends think.Model {
         }
         const jtopActive = [];
         for(const s of schoolds){
-            const nums = await this.query("select count(sceneryid) num  from culture_student_scenery where sceneryid in  (select sceneryid from culture_activity_scenery where activityid in (select activityID from culture_activity where  createbyschoolid="+s.schoolId+"))");
+            const nums = await this.query("select count(DISTINCT studentid,sceneryid) num  from culture_student_scenery where sceneryid in  (select sceneryid from culture_activity_scenery where activityid in (select activityID from culture_activity where  createbyschoolid="+s.schoolId+"))");
             jtopActive.push({
                             name:s.schoolName,
                             num:nums[0].num
