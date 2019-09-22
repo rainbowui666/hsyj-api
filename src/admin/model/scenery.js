@@ -280,8 +280,11 @@ module.exports = class extends think.Model {
         }
     }
     async getAdminTourist() {
-        const num1s = await this.query('select distinct studentid   from culture_discuss');
-        const num2s = await this.query('select distinct studentid   from culture_student_scenery');
+        // const num1s = await this.query('select distinct studentid   from culture_discuss');
+        // const num2s = await this.query('select distinct studentid   from culture_student_scenery');
+
+        const num1s = await this.query('select distinct studentID from culture_student');
+        const num2s = null;
 
         const set = new Set();
         if(num1s&&num1s.length>0){
