@@ -17,6 +17,7 @@ module.exports = class extends Base {
 
         return this.success(data)
     }
+
     async frontListAction() {
         const page = this.get('pageindex') || 1;
         const size = this.get('pagesize') || 10;
@@ -149,7 +150,13 @@ module.exports = class extends Base {
             let groupData = null;
             if (!think.isEmpty(groupId)) groupData = await this.model('group').where({groupid:groupId}).select();
             else groupData = await this.model('group').where({activityid:data.activityID, studentid: studentid}).select();
+            // console.log(this.uncodeUtf16(groupData[0].groupName))
+            if (groupData && groupData.length > 0 && groupData[0].groupName) {
+                let moje = this.uncodeUtf16(groupData[0].groupName);
+                groupData[0].groupName = moje;
+            }
             data.group = groupData;
+            // console.log(data.group)
 
             // 团队人数是否到达活动要求人数
             if (!think.isEmpty(groupData)) {
