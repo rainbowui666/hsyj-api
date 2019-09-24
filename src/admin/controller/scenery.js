@@ -82,7 +82,7 @@ module.exports = class extends Base {
     async addEditAction() {
         const sceneryTitle = this.post('scenerytitle');
         const schoolid = this.post('schoolid');
-        const address = this.post('address') || '';
+        const address = this.post('address');
         const shdesc= this.post('shdesc');
         const longitude = this.post('longitude');
         const latitude = this.post('latitude');
@@ -102,7 +102,7 @@ module.exports = class extends Base {
             soundurl,
             videourl,
             isrecommend,distance
-        }; 
+        };
         await this.getdatabyname('home_discuss');
         if (think.isEmpty(id)) {
             let model = this.model('scenery');

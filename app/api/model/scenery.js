@@ -86,5 +86,32 @@ module.exports = class extends think.Model {
             };
         })();
     }
+
+    getTopScenery(id) {
+        var _this5 = this;
+
+        return _asyncToGenerator(function* () {
+            const activitys = yield _this5.query('select sceneryid,count(sceneryid) num  from culture_attention_activity where activityid=' + id + ' GROUP BY sceneryid  order by num desc limit 5');
+            const topActive = [];
+
+            for (const activity of activitys) {
+                const name = yield _this5.model('scenery').where({ sceneryID: activity.sceneryid }).find();
+                topActive.push({
+                    name: name.sceneryTitle,
+                    num: activity.num
+                });
+            }
+            return topActive;
+        })();
+    }
+
+    getTopGroupStudent(stuid, id) {
+        var _this6 = this;
+
+        return _asyncToGenerator(function* () {
+            const nums = yield _this6.query('select count(DISTINCT sceneryid) num,timediff(max(createdate),min(createdate)) time  from culture_attention_activity where studentid=' + stuid + ' and activityid=' + id + '');
+            return nums;
+        })();
+    }
 };
 //# sourceMappingURL=scenery.js.map
