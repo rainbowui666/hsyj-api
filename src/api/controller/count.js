@@ -104,19 +104,19 @@ module.exports = class extends Base {
         }
 
         var compare = function(obj1,obj2){
-                var val1 = obj1.nums;
-                var val2 = obj2.nums;
-                var val3 = obj1.times;
-                var val4 = obj2.times;
+                var val1 = obj1.num;
+                var val2 = obj2.num;
+                var val3 = obj1.times.split(':')[1];
+                var val4 = obj2.times.split(':')[1];
                 if(val1 < val2){
                    return 1;
                 }else if(val1 > val2){
                    return -1;
                 }else{
                    if(val3 < val4){
-                           return 1;
-                    }else if(val3 > val4){
                            return -1;
+                    }else if(val3 > val4){
+                           return 1;
                     }else{
                            return 0;
                     }
