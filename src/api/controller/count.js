@@ -88,19 +88,22 @@ module.exports = class extends Base {
             let times = 0;
             let nums = 0;
             const sums =  await this.model('scenery').getTopGroupStudent(group.studentid,id);
-            times = sums[0].time||"00:00:00"
-            if(times.indexOf('NaN')>=0){
-                times = "00:00:00"
+            nums = sums[0].num;
+            if(nums>0){
+                times = sums[0].time||"00:00:00"
+                if(times.indexOf('NaN')>=0){
+                    times = "00:00:00"
+                }
+                const scs =  await this.model('activity_scenery').where({activityid:id}).select()||[];
+                returnGroup.push({
+                    id:group.groupid,
+                    name:group.groupName,
+                    times,
+                    num:nums,
+                    isDone:scs.length-nums
+                })
             }
-            nums = sums[0].num
-            const scs =  await this.model('activity_scenery').where({activityid:id}).select()||[];
-            returnGroup.push({
-                id:group.groupid,
-                name:group.groupName,
-                times,
-                num:nums,
-                isDone:scs.length-nums
-            })
+           
         }
 
         var compare = function(obj1,obj2){
