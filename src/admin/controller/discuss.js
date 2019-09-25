@@ -38,23 +38,46 @@ module.exports = class extends Base {
         pageindex = parseInt(pageindex);
         pagesize = parseInt(pagesize)
         const start = (pageindex -1) * pagesize;
-        let data,counta;
+        let data = [],counta = [];
+
+        let createuserData = null;
+        if (distype == 0) {
+            createuserData = await model.query('select createbyuserid from culture_school where schoolID in (select cs.schoolid from culture_discuss d inner join culture_scenery cs on d.targetid=cs.sceneryID where d.distype=0) ');
+        } else {
+            createuserData = await model.query('select createbyuserid from culture_school where schoolID in (select ca.createbyschoolid from culture_discuss d inner join culture_activity ca on d.targetid=ca.activityID where d.distype=1)');
+        }
+        // let curruser = await this.model('user').field('schoolid').where({sysUserID:this.ctx.state.userId}).getField('schoolid');
+
+        let arr = [];
+        let allcreateids =''
+        if (createuserData && createuserData.length > 0) {
+            for (let i = 0; i < createuserData.length; i++) {
+                arr.push(createuserData[i].createbyuserid);
+            }
+        }
+        if (arr.length > 0) {
+            allcreateids = arr.join(',');
+        }
+        console.log('curruser---', allcreateids, this.ctx.state.userId)
+
         // console.log('this.ctx.state.userId=' + this.ctx.state.userId);
         // console.dir(this.ctx.state);
         // data = await model.query("select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" and "+typecondi+" order by d.discussID desc limit "+start+","+pagesize+" ");
         // counta = await model.query("select count(*) t from (select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" and "+typecondi+") t ");
-        data = await model.query("select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" and d.targetid in (select cs.sceneryID from culture_scenery cs where cs.schoolid in (select sch.schoolID from culture_school sch where sch.parentid=(select u.schoolid from culture_user u where u.sysUserID="+this.ctx.state.userId+"))) order by d.discussID desc limit "+start+","+pagesize+" ");
-        counta = await model.query("select count(*) t from (select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID and d.targetid in (select cs.sceneryID from culture_scenery cs where cs.schoolid in (select sch.schoolID from culture_school sch where sch.parentid=(select u.schoolid from culture_user u where u.sysUserID="+this.ctx.state.userId+"))) where d.distype="+distype+") t ");
-
+        if (createuserData && createuserData.length>0 && allcreateids.indexOf(this.ctx.state.userId) != -1) {
+            data = await model.query("select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" and d.targetid in (select cs.sceneryID from culture_scenery cs where cs.schoolid in (select sch.schoolID from culture_school sch where sch.parentid=(select u.schoolid from culture_user u where u.sysUserID="+this.ctx.state.userId+"))) order by d.discussID desc limit "+start+","+pagesize+" ");
+            counta = await model.query("select count(*) t from (select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID and d.targetid in (select cs.sceneryID from culture_scenery cs where cs.schoolid in (select sch.schoolID from culture_school sch where sch.parentid=(select u.schoolid from culture_user u where u.sysUserID="+this.ctx.state.userId+"))) where d.distype="+distype+") t ");
+        }
         if (!think.isEmpty(data) && data.length > 0) {
             for (let i = 0; i < data.length; i++) {
                 data[i].content = this.uncodeUtf16(data[i].content);
             }
         }
-        const waitApprove = await model.field('discussID').where({distype: distype, shstate: 0}).getField('discussID');
+        // const waitApprove = await model.field('discussID').where({distype: distype, shstate: 0}).getField('discussID');
+        let waitApprove = await model.query("select d.*,s.studentName,s.stuNo from culture_discuss d inner join culture_student s on d.studentid=s.studentID where d.distype="+distype+" and d.targetid in (select cs.sceneryID from culture_scenery cs where cs.schoolid in (select sch.schoolID from culture_school sch where sch.parentid=(select u.schoolid from culture_user u where u.sysUserID="+this.ctx.state.userId+"))) and d.shstate=0 order by d.discussID desc");
       
-        const pagecount = Math.ceil(counta[0].t / pagesize); //(counta[0].t + parseInt(pagesize - 1)) / pagesize;
-        return this.success({count:counta[0].t,totalPages:pagecount,currentPage:pageindex,pageSize:pagesize,data, waitApprove:waitApprove.length});
+        const pagecount = counta && counta.length > 0 ? Math.ceil(counta[0].t / pagesize):0; //(counta[0].t + parseInt(pagesize - 1)) / pagesize;
+        return this.success({count:counta && counta.length > 0 ?counta[0].t: 0,totalPages:pagecount,currentPage:pageindex,pageSize:pagesize,data, waitApprove:waitApprove.length});
     }
 
     async getdatabyname(name) {
