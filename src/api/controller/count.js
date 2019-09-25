@@ -90,10 +90,22 @@ module.exports = class extends Base {
             const sums =  await this.model('scenery').getTopGroupStudent(group.studentid,id);
             nums = sums[0].num;
             if(nums>0){
-                times = sums[0].time||"00:00:00"
-                if(times.indexOf('NaN')>=0){
+                if(sums[0].time){
+                    const usedTime = new Date().getTime()-new Date(sums[0].time).getTime();
+                    // var days=Math.floor(usedTime/(24*3600*1000));
+                    // //计算出小时数
+                    var leave1=usedTime%(24*3600*1000);    //计算天数后剩余的毫秒数
+                    var hours=Math.floor(leave1/(3600*1000));
+                    //计算相差分钟数
+                    var leave2=leave1%(3600*1000);        //计算小时数后剩余的毫秒数
+                    var minutes=Math.floor(leave2/(60*1000));
+
+                    var leave3=leave1%(60*1000);        //计算小时数后剩余的毫秒数
+                    var second =Math.floor(leave3/(60*1000));
+                    times = (hours>9?hours:'0'+hours)+':'+(minutes>9?minutes:'0'+minutes)+':'+(second>9?second:'0'+second)
+                }else{
                     times = "00:00:00"
-                }
+                } 
                 const scs =  await this.model('activity_scenery').where({activityid:id}).select()||[];
                 returnGroup.push({
                     id:group.groupid,

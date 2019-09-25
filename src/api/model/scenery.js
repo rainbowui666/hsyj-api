@@ -84,7 +84,7 @@ module.exports = class extends think.Model {
     }
 
     async getTopGroupStudent(stuid,id) {
-        const nums = await this.query('select count(DISTINCT sceneryid) num,timediff(max(createdate),min(createdate)) time  from culture_attention_activity where studentid='+stuid+' and activityid='+id+'');
+        const nums = await this.query('select count(DISTINCT sceneryid) num, min(createdate) time  from culture_attention_activity where studentid='+stuid+' and activityid='+id+'');
         return nums;
     }
 }
