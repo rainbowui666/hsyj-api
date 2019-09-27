@@ -109,7 +109,7 @@ module.exports = class extends think.Model {
         var _this6 = this;
 
         return _asyncToGenerator(function* () {
-            const nums = yield _this6.query('select count(DISTINCT sceneryid) num,timediff(max(createdate),min(createdate)) time  from culture_attention_activity where studentid=' + stuid + ' and activityid=' + id + '');
+            const nums = yield _this6.query('select count(DISTINCT sceneryid) num, min(createdate) time  from culture_attention_activity where studentid=' + stuid + ' and activityid=' + id + '');
             return nums;
         })();
     }

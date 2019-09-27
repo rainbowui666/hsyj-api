@@ -17,6 +17,7 @@ module.exports = class extends Base {
 
         return this.success(data)
     }
+
     async frontListAction() {
         const page = this.get('pageindex') || 1;
         const size = this.get('pagesize') || 10;
@@ -111,9 +112,10 @@ module.exports = class extends Base {
                 } else if (start < nowd && nowd < end) {
                     data.hasjoin = '进行中';
                 } else if(joindate && joindate.isAttentention) {
-                    data.hasjoin = '已报名' 
+                    data.hasjoin = '已报名';
                 }
                 
+                if(think.isEmpty(data.hasjoin) && nowd > end) data.hasjoin = '已结束';
             }
         }
         return this.success(data);
@@ -144,12 +146,18 @@ module.exports = class extends Base {
             } else if(joindate && joindate.isAttentention) {
                 data.hasjoin = '已报名' 
             }
-
+            if(think.isEmpty(data.hasjoin) && nowd > end) data.hasjoin = '已结束';
             let groupId = await this.model('student_group').field('studentid').where({activityid: id,studentid: studentid}).getField('groupid');
             let groupData = null;
             if (!think.isEmpty(groupId)) groupData = await this.model('group').where({groupid:groupId}).select();
             else groupData = await this.model('group').where({activityid:data.activityID, studentid: studentid}).select();
+            // console.log(this.uncodeUtf16(groupData[0].groupName))
+            if (groupData && groupData.length > 0 && groupData[0].groupName) {
+                let moje = this.uncodeUtf16(groupData[0].groupName);
+                groupData[0].groupName = moje;
+            }
             data.group = groupData;
+            // console.log(data.group)
 
             // 团队人数是否到达活动要求人数
             if (!think.isEmpty(groupData)) {

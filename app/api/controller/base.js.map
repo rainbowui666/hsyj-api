@@ -23,11 +23,29 @@
         "parseInt",
         "Date",
         "now",
-        "getLoginUserId"
+        "getLoginUserId",
+        "uncodeUtf16",
+        "str",
+        "reg",
+        "result",
+        "replace",
+        "char",
+        "H",
+        "L",
+        "code",
+        "length",
+        "match",
+        "Math",
+        "floor",
+        "unescape",
+        "toString",
+        "utf16toEntities",
+        "patt",
+        "charCodeAt"
     ],
-    "mappings": ";;AAAAA,OAAOC,OAAP,GAAiB,cAAcC,MAAMC,UAApB,CAA+B;AACxCC,UAAN,GAAiB;AAAA;;AAAA;AACf;AACA,YAAKC,GAAL,CAASC,KAAT,CAAeC,KAAf,GAAuB,MAAKF,GAAL,CAASG,MAAT,CAAgB,WAAhB,KAAgC,EAAvD;AACAC,cAAQC,GAAR,CAAY,WAAZ,EAAyB,MAAKL,GAAL,CAASC,KAAT,CAAeC,KAAxC;AACA,YAAMI,eAAeT,MAAMU,OAAN,CAAc,OAAd,EAAuB,KAAvB,CAArB;AACA,YAAKP,GAAL,CAASC,KAAT,CAAeO,MAAf,GAAwB,MAAMF,aAAaG,SAAb,CAAuB,MAAKT,GAAL,CAASC,KAAT,CAAeC,KAAtC,CAA9B;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACE;AACA;AACA;AACF;AAhBe;AAiBhB;;AAED;;;;AAIAQ,YAAU;AACR,WAAOC,SAASC,KAAKC,GAAL,KAAa,IAAtB,CAAP;AACD;;AAED;;;;AAIAC,mBAAiB;AACf,WAAO,KAAKd,GAAL,CAASC,KAAhB;AACD;AAlC6C,CAAhD",
+    "mappings": ";;AAAAA,OAAOC,OAAP,GAAiB,cAAcC,MAAMC,UAApB,CAA+B;AACxCC,YAAN,GAAiB;AAAA;;AAAA;AACf;AACA,kBAAKC,GAAL,CAASC,KAAT,CAAeC,KAAf,GAAuB,MAAKF,GAAL,CAASG,MAAT,CAAgB,WAAhB,KAAgC,EAAvD;AACAC,oBAAQC,GAAR,CAAY,WAAZ,EAAyB,MAAKL,GAAL,CAASC,KAAT,CAAeC,KAAxC;AACA,kBAAMI,eAAeT,MAAMU,OAAN,CAAc,OAAd,EAAuB,KAAvB,CAArB;AACA,kBAAKP,GAAL,CAASC,KAAT,CAAeO,MAAf,GAAwB,MAAMF,aAAaG,SAAb,CAAuB,MAAKT,GAAL,CAASC,KAAT,CAAeC,KAAtC,CAA9B;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACE;AACA;AACA;AACF;AAhBe;AAiBhB;;AAED;;;;AAIAQ,cAAU;AACR,eAAOC,SAASC,KAAKC,GAAL,KAAa,IAAtB,CAAP;AACD;;AAED;;;;AAIAC,qBAAiB;AACf,eAAO,KAAKd,GAAL,CAASC,KAAhB;AACD;;AAEDc,gBAAYC,GAAZ,EAAgB;AACd,YAAIC,MAAM,UAAV;AACA,YAAIC,SAASF,IAAIG,OAAJ,CAAYF,GAAZ,EAAgB,UAASG,IAAT,EAAc;AACvC,gBAAIC,CAAJ,EAAMC,CAAN,EAAQC,IAAR;AACA,gBAAGH,KAAKI,MAAL,IAAe,CAAlB,EAAqB;AACjBD,uBAAOZ,SAASS,KAAKK,KAAL,CAAW,SAAX,CAAT,CAAP;AACAJ,oBAAIK,KAAKC,KAAL,CAAW,CAACJ,OAAK,OAAN,IAAiB,KAA5B,IAAmC,MAAvC;AACAD,oBAAI,CAACC,OAAO,OAAR,IAAmB,KAAnB,GAA2B,MAA/B;AACA,uBAAOK,SAAS,OAAKP,EAAEQ,QAAF,CAAW,EAAX,CAAL,GAAoB,IAApB,GAAyBP,EAAEO,QAAF,CAAW,EAAX,CAAlC,CAAP;AACH,aALD,MAKK;AACD,uBAAOT,IAAP;AACH;AACJ,SAVY,CAAb;AAWA,eAAOF,MAAP;AACF;;AAEFY,oBAAgBd,GAAhB,EAAqB;AACjB,YAAIe,OAAK,iCAAT;AACA;AACAf,cAAMA,IAAIG,OAAJ,CAAYY,IAAZ,EAAkB,UAASX,IAAT,EAAc;AAClC,gBAAIC,CAAJ,EAAOC,CAAP,EAAUC,IAAV;AACA,gBAAIH,KAAKI,MAAL,KAAc,CAAlB,EAAqB;AACjBH,oBAAID,KAAKY,UAAL,CAAgB,CAAhB,CAAJ;AACA;AACAV,oBAAIF,KAAKY,UAAL,CAAgB,CAAhB,CAAJ;AACA;AACAT,uBAAO,CAACF,IAAI,MAAL,IAAe,KAAf,GAAuB,OAAvB,GAAiCC,CAAjC,GAAqC,MAA5C;AACA;AACA,uBAAO,OAAOC,IAAP,GAAc,GAArB;AACH,aARD,MAQO;AACH,uBAAOH,IAAP;AACH;AACJ,SAbK,CAAN;AAcA,eAAOJ,GAAP;AACH;AAtE+C,CAAhD",
     "file": "../../../src/api/controller/base.js",
     "sourcesContent": [
-        "module.exports = class extends think.Controller {\n  async __before() {\n    // 根据token值获取用户id\n    this.ctx.state.token = this.ctx.header['sms-token'] || '';\n    console.log('api.token', this.ctx.state.token)\n    const tokenSerivce = think.service('token', 'api');\n    this.ctx.state.userId = await tokenSerivce.getUserId(this.ctx.state.token);\n    // this.ctx.state.userinfo = await tokenSerivce.getUser(this.ctx.state.token);\n    // console.log('userid------', this.ctx.state.userId, this.ctx.state.userinfo)\n    // const publicController = this.config('publicController');\n    // const publicAction = this.config('publicAction');\n    // 如果为非公开，则验证用户是否登录\n    // const controllerAction = this.ctx.controller + '/' + this.ctx.action;\n    // if (!publicController.includes(this.ctx.controller) && !publicAction.includes(controllerAction)) {\n      // if (this.ctx.state.userId <= 0) {\n      //   return this.fail(401, '请先登录');\n      // }\n    // }\n  }\n\n  /**\n   * 获取时间戳\n   * @returns {Number}\n   */\n  getTime() {\n    return parseInt(Date.now() / 1000);\n  }\n\n  /**\n   * 获取当前登录用户的id\n   * @returns {*}\n   */\n  getLoginUserId() {\n    return this.ctx.state;\n  }\n};\n"
+        "module.exports = class extends think.Controller {\n  async __before() {\n    // 根据token值获取用户id\n    this.ctx.state.token = this.ctx.header['sms-token'] || '';\n    console.log('api.token', this.ctx.state.token)\n    const tokenSerivce = think.service('token', 'api');\n    this.ctx.state.userId = await tokenSerivce.getUserId(this.ctx.state.token);\n    // this.ctx.state.userinfo = await tokenSerivce.getUser(this.ctx.state.token);\n    // console.log('userid------', this.ctx.state.userId, this.ctx.state.userinfo)\n    // const publicController = this.config('publicController');\n    // const publicAction = this.config('publicAction');\n    // 如果为非公开，则验证用户是否登录\n    // const controllerAction = this.ctx.controller + '/' + this.ctx.action;\n    // if (!publicController.includes(this.ctx.controller) && !publicAction.includes(controllerAction)) {\n      // if (this.ctx.state.userId <= 0) {\n      //   return this.fail(401, '请先登录');\n      // }\n    // }\n  }\n\n  /**\n   * 获取时间戳\n   * @returns {Number}\n   */\n  getTime() {\n    return parseInt(Date.now() / 1000);\n  }\n\n  /**\n   * 获取当前登录用户的id\n   * @returns {*}\n   */\n  getLoginUserId() {\n    return this.ctx.state;\n  }\n\n  uncodeUtf16(str){\n    var reg = /\\&#.*?;/g;\n    var result = str.replace(reg,function(char){\n        var H,L,code;\n        if(char.length == 9 ){\n            code = parseInt(char.match(/[0-9]+/g));\n            H = Math.floor((code-0x10000) / 0x400)+0xD800;\n            L = (code - 0x10000) % 0x400 + 0xDC00;\n            return unescape(\"%u\"+H.toString(16)+\"%u\"+L.toString(16));\n        }else{\n            return char;\n        }\n    });\n    return result;\n }\n\nutf16toEntities(str) {\n    var patt=/[\\ud800-\\udbff][\\udc00-\\udfff]/g;\n    // 检测utf16字符正则\n    str = str.replace(patt, function(char){\n        var H, L, code;\n        if (char.length===2) {\n            H = char.charCodeAt(0);\n            // 取出高位\n            L = char.charCodeAt(1);\n            // 取出低位\n            code = (H - 0xD800) * 0x400 + 0x10000 + L - 0xDC00;\n            // 转换算法\n            return \"&#\" + code + \";\";\n        } else {\n            return char;\n        }\n    });\n    return str;\n}\n};\n"
     ]
 }
