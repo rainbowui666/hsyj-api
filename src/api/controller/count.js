@@ -86,12 +86,16 @@ module.exports = class extends Base {
         const returnGroup = [];
         for(const group of groups){
             let times = 0;
+            let fens = 0;
             let nums = 0;
             const sums =  await this.model('scenery').getTopGroupStudent(group.studentid,id);
             nums = sums[0].num;
             if(nums>0){
+                const scs =  await this.model('activity_scenery').where({activityid:id}).select()||[];
+                const isFinish = scs.length-nums;
                 if(sums[0].time){
-                    const usedTime = new Date().getTime()-new Date(sums[0].time).getTime();
+                    const finishTime = isFinish>0?new Date().getTime():new Date(sums[0].mtime).getTime()
+                    const usedTime = finishTime-new Date(sums[0].time).getTime();
                     // var days=Math.floor(usedTime/(24*3600*1000));
                     // //计算出小时数
                     var leave1=usedTime%(24*3600*1000);    //计算天数后剩余的毫秒数
@@ -103,16 +107,17 @@ module.exports = class extends Base {
                     var leave3=leave1%(60*1000);        //计算小时数后剩余的毫秒数
                     var second =Math.floor(leave3/(60*1000));
                     times = (hours>9?hours:'0'+hours)+':'+(minutes>9?minutes:'0'+minutes)+':'+(second>9?second:'0'+second)
+                    fens = hours*60+minutes
                 }else{
                     times = "00:00:00"
                 } 
-                const scs =  await this.model('activity_scenery').where({activityid:id}).select()||[];
                 returnGroup.push({
                     id:group.groupid,
                     name:group.groupName,
                     times,
+                    fens,
                     num:nums,
-                    isDone:scs.length-nums
+                    isDone:isFinish
                 })
             }
            
