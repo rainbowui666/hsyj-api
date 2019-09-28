@@ -98,14 +98,27 @@ module.exports = class extends Base {
                     const usedTime = finishTime-new Date(sums[0].time).getTime();
                     // var days=Math.floor(usedTime/(24*3600*1000));
                     // //计算出小时数
-                    var leave1=usedTime%(24*3600*1000);    //计算天数后剩余的毫秒数
-                    var hours=Math.floor(leave1/(3600*1000));
-                    //计算相差分钟数
-                    var leave2=leave1%(3600*1000);        //计算小时数后剩余的毫秒数
-                    var minutes=Math.floor(leave2/(60*1000));
+                    // var leave1=usedTime%(24*3600*1000);    //计算天数后剩余的毫秒数
+                    // var hours=Math.floor(leave1/(3600*1000));
+                    // //计算相差分钟数
+                    // var leave2=leave1%(3600*1000);        //计算小时数后剩余的毫秒数
+                    // var minutes=Math.floor(leave2/(60*1000));
 
-                    var leave3=leave1%(60*1000);        //计算小时数后剩余的毫秒数
-                    var second =Math.floor(leave3/(60*1000));
+                    // var leave3=leave1%(60*1000);        //计算小时数后剩余的毫秒数
+                    // var second =Math.floor(leave3/(60*1000));
+                    //计算出相差天数  
+                    // var days=Math.floor(date3/(24*3600*1000))  
+                
+                    //计算出小时数  
+                
+                    var leave1=usedTime%(24*3600*1000)    //计算天数后剩余的毫秒数  
+                    var hours=Math.floor(leave1/(3600*1000))  
+                    //计算相差分钟数  
+                    var leave2=leave1%(3600*1000)        //计算小时数后剩余的毫秒数  
+                    var minutes=Math.floor(leave2/(60*1000))  
+                    //计算相差秒数  
+                    var leave3=leave2%(60*1000)      //计算分钟数后剩余的毫秒数  
+                    var second=Math.round(leave3/1000)  
                     times = (hours>9?hours:'0'+hours)+':'+(minutes>9?minutes:'0'+minutes)+':'+(second>9?second:'0'+second)
                     fens = hours*60+minutes
                 }else{
