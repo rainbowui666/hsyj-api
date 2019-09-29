@@ -91,8 +91,8 @@ module.exports = class extends Base {
             const sums =  await this.model('scenery').getTopGroupStudent(group.studentid,id);
             nums = sums[0].num;
             if(nums>0){
-                const scs =  await this.model('activity_scenery').where({activityid:id}).select()||[];
-                const isFinish = scs.length-nums;
+                const all =  await this.model('activity_scenery').distinct('sceneryid').field(['sceneryid']).where({activityid:id}).select()||[];
+                const isFinish = all.length-nums;
                 if(sums[0].time){
                     const finishTime = isFinish>0?new Date().getTime():new Date(sums[0].mtime).getTime()
                     const usedTime = finishTime-new Date(sums[0].time).getTime();
@@ -139,8 +139,8 @@ module.exports = class extends Base {
         var compare = function(obj1,obj2){
                 var val1 = obj1.num;
                 var val2 = obj2.num;
-                var val3 = obj1.times.split(':')[1];
-                var val4 = obj2.times.split(':')[1];
+                var val3 = obj1.fens;
+                var val4 = obj2.fens;
                 if(val1 < val2){
                    return 1;
                 }else if(val1 > val2){
