@@ -27,7 +27,7 @@ module.exports = class extends Base {
         const endDate = new Date();
         const date = endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate()+' 00:00:00'
         // endDate:{'>': think.datetime(date,'YYYY-MM-DD')
-        const data = await model.where({shstate: 0, iscomplate: 1, endDate:{'>': think.datetime(date,'YYYY-MM-DD')}}).order('activityID desc').page(page,size).countSelect();
+        const data = await model.order('activityID desc').page(page,size).countSelect();
 
         const arrdata = [];
 
@@ -60,6 +60,7 @@ module.exports = class extends Base {
                 } else if(joindate && joindate.isAttentention) {
                     item.hasjoin = '已报名' 
                 }
+                if(think.isEmpty(item.hasjoin) && nowd > end) item.hasjoin = '已结束';
             } else {
                 let start = Number(new Date(item.startDate));
                 let nowd = Number(new Date());
