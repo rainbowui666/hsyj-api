@@ -26,11 +26,13 @@ module.exports = class extends think.Model {
             modeldis._pk = 'discussID';
             const disnum = yield modeldis.where({ distype: 1, targetid: id, shstate: 1 }).count('discussID');
             // 报名人数
-            const applyNum = yield model.where({ activityid: id, shstate: 1 }).count('activityid');
+            // const applyNum = await model.distinct('activityid').field(['activityid']).where({activityid: id, shstate: 1}).count();
+            const applyNum = yield _this2.query('select distinct studentid from culture_student_activity where activityid=' + id + ' and shstate=1');
+            console.log('applyNum---', applyNum[0].activityid);
             return {
                 // checkin: checkin,
                 wantto: wantto,
-                applyNum: applyNum,
+                applyNum: applyNum.length,
                 // sharenum: sharenum,
                 disnum: disnum
             };

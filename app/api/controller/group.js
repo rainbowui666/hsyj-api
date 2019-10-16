@@ -135,6 +135,10 @@ module.exports = class extends Base {
                         };
                         let insertid2 = yield _this4.model('student_activity').add(para3);
                     }
+                    if (groupdate && groupdate.groupName) {
+                        let moje = _this4.uncodeUtf16(groupdate.groupName);
+                        groupdate.groupName = moje;
+                    }
                     return _this4.success({ msg: '扫码加入成功', groupName: groupdate.groupName });
                 }
             } else {

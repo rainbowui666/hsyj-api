@@ -118,6 +118,10 @@ module.exports = class extends Base {
                     }
                     let insertid2 = await this.model('student_activity').add(para3);
                 }
+                if (groupdate && groupdate.groupName) {
+                    let moje = this.uncodeUtf16(groupdate.groupName);
+                    groupdate.groupName = moje;
+                }
                 return this.success({msg:'扫码加入成功',groupName: groupdate.groupName});
             }
         } else {
