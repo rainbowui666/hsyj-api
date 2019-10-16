@@ -36,7 +36,7 @@ module.exports = class extends Base {
             const endDate = new Date();
             const date = endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate() + ' 00:00:00';
             // endDate:{'>': think.datetime(date,'YYYY-MM-DD')
-            const data = yield model.where({ shstate: 0, iscomplate: 1, endDate: { '>': think.datetime(date, 'YYYY-MM-DD') } }).order('activityID desc').page(page, size).countSelect();
+            const data = yield model.order('activityID desc').page(page, size).countSelect();
 
             const arrdata = [];
 
@@ -69,6 +69,7 @@ module.exports = class extends Base {
                     } else if (joindate && joindate.isAttentention) {
                         item.hasjoin = '已报名';
                     }
+                    if (think.isEmpty(item.hasjoin) && nowd > end) item.hasjoin = '已结束';
                 } else {
                     let start = Number(new Date(item.startDate));
                     let nowd = Number(new Date());
@@ -127,6 +128,8 @@ module.exports = class extends Base {
                     } else if (joindate && joindate.isAttentention) {
                         data.hasjoin = '已报名';
                     }
+
+                    if (think.isEmpty(data.hasjoin) && nowd > end) data.hasjoin = '已结束';
                 }
             }
             return _this3.success(data);
@@ -161,7 +164,7 @@ module.exports = class extends Base {
                 } else if (joindate && joindate.isAttentention) {
                     data.hasjoin = '已报名';
                 }
-
+                if (think.isEmpty(data.hasjoin) && nowd > end) data.hasjoin = '已结束';
                 let groupId = yield _this4.model('student_group').field('studentid').where({ activityid: id, studentid: studentid }).getField('groupid');
                 let groupData = null;
                 if (!think.isEmpty(groupId)) groupData = yield _this4.model('group').where({ groupid: groupId }).select();else groupData = yield _this4.model('group').where({ activityid: data.activityID, studentid: studentid }).select();
