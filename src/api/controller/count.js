@@ -93,9 +93,10 @@ module.exports = class extends Base {
             if(nums>0){
                 const all =  await this.model('activity_scenery').distinct('sceneryid').field(['sceneryid']).where({activityid:id}).select()||[];
                 const isFinish = all.length-nums;
+                let usedTime =0;
                 if(sums[0].time){
                     const finishTime = isFinish>0?new Date().getTime():new Date(sums[0].mtime).getTime()
-                    const usedTime = finishTime-new Date(sums[0].time).getTime();
+                    usedTime = finishTime-new Date(sums[0].time).getTime();
                     // var days=Math.floor(usedTime/(24*3600*1000));
                     // //计算出小时数
                     // var leave1=usedTime%(24*3600*1000);    //计算天数后剩余的毫秒数
@@ -137,6 +138,7 @@ module.exports = class extends Base {
                     id:group.groupid,
                     name:group.groupName,
                     times,
+                    usedTime,
                     fens,
                     num:nums,
                     isDone:isFinish
@@ -148,8 +150,8 @@ module.exports = class extends Base {
         var compare = function(obj1,obj2){
                 var val1 = obj1.num;
                 var val2 = obj2.num;
-                var val3 = obj1.fens;
-                var val4 = obj2.fens;
+                var val3 = obj1.usedTime;
+                var val4 = obj2.usedTime;
                 if(val1 < val2){
                    return 1;
                 }else if(val1 > val2){
