@@ -28,7 +28,7 @@ module.exports = class extends think.Model {
             // 报名人数
             // const applyNum = await model.distinct('activityid').field(['activityid']).where({activityid: id, shstate: 1}).count();
             const applyNum = yield _this2.query('select distinct studentid from culture_student_activity where activityid=' + id + ' and shstate=1');
-            console.log('applyNum---', applyNum[0].activityid);
+            // console.log('applyNum---', applyNum[0].activityid)
             return {
                 // checkin: checkin,
                 wantto: wantto,
