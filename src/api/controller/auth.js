@@ -11,8 +11,8 @@ module.exports = class extends Base {
       qs: {
         grant_type: 'authorization_code',
         js_code: this.post('code'),
-        secret: 'b92e07c57496470c7c961e4f4dbccfcc',
-        appid: 'wx57b35c6b53e20d2d'
+        secret: 'e2591caa68bb7a8467cef7eee39595d2',
+        appid: 'wxd72b29a17bddb8d4'
       }
     };
 
