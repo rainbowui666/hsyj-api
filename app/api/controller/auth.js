@@ -32,6 +32,9 @@ module.exports = class extends Base {
         let avatarUrl = _this.post('avatarUrl');
         let gender = _this.post('gender') == 1 ? 0 : 1;
         let nickName = _this.post('nickName');
+        if (nickName && nickName.length >= 2 && nickName.indexOf('"') == 0 && nickName.lastIndexOf('"') == nickName.length - 1) {
+          nickName = nickName.slice(1, -1);
+        }
 
         let userId = yield _this.model('student').add({
           studentName: nickName,

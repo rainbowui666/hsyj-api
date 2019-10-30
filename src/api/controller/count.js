@@ -86,34 +86,81 @@ module.exports = class extends Base {
         const returnGroup = [];
         for(const group of groups){
             let times = 0;
+            let fens = 0;
             let nums = 0;
             const sums =  await this.model('scenery').getTopGroupStudent(group.studentid,id);
-            times = sums[0].time
-            nums = sums[0].num
-            const scs =  await this.model('activity_scenery').where({activityid:id}).select()||[];
-            returnGroup.push({
-                id:group.groupid,
-                name:group.groupName,
-                times,
-                num:nums,
-                isDone:scs.length-nums
-            })
+            nums = sums[0].num;
+            if(nums>0){
+                const all =  await this.model('activity_scenery').distinct('sceneryid').field(['sceneryid']).where({activityid:id}).select()||[];
+                const isFinish = all.length-nums;
+                let usedTime =0;
+                if(sums[0].time){
+                    const finishTime = isFinish>0?new Date().getTime():new Date(sums[0].mtime).getTime()
+                    usedTime = finishTime-new Date(sums[0].time).getTime();
+                    // var days=Math.floor(usedTime/(24*3600*1000));
+                    // //计算出小时数
+                    // var leave1=usedTime%(24*3600*1000);    //计算天数后剩余的毫秒数
+                    // var hours=Math.floor(leave1/(3600*1000));
+                    // //计算相差分钟数
+                    // var leave2=leave1%(3600*1000);        //计算小时数后剩余的毫秒数
+                    // var minutes=Math.floor(leave2/(60*1000));
+
+                    // var leave3=leave1%(60*1000);        //计算小时数后剩余的毫秒数
+                    // var second =Math.floor(leave3/(60*1000));
+                    //计算出相差天数  
+                    // var days=Math.floor(date3/(24*3600*1000))  
+                
+                    //计算出小时数  
+                
+                    var leave1=usedTime%(24*3600*1000)    //计算天数后剩余的毫秒数  
+                    var hours=Math.floor(leave1/(3600*1000))  
+                    //计算相差分钟数  
+                    var leave2=leave1%(3600*1000)        //计算小时数后剩余的毫秒数  
+                    var minutes=Math.floor(leave2/(60*1000))  
+                   
+                    //计算相差秒数  
+                    var leave3=leave2%(60*1000)      //计算分钟数后剩余的毫秒数  
+                    var second=Math.round(leave3/1000)  
+                    if(second===60){
+                        minutes = minutes+1;
+                        second=0
+                    }
+                    if(minutes===60){
+                        hours = hours+1;
+                        minutes=0
+                    }
+                    times = (hours>9?hours:'0'+hours)+':'+(minutes>9?minutes:'0'+minutes)+':'+(second>9?second:'0'+second)
+                    fens = hours*60+minutes
+                }else{
+                    times = "00:00:00"
+                } 
+                returnGroup.push({
+                    id:group.groupid,
+                    name:group.groupName,
+                    times,
+                    usedTime,
+                    fens,
+                    num:nums,
+                    isDone:isFinish
+                })
+            }
+           
         }
 
         var compare = function(obj1,obj2){
-                var val1 = obj1.nums;
-                var val2 = obj2.nums;
-                var val3 = obj1.times;
-                var val4 = obj2.times;
+                var val1 = obj1.num;
+                var val2 = obj2.num;
+                var val3 = obj1.usedTime;
+                var val4 = obj2.usedTime;
                 if(val1 < val2){
                    return 1;
                 }else if(val1 > val2){
                    return -1;
                 }else{
                    if(val3 < val4){
-                           return 1;
-                    }else if(val3 > val4){
                            return -1;
+                    }else if(val3 > val4){
+                           return 1;
                     }else{
                            return 0;
                     }

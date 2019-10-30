@@ -232,7 +232,7 @@ module.exports = class extends think.Model {
         }
         const jtopActive = [];
         for(const s of schoolds){
-            const nums = await this.query("select count(sceneryid) num  from culture_student_scenery where sceneryid in  (select sceneryid from culture_activity_scenery where activityid in (select activityID from culture_activity where  createbyschoolid="+s.schoolId+"))");
+            const nums = await this.query("select count(DISTINCT studentid,sceneryid) num  from culture_student_scenery where sceneryid in  (select sceneryid from culture_activity_scenery where activityid in (select activityID from culture_activity where  createbyschoolid="+s.schoolId+"))");
             jtopActive.push({
                             name:s.schoolName,
                             num:nums[0].num
@@ -279,15 +279,17 @@ module.exports = class extends think.Model {
             return sortArr
         }
     }
+    async getAdminTourist() {
+        // const num1s = await this.query('select distinct studentid   from culture_discuss');
+        // const num2s = await this.query('select distinct studentid   from culture_student_scenery');
 
-    async getTourist(id) {
-        const num1s = await this.query('select distinct studentid   from culture_discuss where targetid in ( select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+'))');
-        const num2s = await this.query('select distinct studentid   from culture_student_scenery where sceneryid in ( select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+'))');
+        const num1s = await this.query('select distinct studentID from culture_student');
+        const num2s = null;
 
         const set = new Set();
         if(num1s&&num1s.length>0){
             for(const n1 of num1s){
-                set.add(n1)
+                set.add(n1.studentID)
             }
         }
 
@@ -297,6 +299,25 @@ module.exports = class extends think.Model {
             }
         }
 
+        return set.size;
+    }
+
+    async getTourist(id) {
+        const num1s = await this.query('select distinct studentid   from culture_discuss where targetid in ( select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+'))');
+        const num2s = await this.query('select distinct studentid   from culture_student_scenery where sceneryid in ( select sceneryID from culture_scenery where schoolid in (select schoolId from culture_school where parentid='+id+'))');
+
+        const set = new Set();
+        if(num1s&&num1s.length>0){
+            for(const n1 of num1s){
+                set.add(n1.studentid)
+            }
+        }
+
+        if(num2s&&num2s.length>0){
+            for(const n1 of num2s){
+                set.add(n1.studentid)
+            }
+        }
         return set.size;
     }
 

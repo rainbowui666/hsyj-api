@@ -9,9 +9,9 @@
         "publicController",
         "publicAction"
     ],
-    "mappings": "AAAAA,OAAOC,OAAP,GAAiB;AACbC,sBAAkB,CACd,OADc,EAEd,MAFc,CADL;;AAMbC,kBAAc,CACV,OADU,EAEV,WAFU;AAND,CAAjB",
+    "mappings": "AAAAA,OAAOC,OAAP,GAAiB;AACbC,sBAAkB,CACd,OADc,EAEd,MAFc,CADL;;AAMbC,kBAAc,CACV,OADU,EAEV,WAFU,EAGV,qBAHU,EAIV,qBAJU,EAKV,mBALU,EAMV,uBANU,EAOV,yBAPU;AAND,CAAjB",
     "file": "../../../src/api/config/config.js",
     "sourcesContent": [
-        "module.exports = {\n    publicController: [\n        'index',\n        'user'\n    ],\n\n    publicAction: [\n        'index',\n        'user/save'\n    ]\n}"
+        "module.exports = {\n    publicController: [\n        'index',\n        'user'\n    ],\n\n    publicAction: [\n        'index',\n        'user/save',\n        \"count/getHotMapData\",\n        \"count/getTopScenery\",\n        \"count/getTopGroup\",\n        \"count/getGroupMapData\",\n        \"count/clickGroupMapData\",\n    ]\n}"
     ]
 }
